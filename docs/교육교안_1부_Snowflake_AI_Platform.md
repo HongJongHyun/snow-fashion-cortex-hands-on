@@ -106,9 +106,12 @@
 | CUSTOMERS | 500,000 | 고객 마스터 (연령/성별/지역/멤버십) |
 | INVENTORY_SNAPSHOT | 780,000 | 일별 재고 스냅샷 (2025년) |
 | PRODUCT_REVIEWS | 100,000 | 한국어 리뷰 텍스트 |
+| REVIEW_TEMPLATES | 43 | 리뷰 생성 템플릿 |
 | VENDORS | 15 | 협력업체 |
 | SUPPLY_ORDERS | 20,000 | 발주 오더 |
 | SHIPMENTS | 18,064 | 배송/입고 이력 |
+| DEMAND_FORECAST | 160 | 수요 예측 데이터 |
+| WEEKLY_DEMAND | 2,060 | 주간 수요 집계 |
 
 #### Snowsight CoCo로 데이터 탐색해보기
 
