@@ -1,0 +1,137 @@
+-- ============================================================
+-- EDU_SCM_SV Step 1: 기본 생성
+--
+-- SCM 분석용 Semantic View (재고/발주/배송/벤더)
+-- 교안 8.3 확장 시나리오
+-- ============================================================
+
+CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SCM_SV
+
+  TABLES (
+    INVENTORY_SNAPSHOT AS SNOW_FASHION.RAW.INVENTORY_SNAPSHOT
+      PRIMARY KEY (SNAPSHOT_DATE, STORE_ID, SKU_ID)
+      COMMENT = '매장별 상품 재고 스냅샷. 일 단위 재고 현황(보유/입고대기/예약)과 재고 상태를 기록.',
+
+    SUPPLY_ORDERS AS SNOW_FASHION.RAW.SUPPLY_ORDERS
+      PRIMARY KEY (ORDER_ID)
+      COMMENT = '협력업체 발주 주문. 발주 수량, 원가, 상태, 예상 입고일 등을 기록.',
+
+    SHIPMENTS AS SNOW_FASHION.RAW.SHIPMENTS
+      PRIMARY KEY (SHIPMENT_ID)
+      COMMENT = '발주에 대한 배송 정보. 출하 수량, 출하일, 입고일, 지연 일수를 기록.',
+
+    VENDORS AS SNOW_FASHION.RAW.VENDORS
+      PRIMARY KEY (VENDOR_ID)
+      COMMENT = '협력업체 마스터. 업체명, 유형, 소재지, 리드타임, 품질 점수 등을 관리.'
+  )
+
+  RELATIONSHIPS (
+    ORDERS_TO_VENDORS AS
+      SUPPLY_ORDERS (VENDOR_ID) REFERENCES VENDORS,
+    SHIPMENTS_TO_ORDERS AS
+      SHIPMENTS (ORDER_ID) REFERENCES SUPPLY_ORDERS,
+    SHIPMENTS_TO_VENDORS AS
+      SHIPMENTS (VENDOR_ID) REFERENCES VENDORS
+  )
+
+  FACTS (
+    -- INVENTORY_SNAPSHOT
+    INVENTORY_SNAPSHOT.ON_HAND_QTY AS ON_HAND_QTY
+      COMMENT = '현재 보유 재고 수량',
+    INVENTORY_SNAPSHOT.IN_TRANSIT_QTY AS IN_TRANSIT_QTY
+      COMMENT = '입고 대기(배송중) 수량',
+    INVENTORY_SNAPSHOT.RESERVED_QTY AS RESERVED_QTY
+      COMMENT = '예약(판매확정 미출고) 수량',
+    INVENTORY_SNAPSHOT.REORDER_POINT AS REORDER_POINT
+      COMMENT = '재주문 기준점',
+
+    -- SUPPLY_ORDERS
+    SUPPLY_ORDERS.ORDER_QTY AS ORDER_QTY
+      COMMENT = '발주 수량',
+    SUPPLY_ORDERS.UNIT_COST AS UNIT_COST
+      COMMENT = '단위 원가(₩)',
+    SUPPLY_ORDERS.TOTAL_COST AS TOTAL_COST
+      COMMENT = '발주 총 금액(₩)',
+
+    -- SHIPMENTS
+    SHIPMENTS.SHIPPED_QTY AS SHIPPED_QTY
+      COMMENT = '출하 수량',
+    SHIPMENTS.DELAY_DAYS AS DELAY_DAYS
+      COMMENT = '지연 일수. 0=정상, 양수=지연',
+
+    -- VENDORS
+    VENDORS.LEAD_TIME_DAYS AS LEAD_TIME_DAYS
+      COMMENT = '기본 리드타임(일)',
+    VENDORS.QUALITY_SCORE AS QUALITY_SCORE
+      COMMENT = '품질 점수 0~100'
+  )
+
+  DIMENSIONS (
+    -- INVENTORY_SNAPSHOT
+    INVENTORY_SNAPSHOT.STORE_ID AS STORE_ID
+      COMMENT = '매장 ID',
+    INVENTORY_SNAPSHOT.SKU_ID AS SKU_ID
+      COMMENT = '상품 SKU ID',
+    INVENTORY_SNAPSHOT.BRAND AS BRAND
+      COMMENT = '브랜드'
+      SAMPLE_VALUES ('TOPTEN', 'ZIOZIA', 'OLZEN', 'ANDZ')
+      IS_ENUM,
+    INVENTORY_SNAPSHOT.STATUS AS STATUS
+      COMMENT = '재고 상태'
+      SAMPLE_VALUES ('정상', '부족', '과잉')
+      IS_ENUM,
+    INVENTORY_SNAPSHOT.SNAPSHOT_DATE AS SNAPSHOT_DATE
+      COMMENT = '재고 스냅샷 기준일',
+
+    -- SUPPLY_ORDERS
+    SUPPLY_ORDERS.ORDER_ID AS ORDER_ID
+      COMMENT = '발주 주문 ID',
+    SUPPLY_ORDERS.VENDOR_ID AS VENDOR_ID
+      COMMENT = '협력업체 ID',
+    SUPPLY_ORDERS.SKU_ID AS SKU_ID
+      COMMENT = '발주 상품 SKU',
+    SUPPLY_ORDERS.BRAND AS BRAND
+      COMMENT = '브랜드'
+      SAMPLE_VALUES ('TOPTEN', 'ZIOZIA', 'OLZEN', 'ANDZ')
+      IS_ENUM,
+    SUPPLY_ORDERS.ORDER_STATUS AS STATUS
+      COMMENT = '발주 상태'
+      SAMPLE_VALUES ('발주확인', '생산중', '배송중', '완료', '지연', '취소')
+      IS_ENUM,
+    SUPPLY_ORDERS.ORDER_DATE AS ORDER_DATE
+      COMMENT = '발주일',
+    SUPPLY_ORDERS.EXPECTED_DELIVERY AS EXPECTED_DELIVERY
+      COMMENT = '예상 입고일',
+
+    -- SHIPMENTS
+    SHIPMENTS.SHIPMENT_ID AS SHIPMENT_ID
+      COMMENT = '배송 ID',
+    SHIPMENTS.ORDER_ID AS ORDER_ID
+      COMMENT = '발주 주문 ID (배송)',
+    SHIPMENTS.VENDOR_ID AS VENDOR_ID
+      COMMENT = '협력업체 ID (배송)',
+    SHIPMENTS.SHIP_STATUS AS STATUS
+      COMMENT = '배송 상태',
+    SHIPMENTS.SHIP_DATE AS SHIP_DATE
+      COMMENT = '출하일',
+    SHIPMENTS.ARRIVAL_DATE AS ARRIVAL_DATE
+      COMMENT = '입고일',
+
+    -- VENDORS
+    VENDORS.VENDOR_ID AS VENDOR_ID
+      COMMENT = '협력업체 ID',
+    VENDORS.VENDOR_NAME AS VENDOR_NAME
+      COMMENT = '협력업체명',
+    VENDORS.VENDOR_TYPE AS VENDOR_TYPE
+      COMMENT = '유형'
+      SAMPLE_VALUES ('원단공급', '봉제가공', '니트생산', '데님생산', '패딩생산', '염색가공')
+      IS_ENUM,
+    VENDORS.COUNTRY AS COUNTRY
+      COMMENT = '소재 국가',
+    VENDORS.CITY AS CITY
+      COMMENT = '소재 도시',
+    VENDORS.IS_ACTIVE AS IS_ACTIVE
+      COMMENT = '활성 여부'
+  )
+
+  COMMENT = '스노우패션 SCM 분석 - 재고/발주/배송/벤더 (교육용)';
