@@ -183,3 +183,17 @@ SELECT TABLE_SCHEMA, TABLE_NAME, ROW_COUNT
 FROM SNOW_FASHION.INFORMATION_SCHEMA.TABLES
 WHERE TABLE_SCHEMA = 'RAW' AND TABLE_TYPE = 'BASE TABLE'
 ORDER BY TABLE_NAME;
+
+-- =============================================================================
+-- 5. File Format & Stage (데이터 로드 준비)
+-- =============================================================================
+CREATE OR REPLACE FILE FORMAT SNOW_FASHION.RAW.CSV_GZ_FORMAT
+  TYPE                      = CSV
+  FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+  SKIP_HEADER               = 1
+  COMPRESSION               = GZIP
+  EMPTY_FIELD_AS_NULL       = TRUE
+  NULL_IF                   = ('NULL', '');
+
+CREATE OR REPLACE STAGE SNOW_FASHION.RAW.LOAD_STAGE
+  FILE_FORMAT = CSV_GZ_FORMAT;
