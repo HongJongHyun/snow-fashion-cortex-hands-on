@@ -31,8 +31,10 @@
 
 1. <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/archive/refs/heads/main.zip" target="_blank">교육 자료 전체 다운로드 (ZIP)</a>를 클릭하여 파일을 받고 압축을 해제합니다.
 2. `scripts/00_setup_db.sql`을 Snowsight 워크시트에서 실행하여 Database, Schema, Warehouse, Table, Stage를 생성합니다.
-3. `scripts/01_put_csv.sql`의 PUT 경로를 본인 환경의 `data/` 폴더 경로로 수정한 뒤, Snowflake CLI(`snow sql -f`)로 실행하여 CSV 파일을 Stage에 업로드합니다.
+3. Snowsight 좌측 메뉴 `Catalog` → `Data Explorer` → `SNOW_FASHION` → `RAW` → `Stages` → `LOAD_STAGE`를 선택한 뒤, `+ Files` 버튼을 클릭하여 `data/` 폴더의 `.csv.gz` 파일 12개를 업로드합니다.
 4. `scripts/02_load_data.sql`을 Snowsight 워크시트에서 실행하여 Stage의 데이터를 테이블에 적재합니다.
+
+> Snowflake CLI를 사용할 수 있는 환경이라면 `scripts/01_put_csv.sql`로 파일 업로드를 일괄 처리할 수도 있습니다.
 
 > 상세한 절차는 부록 B의 "데이터 환경 구축" 섹션을 참고하세요.
 

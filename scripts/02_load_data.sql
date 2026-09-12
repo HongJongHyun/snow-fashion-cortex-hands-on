@@ -1,6 +1,7 @@
 -- =============================================================================
--- Snow Fashion 데이터 로드 스크립트
--- 사전 조건: 00_setup_db.sql 실행 완료, data/ 폴더에 CSV.gz 파일 12개 준비
+-- Snow Fashion 데이터 적재 스크립트
+-- 사전 조건: 00_setup_db.sql 실행 완료, LOAD_STAGE에 .csv.gz 파일 12개 업로드 완료
+-- 실행 환경: Snowsight 워크시트
 -- =============================================================================
 
 USE ROLE ACCOUNTADMIN;
@@ -8,51 +9,12 @@ USE WAREHOUSE SF_WH;
 USE SCHEMA SNOW_FASHION.RAW;
 
 -- =============================================================================
--- 1. File Format (gzip 압축 CSV용)
+-- 1. 스테이지 파일 확인 (12개 파일이 보여야 합니다)
 -- =============================================================================
-CREATE OR REPLACE FILE FORMAT SNOW_FASHION.RAW.CSV_GZ_FORMAT
-  TYPE                      = CSV
-  FIELD_OPTIONALLY_ENCLOSED_BY = '"'
-  SKIP_HEADER               = 1
-  COMPRESSION               = GZIP
-  EMPTY_FIELD_AS_NULL       = TRUE
-  NULL_IF                   = ('NULL', '');
-
--- =============================================================================
--- 2. Internal Stage
--- =============================================================================
-CREATE OR REPLACE STAGE SNOW_FASHION.RAW.LOAD_STAGE
-  FILE_FORMAT = CSV_GZ_FORMAT;
-
--- =============================================================================
--- 3. 파일 업로드 (PUT)
--- 아래 경로를 실제 CSV 파일이 있는 로컬 경로로 변경하세요.
--- Snowsight UI에서는 각 테이블 → Load Data 로 직접 업로드할 수도 있습니다.
--- =============================================================================
-
--- 방법 A: SnowSQL / Snowflake CLI 에서 실행
--- snow sql -q "PUT file:///path/to/data/*.csv.gz @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE;" -c connection_name
--- PUT file:///path/to/data/*.csv.gz @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE;
-
--- 방법 B: 개별 파일 PUT (경로를 본인 환경에 맞게 수정)
--- PUT file:///path/to/data/CUSTOMERS.csv.gz          @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
--- PUT file:///path/to/data/DEMAND_FORECAST.csv.gz    @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
--- PUT file:///path/to/data/INVENTORY_SNAPSHOT.csv.gz  @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
--- PUT file:///path/to/data/PRODUCTS.csv.gz           @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
--- PUT file:///path/to/data/PRODUCT_REVIEWS.csv.gz    @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
--- PUT file:///path/to/data/REVIEW_TEMPLATES.csv.gz   @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
--- PUT file:///path/to/data/SALES_TRANSACTIONS.csv.gz @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
--- PUT file:///path/to/data/SHIPMENTS.csv.gz          @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
--- PUT file:///path/to/data/STORES.csv.gz             @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
--- PUT file:///path/to/data/SUPPLY_ORDERS.csv.gz      @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
--- PUT file:///path/to/data/VENDORS.csv.gz            @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
--- PUT file:///path/to/data/WEEKLY_DEMAND.csv.gz      @SNOW_FASHION.RAW.LOAD_STAGE/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
-
--- 업로드 확인
 LIST @SNOW_FASHION.RAW.LOAD_STAGE;
 
 -- =============================================================================
--- 4. 데이터 로드 (COPY INTO)
+-- 2. 데이터 적재 (COPY INTO)
 -- =============================================================================
 
 COPY INTO SNOW_FASHION.RAW.CUSTOMERS
@@ -116,7 +78,7 @@ COPY INTO SNOW_FASHION.RAW.WEEKLY_DEMAND
   ON_ERROR = 'CONTINUE';
 
 -- =============================================================================
--- 5. 데이터 확인
+-- 3. 데이터 확인
 -- =============================================================================
 SELECT 'CUSTOMERS' AS TBL, COUNT(*) AS CNT FROM SNOW_FASHION.RAW.CUSTOMERS
 UNION ALL SELECT 'DEMAND_FORECAST', COUNT(*) FROM SNOW_FASHION.RAW.DEMAND_FORECAST
