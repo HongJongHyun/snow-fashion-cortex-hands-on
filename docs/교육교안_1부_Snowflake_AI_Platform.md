@@ -1145,7 +1145,7 @@ Agent의 단일 응답 생성에 대한 리소스 제한을 설정합니다. 둘
 
 ### 6.5 Step 4: SQL로 Agent 생성 (전체 코드)
 
-> **별도 SQL 파일**: `EDU_SALES_AGENT_생성.sql`
+> **별도 SQL 파일**: <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_AGENT_%EC%83%9D%EC%84%B1.sql" target="_blank">`EDU_SALES_AGENT_생성.sql`</a>
 
 위 Step 1~3에서 UI로 설정한 내용을 SQL로 표현하면 아래와 같습니다. 전체 코드는 별도 SQL 파일을 참조하세요.
 
