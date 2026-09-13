@@ -1347,7 +1347,7 @@ Chapter 3에서 만든 `EDU_SALES_SV`는 매출/고객/상품/매장 데이터�
 | SHIPMENTS | 발주에 대한 배송 기록 | 출하수량, 지연일수 |
 | VENDORS | 협력업체 마스터 | 리드타임, 품질점수 |
 
-> **별도 SQL 파일**: `EDU_SCM_SV_01_생성.sql`
+> **별도 SQL 파일**: <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SCM_SV_01_%EC%83%9D%EC%84%B1.sql" target="_blank">`EDU_SCM_SV_01_생성.sql`</a>
 
 ```sql
 CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SCM_SV
@@ -1387,7 +1387,7 @@ Chapter 6에서 만든 `EDU_SALES_AGENT`는 매출 Semantic View + 데이터사�
 | voc_search | Cortex Search | EDU_VOC_SEARCH | 고객 리뷰/VOC |
 | data_to_chart | 내장 도구 | — | 데이터 시각화 |
 
-> **별도 SQL 파일**: `EDU_UNIFIED_AGENT_생성.sql`
+> **별도 SQL 파일**: <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_UNIFIED_AGENT_%EC%83%9D%EC%84%B1.sql" target="_blank">`EDU_UNIFIED_AGENT_생성.sql`</a>
 
 ```sql
 CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
