@@ -58,7 +58,7 @@
 #### Cortex Search (비정형 데이터 → RAG 검색)
 - **역할**: 텍스트 데이터에서 **의미 기반 검색** (키워드 매칭이 아닌 벡터 유사도)
 - **기반**: Cortex Search Service (자동 인덱싱)
-- **활용 1 - VOC 검색**: "사이즈가 안 맞다는 리뷰가 어떤 브랜드에 많아?"
+- **활용 1 - VOC 검색**: "보풀 관련 불만 리뷰가 어떤 브랜드에 많아?"
 - **활용 2 - 데이터 사전 검색**: "객단가가 뭐야?" → Agent가 정확한 컬럼/계산식을 파악
 - **내부 동작**: 질문 → 벡터 + 키워드 하이브리드 검색 → 관련 문서 반환
 
@@ -919,13 +919,16 @@ AS (
 
 | # | 검색어 | 확인 포인트 |
 |---|--------|------------|
-| 1 | `사이즈가 맞지 않아요` | 사이즈 관련 불만 리뷰가 상위에 나오는지 |
-| 2 | `원단 품질` | 원단/소재 관련 리뷰가 나오는지 |
-| 3 | `배송이 너무 늦어요` | 배송 관련 부정 리뷰가 나오는지 |
+| 1 | `보풀이 심해요` | 보풀 관련 리뷰가 상위에 나오는지 |
+| 2 | `배송이 빠르네요` | 배송 관련 긍정 리뷰가 나오는지 |
 
-5. **Filter 활용**: 우측 Settings의 **Filter** → `Add condition` 클릭
-   - `BRAND` = `TOPTEN`, `RATING` ≤ `2` 로 필터 설정 후 `원단 품질` 검색
-   - TOPTEN 브랜드의 저평점 리뷰만 필터링되는지 확인
+> **참고**: 시맨틱 검색은 의미가 유사한 문장을 찾는 방식이므로, 검색어의 감성(긍정/부정)과 무관하게 주제가 비슷한 리뷰가 함께 나올 수 있습니다. 예를 들어 "지퍼 고장"을 검색해도 지퍼와 관련 없는 리뷰가 상위에 나올 수 있습니다. 이는 임베딩 모델의 특성이며 오류가 아닙니다.
+
+5. **Filter 활용**: 검색 결과의 정확도를 높이려면 필터를 함께 사용합니다.
+   - 우측 Settings의 **Filter** → `Add condition` 클릭
+   - `BRAND` = `TOPTEN` 필터 설정 후 `보풀이 심해요` 검색
+   - TOPTEN 브랜드 리뷰만 필터링되는지 확인
+   - 필터를 추가로 `RATING` = `2` 로 설정하면 저평점 불만 리뷰만 좁혀서 볼 수 있음
 
 > **데이터 사전 Search와의 차이**: 데이터 사전은 메타데이터 30건을 검색하지만,
 > VOC Search는 고객 리뷰 원문 10만건을 의미 검색합니다.
@@ -942,16 +945,16 @@ Playground 외에 SQL로도 검색을 테스트할 수 있습니다.
 -- 일반 검색
 SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
   'SNOW_FASHION.SEMANTIC.EDU_VOC_SEARCH',
-  '{"query": "사이즈가 맞지 않아요", "columns": ["REVIEW_TEXT","BRAND","RATING"], "limit": 5}'
+  '{"query": "보풀이 심해요", "columns": ["REVIEW_TEXT","BRAND","RATING"], "limit": 5}'
 );
 
--- 브랜드 필터 + 부정 리뷰만
+-- 브랜드 필터 적용
 SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
   'SNOW_FASHION.SEMANTIC.EDU_VOC_SEARCH',
   '{
-    "query": "원단 품질이 나빠요",
+    "query": "보풀이 심해요",
     "columns": ["REVIEW_TEXT", "BRAND", "RATING"],
-    "filter": {"@and": [{"@eq": {"BRAND": "TOPTEN"}}, {"@lte": {"RATING": 2}}]},
+    "filter": {"@eq": {"BRAND": "TOPTEN"}},
     "limit": 5
   }'
 );
