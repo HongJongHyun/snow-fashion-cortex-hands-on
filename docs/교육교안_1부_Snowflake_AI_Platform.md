@@ -289,7 +289,7 @@ VENDORS ──────┐
    - 이번 교육에서는 `Select all`로 전체 선택 (47개 컬럼)
    - 우측 하단 `Create` 클릭 → Autopilot이 Dimension/Fact 분류, Relationship 추론, Description 생성을 자동으로 수행합니다. 완료까지 잠시 시간이 걸릴 수 있습니다.
 
-> **Semantic View 설계 베스트 프랙티스** (출처: [Best practices for modeling semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/best-practices-modeling))
+> **Semantic View 설계 베스트 프랙티스** (출처: <a href="https://docs.snowflake.com/en/user-guide/views-semantic/best-practices-modeling" target="_blank">Best practices for modeling semantic views</a>)
 > 
 > UI에서 안내하듯이, 모든 컬럼을 넣는 것보다 **분석에 필요한 컬럼만** 선택하는 것이 좋습니다.
 > 
@@ -323,7 +323,7 @@ Autopilot이 완료되면 Semantic View 편집 화면이 열립니다. 화면 �
 - 각 추천을 클릭하여 `Add verified query` / `Accept` / `Edit` / `Dismiss` 선택 가능
 - **추천은 자동 적용되지 않으며, 반드시 리뷰 후 수동으로 추가해야 합니다**
 
-> **Suggestions의 출처** (출처: [Suggestions for semantic models and views](https://docs.snowflake.com/en/user-guide/views-semantic/verified-query-suggestions))
+> **Suggestions의 출처** (출처: <a href="https://docs.snowflake.com/en/user-guide/views-semantic/verified-query-suggestions" target="_blank">Suggestions for semantic models and views</a>)
 > 
 > | 출처 | 설명 |
 > |------|------|
@@ -397,8 +397,8 @@ Autopilot은 NUMBER 타입 컬럼 중 일부를 Dimension으로 분류합니다.
 
 > **참고**: `ALTER SEMANTIC VIEW`는 COMMENT, TAG, RENAME, MATERIALIZATION, MAX_STALENESS 변경만 지원합니다.
 > 컬럼 타입 등 구조적 변경이 필요하면 `CREATE OR ALTER SEMANTIC VIEW`로 전체 정의를 다시 작성해야 합니다.
-> 본 단계의 Fact/Dimension 수정을 SQL로 실행하려면 별도 파일 **`EDU_SALES_SV_01_Fact수정.sql`**을 참고하세요.
-> ([ALTER SEMANTIC VIEW 문서](https://docs.snowflake.com/en/sql-reference/sql/alter-semantic-view) 참조)
+> 본 단계의 Fact/Dimension 수정을 SQL로 실행하려면 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_01_Fact%EC%88%98%EC%A0%95.sql" target="_blank">EDU_SALES_SV_01_Fact수정.sql</a>을 참고하세요.
+> (<a href="https://docs.snowflake.com/en/sql-reference/sql/alter-semantic-view" target="_blank">ALTER SEMANTIC VIEW 문서</a> 참조)
 
 #### 3.3.2 한국어 Description 추가
 
@@ -414,7 +414,7 @@ Description은 LLM이 컬럼의 의미를 이해하는 데 결정적입니다. *
 4. **Save** 클릭
 
 > 한두 개는 UI에서 직접 해보면 구조를 이해하기 좋습니다.
-> 나머지 컬럼의 Description도 일괄 반영하려면 별도 파일 **`EDU_SALES_SV_02_Description추가.sql`**의 `CREATE OR ALTER SEMANTIC VIEW`를 실행하세요.
+> 나머지 컬럼의 Description도 일괄 반영하려면 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_02_Description%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_02_Description추가.sql</a>의 `CREATE OR ALTER SEMANTIC VIEW`를 실행하세요.
 > (Fact/Dimension 변경과 마찬가지로, 컬럼 단위 Description 변경도 `ALTER SEMANTIC VIEW`로는 불가능합니다.)
 
 아래는 주요 컬럼별 권장 Description입니다. 이 내용이 `EDU_SALES_SV_수정.sql`에 모두 반영되어 있습니다.
@@ -457,9 +457,9 @@ Metric은 비즈니스 KPI를 사전 정의하여 LLM이 정확한 집계 SQL을
 > 나머지 메트릭은 SQL로 일괄 추가합니다.
 
 > Metric 추가도 `ALTER SEMANTIC VIEW`로는 불가능합니다.
-> UI에서 1개를 직접 추가해 본 후, 나머지는 별도 파일 **`EDU_SALES_SV_03_Metric추가.sql`**을 실행하세요.
+> UI에서 1개를 직접 추가해 본 후, 나머지는 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_03_Metric%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_03_Metric추가.sql</a>을 실행하세요.
 
-아래는 추가할 Metric 목록입니다. 이 내용이 `EDU_SALES_SV_03_Metric추가.sql`에 모두 반영되어 있습니다.
+아래는 추가할 Metric 목록입니다. 이 내용이 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_03_Metric%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_03_Metric추가.sql</a>에 모두 반영되어 있습니다.
 
 | Metric 이름 | Expression | Description |
 |-------------|-----------|-------------|
@@ -503,9 +503,9 @@ Verified Query 매칭됨?
 4. **Save and continue** 클릭
 
 > 복잡한 VQR(CTE, Window function 등)도 `ALTER SEMANTIC VIEW`로는 추가할 수 없습니다.
-> UI에서 1개를 직접 추가해 본 후, 나머지는 별도 파일 **`EDU_SALES_SV_04_VQR추가.sql`**을 실행하세요.
+> UI에서 1개를 직접 추가해 본 후, 나머지는 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_04_VQR%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_04_VQR추가.sql</a>을 실행하세요.
 
-아래는 추가할 VQR 목록입니다. 이 내용이 `EDU_SALES_SV_04_VQR추가.sql`에 모두 반영되어 있습니다.
+아래는 추가할 VQR 목록입니다. 이 내용이 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_04_VQR%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_04_VQR추가.sql</a>에 모두 반영되어 있습니다.
 
 | VQR 이름 | Question | 주요 SQL 패턴 |
 |----------|----------|---------------|
