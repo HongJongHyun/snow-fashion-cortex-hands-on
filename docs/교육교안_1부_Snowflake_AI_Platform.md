@@ -615,7 +615,7 @@ Agent 동작:     ▼
 
 ### 4.4 Step 2: 데이터 사전 테이블 생성 및 적재
 
-> 전체 SQL은 별도 파일 **`EDU_DATA_DICTIONARY_생성.sql`**을 실행하세요.
+> 전체 SQL은 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_DATA_DICTIONARY_%EC%83%9D%EC%84%B1.sql" target="_blank">EDU_DATA_DICTIONARY_생성.sql</a>을 실행하세요.
 > 아래는 테이블 구조와 INSERT 예시입니다.
 
 **테이블 생성**
@@ -653,7 +653,7 @@ VALUES
  'TOPTEN은 스노우패션의 가성비 영캐주얼 브랜드입니다. 필터: BRAND = ''TOPTEN''', '상품');
 ```
 
-> **`EDU_DATA_DICTIONARY_생성.sql`에 포함된 전체 데이터:**
+> **<a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_DATA_DICTIONARY_%EC%83%9D%EC%84%B1.sql" target="_blank">EDU_DATA_DICTIONARY_생성.sql</a>에 포함된 전체 데이터:**
 > - TERM 14건: 매출액, 객단가, 거래건수, 구매고객수, 평효율, 마진율, 할인율, 전년동기대비, 전월대비, 배송지연, 벤더품질, 리드타임, 가용재고, 재고상태
 > - VALUE 16건: 브랜드 4개, 채널 4개, 멤버십 2개, 매장유형 2개, 시즌 4개
 
@@ -669,9 +669,9 @@ SELECT ENTRY_TYPE, COUNT(*) FROM SNOW_FASHION.SEMANTIC.EDU_DATA_DICTIONARY GROUP
 1. 좌측 메뉴에서 `AI & ML` → `Cortex Search` → **Create** 클릭
 
 2. **New service** 단계:
-   - Service name: `EDU_DICT_SEARCH`
-   - Database: `SNOW_FASHION`, Schema: `SEMANTIC`
    - Role: `ACCOUNTADMIN`, Warehouse: `SF_WH`
+   - Database: `SNOW_FASHION`, Schema: `SEMANTIC`
+   - Service name: `EDU_DICT_SEARCH`
    - **Next** 클릭
 
 3. **Select data** 단계:
@@ -732,7 +732,7 @@ Cortex Search Service는 `TARGET_LAG`에 설정된 주기로 원본 테이블의
 > - 인크리멘탈 갱신(변경된 행만 재임베딩)은 PK 없이도 기본 동작입니다.
 > - Search Service에 PRIMARY KEY를 정의하면 변경 감지가 더 최적화되어 비용과 지연이 줄어듭니다.
 > - 단, Search Service의 PK 컬럼은 **TEXT 타입만** 가능합니다 (NUMBER 불가).
-> - ([Understanding cost for Cortex Search Services](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-costs) 참조)
+> - (<a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-costs" target="_blank">Understanding cost for Cortex Search Services</a> 참조)
 
 ### 4.6 Step 4: 데이터 사전 검색 테스트
 
