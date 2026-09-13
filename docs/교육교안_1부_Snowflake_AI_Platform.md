@@ -1229,7 +1229,15 @@ Example questions 버튼을 클릭하거나 직접 질문을 입력하여 테스
 Agent 상세 화면 상단의 `+ Add to Snowflake CoWork` 버튼을 클릭합니다.
 
 > **참고**: 이 버튼을 누르지 않으면 CoWork 화면의 Agent 목록에 표시되지 않습니다. 등록하지 않은 Agent는 직접 링크 또는 Snowsight UI(Preview 탭)에서만 접근 가능합니다.  
-> (기술적으로는 계정에 "Snowflake CoWork 오브젝트"가 생성되어 있을 때 적용되는 동작입니다. 이 오브젝트가 없으면 USAGE 권한이 있는 모든 Agent가 자동 표시됩니다. 현재 교육 환경에서는 이 오브젝트가 이미 존재하므로 등록이 필요합니다.)
+>
+> **CoWork 오브젝트와 Agent 가시성**: Snowflake CoWork에는 Agent 목록을 중앙 관리하는 "CoWork 오브젝트"라는 계정 수준 설정이 있습니다. 이 오브젝트의 존재 여부에 따라 Agent 표시 방식이 달라집니다.
+>
+> | CoWork 오브젝트 | Agent 표시 방식 |
+> |---|---|
+> | **없음** (기본) | USAGE 권한이 있는 모든 Agent가 **자동 표시** |
+> | **있음** | `+ Add to Snowflake CoWork`으로 **명시 등록한 Agent만** 표시 |
+>
+> CoWork 오브젝트는 Snowsight에서 `AI & ML → Agents → Open settings`를 처음 클릭하거나, SQL `CREATE SNOWFLAKE INTELLIGENCE` 명령을 실행하면 생성됩니다. Agent를 만드는 것만으로는 생성되지 않습니다. 현재 교육 환경에서는 이미 존재하므로 위 버튼으로 등록해야 합니다.
 
 #### CoWork에서 질문하기
 
