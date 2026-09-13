@@ -852,9 +852,9 @@ ALTER CORTEX SEARCH SERVICE SNOW_FASHION.SEMANTIC.EDU_DICT_SEARCH REFRESH;
 1. Snowsight 좌측 메뉴 → `AI & ML` → `Cortex Search` → `+ Create` 클릭
 
 2. **New service** — 기본 정보 입력:
-   - **Name**: `EDU_VOC_SEARCH`
-   - **Database**: `SNOW_FASHION` / **Schema**: `SEMANTIC`
-   - **Warehouse**: `SF_WH`
+   - Role: `ACCOUNTADMIN`, Warehouse: `SF_WH`
+   - Database: `SNOW_FASHION`, Schema: `SEMANTIC`
+   - Service name: `EDU_VOC_SEARCH`
    - **Next** 클릭
 
 3. **Select data** — 인덱싱할 데이터 선택:
@@ -983,9 +983,9 @@ SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
 1. Snowsight 좌측 메뉴 → `AI & ML` → `Agents`
 2. 우측 상단 `+ Create agent` 클릭
 3. 기본 정보 입력:
+   - **Database/Schema**: `SNOW_FASHION.SEMANTIC`
    - **Object Name**: `EDU_SALES_AGENT`
    - **Display Name**: `스노우패션 매출분석(교육)`
-   - **Database/Schema**: `SNOW_FASHION.SEMANTIC`
 4. **Create** 클릭
 
 > 생성 후 Agent 상세 화면(Overview)으로 이동합니다.
@@ -1011,17 +1011,20 @@ Tools 화면에는 다음 섹션이 순서대로 나열됩니다:
 
 1. **Query structured data** 섹션에서 `+ Add semantic view` 클릭
 2. 설정:
-   - **Semantic View**: `SNOW_FASHION.SEMANTIC.EDU_SALES_SV`
-   - **Warehouse**: `SF_WH`
-   - **Query timeout**: 비워두기 (Agent가 생성한 SQL의 웨어하우스 실행 제한 시간, 초 단위. 미입력 시 기본 타임아웃 적용)
-   - **Tool name**: `sales_analytics`
-   - **Tool description**: `스노우패션 매출, 고객, 상품, 매장 데이터를 SQL로 조회합니다.`
+   - **Schema**: `SNOW_FASHION.SEMANTIC`
+   - **Semantic View**: `EDU_SALES_SV`
+   - **Name**: `sales_analytics`
+   - **Description**: `스노우패션 매출, 고객, 상품, 매장 데이터를 SQL로 조회합니다.`
+   - **Warehouse**: Custom → `SF_WH`
+   - **Query timeout**: 비워두기 (기본 타임아웃 적용)
 
 #### 도구 2: Cortex Search — 데이터 사전
 
 3. **Search documents and unstructured data** 섹션에서 `+ Add search service` 클릭
 4. 설정:
-   - **Tool name**: `dict_search`
+   - **Schema**: `SEMANTIC` (Database: `SNOW_FASHION`)
+   - **Search service**: `EDU_DICT_SEARCH`
+   - **Name**: `dict_search`
    - **Description**: `데이터 사전을 검색합니다. 비즈니스 용어(객단가, 평효율 등)의 의미와 계산식, 컬럼 설명, 고유값 정보를 찾을 수 있습니다. 생소한 용어나 약어가 나오면 이 도구로 먼저 검색하세요.`
    - **Advanced configuration** (나머지는 기본값 유지):
      - **Max results**: `4` (기본값 — Search Service가 반환할 최대 문서 수)
@@ -1037,7 +1040,9 @@ Tools 화면에는 다음 섹션이 순서대로 나열됩니다:
 
 5. 다시 `+ Add search service` 클릭
 6. 설정:
-   - **Tool name**: `voc_search`
+   - **Schema**: `SEMANTIC` (Database: `SNOW_FASHION`)
+   - **Search service**: `EDU_VOC_SEARCH`
+   - **Name**: `voc_search`
    - **Description**: `고객 리뷰(VOC) 텍스트를 검색합니다. 10만건의 한국어 리뷰에서 사이즈, 품질, 배송, 가격 등에 대한 고객 의견을 조회합니다.`
    - **Advanced configuration** (나머지는 기본값 유지):
      - **Max results**: `4` (기본값)
