@@ -274,7 +274,7 @@ cortex
 #### Step 1: 설치
 
 1. 아래 공식 다운로드 페이지에서 OS에 맞는 설치 파일 다운로드
-   - https://www.snowflake.com/en/product/snowflake-coco/downloads/
+   - <a href="https://www.snowflake.com/en/product/snowflake-coco/downloads/" target="_blank">https://www.snowflake.com/en/product/snowflake-coco/downloads/</a>
    - macOS: `.dmg` 파일
    - Windows: User installer (권장, 관리자 권한 불필요) / System installer (전체 사용자 설치)
 2. 설치 후 앱 실행
