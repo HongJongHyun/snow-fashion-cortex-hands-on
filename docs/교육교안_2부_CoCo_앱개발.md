@@ -219,6 +219,20 @@ ALTER USER ADD PAT MY_COCO_TOKEN
 
 **PAT를 connections.toml에 등록:**
 
+**방법 A — password 필드에 직접 사용 (간편):**
+
+```toml
+# ~/.snowflake/connections.toml
+[snow_fashion]
+account = "<계정식별자>"
+user = "admin"
+password = "eyJraWQ..."   # PAT 토큰을 password에 그대로 입력
+```
+
+> Snowflake는 password 필드에 PAT가 들어오면 **자동으로 PAT 인증으로 처리**합니다. `authenticator` 설정이 필요 없어 가장 간편합니다.
+
+**방법 B — token_file_path 사용 (보안 권장):**
+
 ```toml
 # ~/.snowflake/connections.toml
 [snow_fashion]
@@ -235,7 +249,7 @@ echo "ver:1-hint:..." > ~/.snowflake/pat_token.txt
 chmod 600 ~/.snowflake/pat_token.txt
 ```
 
-> **보안 권장사항**: 토큰을 설정 파일에 직접 넣지 마세요. 별도 파일(`token_file_path`)이나 환경 변수를 사용합니다.
+> **보안 권장사항**: 프로덕션 환경에서는 토큰을 설정 파일에 직접 넣지 마세요. 별도 파일(`token_file_path`)이나 환경 변수를 사용합니다. 교육 환경에서는 방법 A로 빠르게 진행해도 됩니다.
 
 #### Key Pair 생성 방법
 
