@@ -473,7 +473,7 @@ CREATE COMPUTE POOL IF NOT EXISTS SF_COMPUTE_POOL
    - **App ID** (optional): URL에 사용될 식별자 (자동 생성됨, 필요 시 수정)
    - ☑ **Deployed app owner role matches the preview execution role**: 체크 시 배포된 앱이 현재 역할로 실행
 3. **Execution** 탭:
-   - **App location**: 데이터베이스 및 스키마 선택 (예: `SNOW_FASHION.RAW`)
+   - **App location**: 데이터베이스 및 스키마 선택 (예: `SNOW_FASHION.ANALYTICS`)
    - **Compute pool**: 앱이 실행될 Compute Pool 선택 (예: `SF_COMPUTE_POOL` 또는 `SYSTEM_COMPUTE_POOL_CPU`)
    - **Query warehouse**: 앱의 SQL 쿼리가 실행될 Warehouse 선택 (예: `SF_WH`)
    - **Artifact repositories**: Python 라이브러리 저장소 (기본값 사용)
