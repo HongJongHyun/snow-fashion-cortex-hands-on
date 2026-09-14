@@ -1557,18 +1557,20 @@ CoCo에게: "EDU_UNIFIED_AGENT의 Response Instruction에 추가해줘:
 
 ### 10.2 Agent 모니터링
 
-Snowsight `AI & ML` → `Agents` → Agent 선택 → `Threads` 탭:
-- 사용자별 질문 내역
+Snowsight `AI & ML` → `Agents` → Agent 선택 → `Observability` 탭:
+- 사용자별 질문 내역 및 대화 로그
 - 도구 호출 로그 (어떤 도구가 사용되었는지)
 - 생성된 SQL 검토
 - 응답 시간
 
+> **Tip**: 개발 중 실시간으로 도구 호출 과정을 확인하려면 `Preview` 탭에서 질문 후 우측 상단 **Show Traces**를 클릭하세요.
+
 | 지표 | 확인 방법 | 개선 액션 |
 |------|-----------|----------|
-| 도구 선택 정확도 | Thread 도구 호출 확인 | Instruction 개선 |
+| 도구 선택 정확도 | Observability 도구 호출 확인 | Instruction 개선 |
 | SQL 정확도 | 생성 SQL 검토 | VQR 추가 |
 | 용어 매핑 정확도 | dict_search 결과 확인 | 데이터 사전 보강 |
-| 응답 시간 | Thread 타임스탬프 | Budget/웨어하우스 조정 |
+| 응답 시간 | Observability 타임스탬프 | Budget/웨어하우스 조정 |
 | 사용자 만족도 | Cowork 피드백 | 전반적 개선 |
 
 ### 10.3 피드백 기반 개선 루프
