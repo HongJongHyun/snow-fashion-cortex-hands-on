@@ -360,7 +360,7 @@ Workspace의 Streamlit 앱(Container Runtime)은 **Compute Pool** 위에서 실�
 | **Compute Pool** | 앱이 실행되는 컨테이너 환경. 계정에 기본 컴퓨트 풀이 설정되어 있어야 함 |
 | **Query Warehouse** | 앱 내 SQL 쿼리를 실행하는 웨어하우스 (예: `SF_WH`) |
 
-> **참고**: `SYSTEM_COMPUTE_POOL_CPU`(시스템 제공 풀)를 사용하면 노드당 3개 앱이 공유 실행되어 비용을 줄일 수 있습니다.
+> **참고**: `SYSTEM_COMPUTE_POOL_CPU`(시스템 제공 풀)를 사용하면 전용 Compute Pool을 별도로 생성하지 않아도 됩니다. 노드당 최대 3개 앱이 공유 실행되며, 전용 풀과 달리 앱이 없을 때 빈 노드를 점유하지 않습니다.
 
 #### 자동 중지 동작
 
@@ -414,7 +414,7 @@ ALTER COMPUTE POOL my_pool SET AUTO_RESUME = TRUE;
 |------|------|
 | `AUTO_SUSPEND_SECS`를 짧게 설정 | 서비스 종료 후 빠르게 노드 해제 |
 | `AUTO_RESUME = TRUE` | 접근 시 자동 재개 (콜드 스타트 발생) |
-| 시스템 풀(`SYSTEM_COMPUTE_POOL_CPU`) 사용 | 노드당 3개 앱 공유 → 비용 절감 |
+| 시스템 풀(`SYSTEM_COMPUTE_POOL_CPU`) 사용 | 전용 풀 생성 불필요, 앱 미사용 시 빈 노드 점유 없음 |
 | 미사용 앱 수동 SUSPEND | 3일 대기 없이 즉시 리소스 해제 |
 
 #### 배포 흐름
@@ -454,7 +454,7 @@ CREATE COMPUTE POOL IF NOT EXISTS SF_COMPUTE_POOL
 | `AUTO_RESUME = TRUE` | 앱 접속 시 자동 재개 |
 | `AUTO_SUSPEND_SECS = 300` | 5분 비활동 시 노드 해제 (비용 절감) |
 
-> **시스템 풀 사용 시**: 별도 생성 없이 `SYSTEM_COMPUTE_POOL_CPU`를 선택하면 됩니다. 노드당 3개 앱이 공유 실행되어 비용이 절감되지만, 리소스를 다른 앱과 공유합니다.
+> **시스템 풀 사용 시**: 별도 생성 없이 `SYSTEM_COMPUTE_POOL_CPU`를 선택하면 됩니다. 노드당 최대 3개 앱이 공유 실행되며, 전용 풀처럼 MIN_NODES를 유지할 필요가 없어 간편합니다. 단, 리소스를 다른 앱과 공유하므로 성능 변동이 있을 수 있습니다.
 
 ### 4.4 Workspace에서 Streamlit 앱 만들기
 
