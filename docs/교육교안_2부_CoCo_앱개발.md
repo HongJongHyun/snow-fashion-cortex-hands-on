@@ -308,7 +308,7 @@ cortex
 
 CoCo Desktop은 **로컬 디렉토리 기반**으로 작업합니다:
 
-1. 작업 폴더 생성: `~/ssts-demo-apps`
+1. 작업 폴더 생성: `~/snow-fashion-apps`
 2. CoCo Desktop → `File` → `Open Folder` → 해당 폴더 선택
 
 ---
@@ -461,7 +461,7 @@ CREATE COMPUTE POOL IF NOT EXISTS SF_COMPUTE_POOL
 1. Snowsight → `Projects` → `Workspaces`
 2. 기존 Workspace 선택 또는 `+` 로 새 Workspace 생성
 3. Workspace 내에서 `+ Add new` → `Streamlit app` 선택
-4. 앱 폴더 이름 입력 (예: `ssts_dashboard`) → Enter
+4. 앱 폴더 이름 입력 (예: `sf_dashboard`) → Enter
 5. 자동으로 starter 파일이 생성됨 (`streamlit_app.py`, `pyproject.toml`, `snowflake.yml`) — `streamlit_app.py`에는 예제 코드가 미리 작성되어 있음
 5. `Run` 버튼 → 우측에 미리보기 표시
 
