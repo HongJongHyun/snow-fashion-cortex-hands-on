@@ -956,11 +956,11 @@ CoCo Desktop 채팅창에서 앱 프로젝트 폴더가 열린 상태로 요청�
 "이 앱을 SNOW_FASHION.ANALYTICS 스키마에 배포해줘. Warehouse는 SF_WH를 사용해"
 ```
 
-> **참고**: CoCo Desktop은 현재 열려 있는 프로젝트 폴더를 기준으로 작업합니다. 앱 소스 코드(`app.yml`, `streamlit_app.py` 등)가 있는 폴더에서 CoCo를 실행해야 합니다.
+> **참고**: CoCo Desktop은 현재 열려 있는 프로젝트 폴더를 기준으로 작업합니다. App Runtime 소스 코드(`app.yml`, `package.json` 등)가 있는 폴더에서 CoCo를 실행해야 합니다.
 
 수동으로 CLI에서 배포하려면, 터미널에서 앱 프로젝트 폴더로 이동한 뒤 실행합니다:
 ```bash
-cd ~/snow-fashion-apps/sf_dashboard
+cd ~/snow-fashion-apps/sf-operations-portal
 snow app deploy
 ```
 
