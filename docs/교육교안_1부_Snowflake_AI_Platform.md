@@ -120,7 +120,7 @@
 
 **Step 1: Snowsight에서 CoCo 열기**
 1. Snowsight 화면 우측 하단의 **CoCo 아이콘** 클릭하여 채팅 패널 열기
-2. 컨텍스트 설정: Database = `SNOW_FASHION`, Schema = `RAW`, Warehouse = `SF_WH`
+2. CoCo 패널은 현재 Snowsight 세션의 Role과 기본 Warehouse를 자동으로 사용합니다. 테이블은 `@SNOW_FASHION.RAW.테이블명` 형태로 멘션하여 참조합니다.
 
 **Step 2: 자연어로 데이터 구조 탐색**
 
