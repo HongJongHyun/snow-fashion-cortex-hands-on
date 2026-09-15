@@ -859,12 +859,12 @@ Streamlit으로는 구현이 어려운 기능들:
 
 ```bash
 # CoCo에게 요청
-"이 Streamlit 앱을 SNOW_FASHION.ANALYTICS 스키마에 배포해줘"
+"이 Streamlit 앱을 SNOW_FASHION.ANALYTICS 스키마에 배포해줘. Warehouse는 SF_WH를 사용해"
 ```
 
 또는 수동으로:
 ```bash
-snow streamlit deploy --database SNOW_FASHION --schema ANALYTICS
+snow streamlit deploy --database SNOW_FASHION --schema ANALYTICS --query-warehouse SF_WH
 ```
 
 #### Step 4: 배포 확인
