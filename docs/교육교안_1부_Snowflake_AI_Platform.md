@@ -1784,7 +1784,7 @@ Tool Description은 Agent가 도구를 선택하는 핵심 판단 기준입니�
 | **언제** 사용해야 하는지 | "매출, 객단가, 구매 고객 등 정량적 분석 질문에 사용" |
 | **언제 사용하면 안 되는지** | "고객 리뷰/VOC 분석에는 사용하지 마세요" |
 
-> **출처**: Snowflake 공식 문서 "Build agents" — *Write a useful tool description*
+> **출처**: Snowflake 공식 문서 <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-cowork/build-agents" target="_blank">"Build agents"</a> — *Write a useful tool description*
 
 ---
 
