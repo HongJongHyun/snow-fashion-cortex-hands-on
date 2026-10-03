@@ -619,28 +619,11 @@ Verified Query 매칭됨?
 2. 우측 상단 **Playground** 탭 클릭
 3. 하단 "Enter prompt" 입력창에 아래 질문을 하나씩 입력하고 **Run** 클릭하여 결과를 확인합니다
 
-**기본 질문 (Metric + Dimension 조합)**
-
 | # | 질문 | 확인 포인트 |
 |---|------|------------|
-| 1 | `브랜드별 총 매출은?` | SQL 하단에 `Generated based on verified query: BRAND_REVENUE` 표시 여부 |
-| 2 | `채널별 거래 건수를 보여줘` | `SEMANTIC_VIEW(... DIMENSIONS channel METRICS transaction_count)` — Dimension과 Metric 이름이 사용되는지 |
-| 3 | `VIP 고객의 매출 비중은?` | SQL 하단에 `Generated based on verified query: VIP_CONTRIBUTION` 표시 여부 |
-
-**Description 정확도 확인**
-
-| # | 질문 | 확인 포인트 |
-|---|------|------------|
-| 4 | `라이브커머스 매출이 얼마야?` | CHANNEL = '라이브커머스' 필터가 정확한지 |
-| 5 | `GOLD 등급 이상 고객 수는?` | MEMBERSHIP_TIER IN ('GOLD', 'VIP') — 등급 순서 이해 여부 |
-| 6 | `FW24 시즌 아우터 매출` | SEASON = 'FW24' AND CATEGORY = '아우터' 필터 조합 |
-
-**복잡한 질문 (VQR 활용)**
-
-| # | 질문 | 확인 포인트 |
-|---|------|------------|
-| 7 | `매장별 평당 매출 순위는?` | SQL 하단에 `Generated based on verified query: STORE_EFFICIENCY` 표시 여부 |
-| 8 | `요일별로 매출 패턴이 어때?` | SQL 하단에 `Generated based on verified query: WEEKDAY_PATTERN` 표시 여부 |
+| 1 | `브랜드별 총 매출은?` | SQL 하단에 `Generated based on verified query: BRAND_REVENUE` 표시 → **VQR 매칭** 확인 |
+| 2 | `라이브커머스 매출이 얼마야?` | CHANNEL = '라이브커머스' 필터가 정확한지 → **Description 허용값** 반영 확인 |
+| 3 | `VIP 고객의 매출 비중은?` | SQL 하단에 `Generated based on verified query: VIP_CONTRIBUTION` 표시 → **복잡 VQR** 매칭 확인 |
 
 #### 3.5.2 결과 확인 및 개선 판단
 
