@@ -319,14 +319,30 @@ SUPPLY_ORDERS (PK: order_id)──FK: sku_id──► PRODUCTS (PK: sku_id)
 
 Autopilot이 완료되면 Semantic View 편집 화면이 열립니다. 화면 구성:
 
-**좌측 (현재 모델)**:
-- **Facts**: Autopilot이 자동 분류한 Fact 컬럼
-- **Named Filters**: 0개 (수동 추가 필요)
-- **Metrics**: 0개 (수동 추가 필요)
-- **Derived metrics**: 0개
-- **Level of Detail (LOD) Fields**: 0개 — 쿼리의 GROUP BY와 무관하게 고정된 차원에서 계산되는 필드 (예: "고객별 주문 횟수"를 지역별로 집계). Tableau의 LOD Expression과 유사한 개념으로, 중첩 집계가 필요할 때 사용합니다. 이번 교육에서는 다루지 않습니다.
-- **Relationships**: Autopilot이 PK/UK 메타데이터, Query History의 JOIN 패턴, 제공된 예시 SQL을 분석하여 자동 추론. 단, 해당 정보가 없으면 생성되지 않을 수 있으므로 Chapter 2.5의 ER 다이어그램을 참고하여 수동으로 추가합니다.
-- **Verified queries**: **0개** — 컨텍스트를 Skip했으므로 VQR은 자동 등록되지 않습니다 (SQL/BI 컨텍스트 업로드 시에만 자동 추가)
+**좌측 (현재 모델)** — 상단부터 순서대로:
+
+**① Custom instructions**: Cortex Analyst가 SQL 생성 시 따라야 할 자연어 규칙
+- **Question categorization**: 질문 분류 규칙 (예: "인사 관련 질문은 답변하지 마세요")
+- **SQL generation**: SQL 생성 규칙 (예: "날짜 필터가 없으면 최근 3개월만 조회")
+- Autopilot 생성 직후에는 비어 있으며, 정확도 개선 시 추가합니다
+
+**② Variables**: Semantic View 내 SQL 표현식에서 재사용 가능한 파라미터 (예: 세율, 기준일). 이번 교육에서는 다루지 않습니다.
+
+**③ Logical Tables** (4개): Autopilot이 선택한 테이블로 생성된 논리 테이블
+- 각 Logical Table 안에는 다음 항목이 있습니다:
+  - **Dimensions**: 범주형 속성 (예: BRAND, REGION, CHANNEL). Autopilot이 자동 분류
+  - **Time dimensions**: 날짜/시간 컬럼 (예: TXN_DATE). Autopilot이 자동 분류
+  - **Facts**: 수치형 속성 (예: SALE_AMOUNT, QUANTITY). Autopilot이 자동 분류
+  - **Named filters**: 재사용 가능한 WHERE 조건 (0개 — 수동 추가 필요)
+  - **Metrics**: 집계 계산식 (0개 — 수동 추가 필요). 예: `SUM(sale_amount)`, `AVG(sale_amount)`
+
+**④ Derived Metrics** (0개): 여러 Logical Table의 Metric을 결합하는 View-level 계산식. 이번 교육에서는 다루지 않습니다.
+
+**⑤ Level of Detail Fields** (0개): 쿼리의 GROUP BY와 무관하게 고정된 차원에서 계산되는 필드. Tableau의 LOD Expression과 유사. 이번 교육에서는 다루지 않습니다.
+
+**⑥ Verified queries** (0개): 질문-SQL 쌍으로 검증된 쿼리. 컨텍스트를 Skip했으므로 자동 등록되지 않습니다 (SQL/BI 컨텍스트 업로드 시에만 자동 추가).
+
+**⑦ Relationships** (0개): 테이블 간 JOIN 정의. Autopilot이 PK/UK 메타데이터, Query History의 JOIN 패턴, 제공된 예시 SQL을 분석하여 자동 추론하지만, 해당 정보가 없으면 생성되지 않을 수 있으므로 Chapter 2.5의 ER 다이어그램을 참고하여 수동으로 추가합니다.
 
 **우측 Suggestions 패널** (핵심):
 - Autopilot이 자동 등록하지 않은 항목들을 **추천(Suggestions)** 으로 제안합니다
