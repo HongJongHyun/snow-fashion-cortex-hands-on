@@ -450,21 +450,31 @@ Workspace에서 열린 `.sv.yaml` 파일을 CoCo 패널에서 자연어로 수�
 
 Description은 LLM이 컬럼의 의미를 이해하는 데 결정적입니다. **특히 고유값 목록을 명시하면 필터 조건의 정확도가 크게 올라갑니다.**
 
-**방법 A: Snowsight UI에서 Description 추가 (1~2개 체험)**
+**방법 A: Visual 편집기에서 직접 수정** (1~2개 체험)
 
-> BRAND 컬럼의 Description을 UI에서 직접 수정해 봅니다.
+> BRAND 컬럼의 Description을 Visual 편집기에서 직접 수정해 봅니다.
 
-1. Semantic View 편집 화면에서 `SALES_TRANSACTIONS` Logical Table 선택
-2. `BRAND` 컬럼 옆의 **Edit** (연필 아이콘) 클릭 → Description 입력 필드 활성화
-3. **Description** 필드에 입력: `브랜드명. 허용값: TOPTEN, ZIOZIA, OLZEN, ANDZ`
-4. **Publish changes** 클릭
+1. Semantic View 편집 화면 진입:
+   - `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭
+   - **"Open semantic view in Workspaces"** 대화상자에서 Workspace 선택 후 `Open`
+2. 좌측 패널에서 `SALES_TRANSACTIONS` Logical Table 선택
+3. **Dimensions** 섹션에서 `BRAND` 컬럼 옆의 **Edit** (연필 아이콘) 클릭
+4. **Description** 필드에 입력: `브랜드명. 허용값: TOPTEN, ZIOZIA, OLZEN, ANDZ`
+5. **Save** 클릭하여 컬럼 수정 완료
+6. 상단 **Publish changes** 클릭
 
-> 한두 개는 UI에서 직접 해보면 구조를 이해하기 좋습니다.
-> 나머지 컬럼의 Description도 일괄 반영하려면 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_02_Description%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_02_Description추가.sql</a>의 `CREATE OR ALTER SEMANTIC VIEW`를 실행하세요.
-> (Fact/Dimension 변경과 마찬가지로, 컬럼 단위 Description 변경도 `ALTER SEMANTIC VIEW`로는 불가능합니다.)
-> SQL 실행 후에는 Workspace 상단의 **Pull** 버튼으로 로컬 YAML을 동기화하세요.
+> **팁**: 한두 개는 Visual 편집기에서 직접 해보면 Semantic View의 구조를 이해하기 좋습니다. CoCo 패널에서 자연어로도 Description을 추가할 수 있습니다:
+> <span style="color:blue">BRAND 컬럼의 description을 "브랜드명. 허용값: TOPTEN, ZIOZIA, OLZEN, ANDZ"로 수정해줘</span>
 
-아래는 주요 컬럼별 권장 Description입니다. 이 내용이 `EDU_SALES_SV_수정.sql`에 모두 반영되어 있습니다.
+**방법 B: SQL 파일 실행** (일괄 변경 시 편리)
+
+나머지 컬럼의 Description도 일괄 반영하려면 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_02_Description%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_02_Description추가.sql</a>의 `CREATE OR ALTER SEMANTIC VIEW`를 실행합니다.
+
+> **참고**: Fact/Dimension 변경과 마찬가지로, 컬럼 단위 Description 변경도 `ALTER SEMANTIC VIEW`로는 불가능합니다. `CREATE OR ALTER`로 전체 정의를 재선언해야 합니다.
+
+> **중요**: SQL 실행 후에는 Workspace 편집 화면 상단의 **Pull** 버튼을 클릭하여 로컬 `.sv.yaml` 파일을 최신 상태로 동기화하세요. Pull 없이 Workspace에서 Publish changes를 누르면 SQL로 변경한 내용이 덮어씌워질 수 있습니다.
+
+아래는 주요 컬럼별 권장 Description입니다. 이 내용이 `EDU_SALES_SV_02_Description추가.sql`에 모두 반영되어 있습니다.
 
 | 테이블 | 컬럼 | 권장 Description |
 |--------|------|-----------------|
