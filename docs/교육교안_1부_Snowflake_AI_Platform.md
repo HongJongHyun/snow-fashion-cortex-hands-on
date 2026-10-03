@@ -324,6 +324,7 @@ Autopilot이 완료되면 Semantic View 편집 화면이 열립니다. 화면 �
 - **Named Filters**: 0개 (수동 추가 필요)
 - **Metrics**: 0개 (수동 추가 필요)
 - **Derived metrics**: 0개
+- **Level of Detail (LOD) Fields**: 0개 — 쿼리의 GROUP BY와 무관하게 고정된 차원에서 계산되는 필드 (예: "고객별 주문 횟수"를 지역별로 집계). Tableau의 LOD Expression과 유사한 개념으로, 중첩 집계가 필요할 때 사용합니다. 이번 교육에서는 다루지 않습니다.
 - **Relationships**: Autopilot이 PK/UK 메타데이터, Query History의 JOIN 패턴, 제공된 예시 SQL을 분석하여 자동 추론. 단, 해당 정보가 없으면 생성되지 않을 수 있으므로 Chapter 2.5의 ER 다이어그램을 참고하여 수동으로 추가합니다.
 - **Verified queries**: **0개** — 컨텍스트를 Skip했으므로 VQR은 자동 등록되지 않습니다 (SQL/BI 컨텍스트 업로드 시에만 자동 추가)
 
