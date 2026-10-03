@@ -44,8 +44,9 @@
 
 ### 1.1 학습 목표
 - Cortex Analyst, Cortex Search, Cortex Agent의 역할과 차이점 이해
-- 각 서비스가 어떤 데이터 유형에 적합한지 판단할 수 있다
-- Snowflake Intelligence(Cowork)에서 이들이 어떻게 통합되는지 이해
+- 각 서비스가 어떤 데이터 유형(정형/비정형)에 적합한지 판단할 수 있다
+- Agent → Analyst/Search → Cowork으로 이어지는 전체 아키텍처 흐름 이해
+- 교육에 사용할 스노우패션 데이터셋의 구조 파악
 
 ### 1.2 핵심 개념
 
