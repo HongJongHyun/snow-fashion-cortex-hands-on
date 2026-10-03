@@ -222,15 +222,18 @@ CoCo에게: "PRODUCT_REVIEWS 테이블에서 리뷰 텍스트 샘플 5건을 보
 
 ### 2.4 도메인별 시맨틱 뷰 분리 전략
 
+하나의 거대한 Semantic View에 모든 테이블을 넣을 수도 있지만, **도메인별로 분리**하는 것이 권장됩니다.
+
+**분리가 좋은 이유:**
+- **정확도 향상**: Semantic View의 테이블/메트릭 수가 적을수록 LLM이 올바른 테이블과 JOIN을 선택할 확률이 높아집니다. 매출 질문에 재고/배송 테이블까지 포함되면 혼란이 생깁니다.
+- **관리 용이**: 매출 팀과 SCM 팀이 각자의 Semantic View를 독립적으로 수정·배포할 수 있습니다.
+- **Agent 라우팅**: Agent에 도메인별 도구를 등록하면, "재고 현황 알려줘"는 SCM SV로, "매출 추이 보여줘"는 매출 SV로 자동 라우팅됩니다.
+- **성능**: 참조 테이블이 적을수록 SQL 생성 속도가 빨라집니다.
+
 | 도메인 | Semantic View | 포함 테이블 | 주요 분석 |
 |--------|---------------|-------------|-----------|
 | 매출 분석 | `EDU_SALES_SV` | SALES_TRANSACTIONS, PRODUCTS, CUSTOMERS, STORES | 브랜드별·채널별·지역별 매출 |
 | SCM 분석 | `EDU_SCM_SV` | INVENTORY_SNAPSHOT, SUPPLY_ORDERS, SHIPMENTS, VENDORS | 재고, 발주, 배송 |
-
-| Cortex Search | 대상 | 역할 |
-|---------------|------|------|
-| `EDU_DICT_SEARCH` | 데이터 사전 테이블 | 비즈니스 용어 해석, 컬럼 설명 검색 |
-| `EDU_VOC_SEARCH` | PRODUCT_REVIEWS | 고객 VOC 의미 검색 |
 
 ### 2.5 ER 다이어그램 (핵심 관계)
 
