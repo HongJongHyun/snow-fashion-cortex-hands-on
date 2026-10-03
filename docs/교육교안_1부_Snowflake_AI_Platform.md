@@ -424,6 +424,8 @@ Autopilot은 데이터 타입과 컬럼 특성을 분석하여 Fact와 Dimension
 | STORES | AREA_SQM | **Fact** | 매장 면적 합계/평균 집계 |
 | CUSTOMERS | TOTAL_PURCHASES | **Fact** | 고객별 구매횟수 집계 |
 
+> **참고**: Workspace의 Visual 편집기에서는 컬럼의 Description, Synonyms, Sample values 등 속성 수정은 가능하지만, Dimension ↔ Fact 타입 변경은 지원되지 않습니다. 타입 변경은 YAML 편집기 또는 SQL로 수행해야 합니다.
+
 **방법 A: YAML 편집기에서 수정** (권장)
 
 1. Semantic View 편집 화면 진입: `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭 → **"Open semantic view in Workspaces"** 대화상자에서 Workspace 선택 후 `Open`
