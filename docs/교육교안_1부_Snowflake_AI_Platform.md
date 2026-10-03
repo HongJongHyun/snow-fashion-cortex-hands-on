@@ -283,6 +283,8 @@ SUPPLY_ORDERS (PK: order_id)──FK: sku_id──► PRODUCTS (PK: sku_id)
 
 > **참고**: Semantic View 편집 환경이 Workspace 기반으로 변경되었습니다.
 > Semantic View를 생성하거나 편집하면 선택한 Workspace에 `.sv.yaml` 파일이 생성되며, 이 파일을 통해 Visual 편집기 또는 YAML 편집기로 작업할 수 있습니다. Git 연동된 Workspace를 사용하면 버전 관리도 가능합니다.
+>
+> 기존 Cortex Analyst 페이지 내 편집기는 Semantic View 목록의 `...` 메뉴 → **Open in Cortex Analyst (Legacy)** 로 접근할 수 있으나, Legacy로 분류되어 향후 제거될 수 있습니다. 본 교육에서는 Workspace 기반으로 진행합니다.
 
 3. **Provide context** 단계: 기존 SQL 쿼리나 Tableau/Power BI 파일을 업로드하여 Autopilot의 정확도를 높일 수 있지만, 이번 교육에서는 우측 하단 `Skip` 클릭하여 건너뜁니다.
 4. **Name your semantic view**:
