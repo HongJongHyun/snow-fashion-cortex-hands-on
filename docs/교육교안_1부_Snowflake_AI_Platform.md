@@ -399,22 +399,24 @@ Autopilot이 완료되면 Semantic View 편집 화면이 열립니다. 화면 �
 
 #### 3.3.1 Fact/Dimension 수정
 
-Autopilot은 NUMBER 타입 컬럼 중 일부를 Dimension으로 분류합니다. 집계 대상인 컬럼은 Fact로 변경해야 합니다.
+Autopilot은 데이터 타입과 컬럼 특성을 분석하여 Fact와 Dimension을 자동 분류하지만, 결과가 항상 정확하지는 않습니다. 특히 NUMBER 타입 컬럼 중 "가격", "횟수" 같은 컬럼은 Dimension으로 잘못 분류되는 경우가 있습니다.
 
-| 테이블 | 컬럼 | Autopilot 분류 | 올바른 분류 | 이유 |
-|--------|------|:-:|:-:|------|
-| SALES_TRANSACTIONS | SALE_AMOUNT | Fact | Fact | ✅ Autopilot이 올바르게 분류 |
-| SALES_TRANSACTIONS | QUANTITY | Fact | Fact | ✅ Autopilot이 올바르게 분류 |
-| SALES_TRANSACTIONS | DISCOUNT_RATE | Fact | Fact | ✅ Autopilot이 올바르게 분류 |
-| SALES_TRANSACTIONS | UNIT_PRICE | Dimension | **Fact** | ⚠️ 단가 평균 등 집계에 사용 |
-| PRODUCTS | COST_PRICE | Dimension | **Fact** | ⚠️ 마진 계산(정가-원가)에 사용 |
-| PRODUCTS | RETAIL_PRICE | Dimension | **Fact** | ⚠️ 정가 기준 매출 비교에 사용 |
-| STORES | AREA_SQM | Fact | Fact | ✅ Autopilot이 올바르게 분류 |
-| CUSTOMERS | TOTAL_PURCHASES | Dimension | **Fact** | ⚠️ 고객별 구매횟수 집계 |
+**판단 기준**: 해당 컬럼에 `SUM`, `AVG`, `MAX` 같은 집계 함수를 적용하는 것이 의미 있는가?
+- **Yes → Fact**: 매출액, 수량, 단가, 원가, 면적, 구매횟수 등
+- **No → Dimension**: ID, 코드, 카테고리, 지역명 등 (숫자라도 그룹핑/필터에 사용)
 
-> Autopilot은 SALE_AMOUNT, QUANTITY, DISCOUNT_RATE 같은 전형적인 수치 컬럼은 잘 분류하지만,
-> UNIT_PRICE, COST_PRICE처럼 "가격"에 해당하는 컬럼은 Dimension으로 분류하는 경향이 있습니다.
-> 비즈니스 맥락에서 집계(SUM, AVG)가 필요한 컬럼인지 판단하여 Fact로 변경해 주세요.
+아래 컬럼들이 **Fact로 설정되어 있는지 확인**하고, Dimension으로 되어 있다면 Fact로 변경하세요:
+
+| 테이블 | 컬럼 | 올바른 분류 | 이유 |
+|--------|------|:-:|------|
+| SALES_TRANSACTIONS | SALE_AMOUNT | **Fact** | 매출 합계/평균 집계 |
+| SALES_TRANSACTIONS | QUANTITY | **Fact** | 판매 수량 합계 |
+| SALES_TRANSACTIONS | DISCOUNT_RATE | **Fact** | 할인율 평균 집계 |
+| SALES_TRANSACTIONS | UNIT_PRICE | **Fact** | 단가 평균 등 집계에 사용 |
+| PRODUCTS | COST_PRICE | **Fact** | 마진 계산(정가-원가)에 사용 |
+| PRODUCTS | RETAIL_PRICE | **Fact** | 정가 기준 매출 비교에 사용 |
+| STORES | AREA_SQM | **Fact** | 매장 면적 합계/평균 집계 |
+| CUSTOMERS | TOTAL_PURCHASES | **Fact** | 고객별 구매횟수 집계 |
 
 **Snowsight UI에서 수정**
 
@@ -422,11 +424,9 @@ Autopilot은 NUMBER 타입 컬럼 중 일부를 Dimension으로 분류합니다.
 > `ALTER SEMANTIC VIEW`로는 컬럼 타입(Fact/Dimension)을 변경할 수 없으므로, SQL로 변경하려면 `CREATE OR ALTER SEMANTIC VIEW`로 전체 정의를 다시 작성해야 합니다.
 
 1. `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭하여 편집 화면 진입
-2. 왼쪽 엔터티 목록에서 `SALES_TRANSACTIONS` 선택
-3. 컬럼 목록에서 `UNIT_PRICE` 찾기 → 타입 드롭다운을 **Dimension → Fact**로 변경
-4. `PRODUCTS` 엔터티로 이동 → `COST_PRICE`, `RETAIL_PRICE`를 각각 **Fact**로 변경
-5. `CUSTOMERS` 엔터티로 이동 → `TOTAL_PURCHASES`를 **Fact**로 변경
-6. 상단 **Publish changes** 클릭
+2. 왼쪽 Logical Table 목록에서 각 테이블을 클릭하여 컬럼 목록 확인
+3. 위 표의 컬럼이 **Fact**로 되어 있는지 확인하고, Dimension으로 되어 있다면 타입 드롭다운을 **Fact**로 변경
+4. 상단 **Publish changes** 클릭
 
 > **참고**: `ALTER SEMANTIC VIEW`는 COMMENT, TAG, RENAME, MATERIALIZATION, MAX_STALENESS 변경만 지원합니다.
 > 컬럼 타입 등 구조적 변경이 필요하면 `CREATE OR ALTER SEMANTIC VIEW`로 전체 정의를 다시 작성해야 합니다.
