@@ -237,6 +237,8 @@ CoCo에게: "PRODUCT_REVIEWS 테이블에서 리뷰 텍스트 샘플 5건을 보
 
 ### 2.5 ER 다이어그램 (핵심 관계)
 
+Semantic View를 만들 때 **Relationship(관계)** 정의가 필수입니다. 관계가 없으면 Cortex Analyst는 테이블 간 JOIN 방법을 모르기 때문에, 여러 테이블에 걸친 질문("TOPTEN 매장별 매출")에 답할 수 없습니다. 아래 다이어그램은 Chapter 3에서 Semantic View에 등록할 JOIN 키를 미리 파악하기 위한 것입니다.
+
 ```
 CUSTOMERS ──────┐
   (CUSTOMER_ID) │
@@ -258,6 +260,8 @@ VENDORS ──────┐
            PRODUCTS
            (SKU_ID)
 ```
+
+> **참고**: Autopilot(자동 생성)이 Primary Key와 Foreign Key를 감지하여 Relationship을 자동 설정하지만, 명시적 FK 제약이 없는 테이블에서는 누락될 수 있습니다. 위 관계를 미리 파악해두면 Chapter 3에서 수동 보완이 수월합니다.
 
 ## Chapter 3. Semantic View 생성과 고도화
 
