@@ -375,17 +375,23 @@ Autopilot이 완료되면 Semantic View 편집 화면이 열립니다. 화면 �
 
 #### 3.2.4 Autopilot이 잘 하는 것과 못하는 것
 
-| 항목 | Autopilot이 처리 | 수동 보완 필요 |
+| 항목 | Autopilot | 수동 보완 |
 |------|:-:|:-:|
-| DATE/TIMESTAMP → Time Dimension | O | |
-| VARCHAR → Dimension | O | |
-| 컬럼명 매칭으로 Relationship 추론 | O | |
-| 기본 VQR 자동 생성 | | **X** (SQL/BI 컨텍스트 업로드 시에만 자동 추가) |
-| **NUMBER를 Fact vs Dimension 구분** | | **X** (아래 상세) |
-| **커스텀 Metric 정의** | | **X** |
-| **한국어 Description** | | **X** |
-| **비즈니스 맥락의 VQR** | | **X** |
-| **컬럼 고유값 설명** | | **X** |
+| 테이블 구조 분석 및 Logical Table 생성 | **O** | |
+| 데이터 타입 기반 Dimension / Time Dimension / Fact 자동 분류 | **O** | |
+| 컬럼별 영문 Description 자동 생성 (Add descriptions 체크 시) | **O** | |
+| 컬럼 Sample Values 수집 (Add sample values 체크 시) | **O** | |
+| Metric 후보 Suggestions 제안 (우측 패널) | **O** | |
+| VQR 후보 Suggestions 제안 (SQL/BI 컨텍스트 업로드 시) | **O** | |
+| Relationship 추론 (PK/UK 메타데이터 + Query History JOIN 패턴 기반) | △ | 정보가 없으면 미생성 |
+| **NUMBER를 Fact vs Dimension 정확히 구분** (예: STORE_ID) | | **X** (아래 상세) |
+| **커스텀 Metric 정의** (예: `SUM(SALE_AMOUNT)`) | | **X** |
+| **한국어 Description 작성** | | **X** |
+| **비즈니스 맥락의 VQR 작성** | | **X** |
+| **컬럼 고유값 설명** (예: BRAND 허용값: TOPTEN, ZIOZIA...) | | **X** |
+
+> **핵심**: Autopilot은 테이블 구조 분석과 기본 분류를 자동으로 처리하여 시작점을 만들어 줍니다.
+> 이후 비즈니스 맥락(Fact/Dimension 재분류, Metric 정의, VQR 등)은 수동으로 보완해야 합니다.
 
 ### 3.3 Step 2: Autopilot 결과 검토 및 수정
 
