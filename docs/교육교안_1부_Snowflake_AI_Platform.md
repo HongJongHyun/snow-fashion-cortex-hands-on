@@ -558,19 +558,36 @@ Verified Query 매칭됨?
 
 #### 3.4.2 VQR 추가 방법
 
-**방법 A: Snowsight UI에서 VQR 추가 (1개 시연)**
+**방법 A: Visual 편집기에서 직접 추가** (1개 체험)
 
-> 간단한 VQR 1개를 UI에서 직접 추가하는 과정을 보여줍니다.
+> `BRAND_REVENUE` VQR을 Visual 편집기에서 직접 추가하는 과정을 보여줍니다.
 
-1. Semantic View 편집 화면에서 **Verified Queries** 탭 클릭
-2. Verified queries 섹션 옆의 **+** 버튼 클릭
+1. Semantic View 편집 화면 진입:
+   - `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭
+   - **"Open semantic view in Workspaces"** 대화상자에서 Workspace 선택 후 `Open`
+2. 좌측 패널에서 **Verified queries** 섹션 옆의 **+** 버튼 클릭
 3. 입력:
    - **Question**: `브랜드별 총 매출은 얼마인가요?`
-   - **SQL**: `SELECT BRAND, SUM(SALE_AMOUNT) AS TOTAL_REVENUE FROM SALES_TRANSACTIONS GROUP BY BRAND ORDER BY TOTAL_REVENUE DESC`
+   - **SQL**:
+     ```sql
+     SELECT BRAND, SUM(SALE_AMOUNT) AS TOTAL_REVENUE
+     FROM SALES_TRANSACTIONS
+     GROUP BY BRAND
+     ORDER BY TOTAL_REVENUE DESC
+     ```
 4. **Save and continue** 클릭
+5. 상단 **Publish changes** 클릭
 
-> 복잡한 VQR(CTE, Window function 등)도 `ALTER SEMANTIC VIEW`로는 추가할 수 없습니다.
-> UI에서 1개를 직접 추가해 본 후, 나머지는 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_04_VQR%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_04_VQR추가.sql</a>을 실행하세요.
+> **팁**: CoCo 패널에서 자연어로 두 번째 VQR도 추가해 보세요:
+> <span style="color:blue">Verified Query를 추가해줘. 이름은 YOY_BRAND_GROWTH, 질문은 "브랜드별 전년 대비 매출 성장률은?", SQL은 CTE로 연도별 브랜드 매출을 구한 뒤 전년 대비 성장률을 계산하는 쿼리로 작성해줘</span>
+
+**방법 B: SQL 파일 실행** (일괄 변경 시 편리)
+
+나머지 VQR을 일괄 추가하려면 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_04_VQR%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_04_VQR추가.sql</a>의 `CREATE OR ALTER SEMANTIC VIEW`를 실행합니다.
+
+> **참고**: 복잡한 VQR(CTE, Window function 등)도 `ALTER SEMANTIC VIEW`로는 추가할 수 없습니다. `CREATE OR ALTER`로 전체 정의를 재선언해야 합니다.
+
+> **중요**: SQL 실행 후에는 Workspace 편집 화면 상단의 **Pull** 버튼을 클릭하여 로컬 `.sv.yaml` 파일을 최신 상태로 동기화하세요. Pull 없이 Workspace에서 Publish changes를 누르면 SQL로 변경한 내용이 덮어씌워질 수 있습니다.
 
 아래는 추가할 VQR 목록입니다. 이 내용이 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_04_VQR%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_04_VQR추가.sql</a>에 모두 반영되어 있습니다.
 
