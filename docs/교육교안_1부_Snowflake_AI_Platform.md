@@ -426,12 +426,20 @@ Autopilot은 데이터 타입과 컬럼 특성을 분석하여 Fact와 Dimension
 
 > **참고**: Workspace의 Visual 편집기에서는 컬럼의 Description, Synonyms, Sample values 등 속성 수정은 가능하지만, Dimension ↔ Fact 타입 변경은 지원되지 않습니다. 타입 변경은 YAML 편집기 또는 SQL로 수행해야 합니다.
 
-**방법 A: YAML 편집기에서 수정** (권장)
+**방법 A: CoCo(Cortex Code)에서 수정** (권장)
 
-1. Semantic View 편집 화면 진입: `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭 → **"Open semantic view in Workspaces"** 대화상자에서 Workspace 선택 후 `Open`
-2. 상단 `Visual` / `YAML` 토글에서 **YAML** 선택
-3. 해당 컬럼을 `dimensions:` 섹션에서 잘라내어 `facts:` 섹션으로 이동
+Workspace에서 열린 `.sv.yaml` 파일을 CoCo 패널에서 자연어로 수정할 수 있습니다.
+
+1. Workspace에서 `EDU_SALES_SV.sv.yaml` 파일을 열어둔 상태에서 CoCo 패널을 엽니다
+2. 프롬프트에 다음과 같이 입력합니다:
+   ```
+   이 시맨틱뷰에서 UNIT_PRICE, COST_PRICE, RETAIL_PRICE, TOTAL_PURCHASES 컬럼을
+   dimensions에서 facts로 이동시켜줘
+   ```
+3. CoCo가 YAML 수정 사항을 제안하면 확인 후 적용합니다
 4. 상단 **Publish changes** 클릭
+
+> **팁**: CoCo를 활용하면 YAML 구조를 직접 편집하지 않아도 자연어로 Semantic View를 수정할 수 있습니다. Description 추가, Metric 정의, Relationship 설정 등도 같은 방식으로 가능합니다.
 
 **방법 B: SQL 파일 실행** (일괄 변경 시 편리)
 
