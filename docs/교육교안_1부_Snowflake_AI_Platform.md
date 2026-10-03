@@ -268,10 +268,10 @@ SUPPLY_ORDERS (PK: order_id)──FK: sku_id──► PRODUCTS (PK: sku_id)
 ## Chapter 3. Semantic View 생성과 고도화
 
 ### 3.1 학습 목표
-- Snowsight에서 Semantic View를 처음부터 생성하는 과정 실습
-- Autopilot이 자동 설정하는 항목과 수동 보완 항목 구분
-- Metric, Verified Query, Description 추가로 정확도 높이기
-- Snowsight CoCo를 활용한 반복 개선 프로세스 이해
+- Workspace 기반 Semantic Studio에서 Semantic View를 생성하는 과정 실습
+- Autopilot이 자동 설정하는 항목과 수동 보완이 필요한 항목 구분
+- Fact/Dimension 수정, 한국어 Description, Metric, Verified Query 추가로 정확도 높이기
+- Playground에서 테스트하여 VQR 매칭 및 필터 정확도 확인
 
 ### 3.2 Step 1: 매출 분석용 Semantic View 생성 (Autopilot)
 
