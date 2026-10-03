@@ -324,7 +324,7 @@ Autopilot이 완료되면 Semantic View 편집 화면이 열립니다. 화면 �
 - **Named Filters**: 0개 (수동 추가 필요)
 - **Metrics**: 0개 (수동 추가 필요)
 - **Derived metrics**: 0개
-- **Relationships**: Autopilot이 컬럼명 매칭으로 자동 추론 (예: SALES_TRANSACTIONS → PRODUCTS via SKU_ID)
+- **Relationships**: Autopilot이 PK/UK 메타데이터, Query History의 JOIN 패턴, 제공된 예시 SQL을 분석하여 자동 추론. 단, 해당 정보가 없으면 생성되지 않을 수 있으므로 Chapter 2.5의 ER 다이어그램을 참고하여 수동으로 추가합니다.
 - **Verified queries**: **0개** — 컨텍스트를 Skip했으므로 VQR은 자동 등록되지 않습니다 (SQL/BI 컨텍스트 업로드 시에만 자동 추가)
 
 **우측 Suggestions 패널** (핵심):
