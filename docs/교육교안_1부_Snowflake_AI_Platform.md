@@ -169,8 +169,9 @@ CoCo에게: "PRODUCT_REVIEWS 테이블에서 리뷰 텍스트 샘플 5건을 보
 
 ### 2.1 학습 목표
 - Semantic View를 만들기 전 데이터 모델링 설계의 중요성 이해
+- 데이터 사전(Data Dictionary)이 Agent 정확도에 미치는 영향 이해
 - 도메인별 시맨틱 레이어 분리 전략 수립
-- 데이터 사전의 역할과 Search 연동 구조 이해
+- Semantic View에 등록할 테이블 간 PK/FK 관계 파악
 
 ### 2.2 왜 시맨틱 레이어가 필요한가?
 
