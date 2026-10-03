@@ -499,22 +499,32 @@ Description은 LLM이 컬럼의 의미를 이해하는 데 결정적입니다. *
 
 Metric은 비즈니스 KPI를 사전 정의하여 LLM이 정확한 집계 SQL을 생성하도록 돕습니다.
 
-**방법 A: Snowsight UI에서 Metric 추가 (1개 시연)**
+**방법 A: Visual 편집기에서 직접 추가** (1개 체험)
 
-> `TOTAL_REVENUE` 메트릭을 UI에서 직접 추가하는 과정을 보여줍니다.
+> `TOTAL_REVENUE` 메트릭을 Visual 편집기에서 직접 추가하는 과정을 보여줍니다.
 
-1. Semantic View 편집 화면에서 `SALES_TRANSACTIONS` 엔터티 선택
-2. Metrics 섹션 옆의 **+** 버튼 클릭
-3. 설정:
+1. Semantic View 편집 화면 진입:
+   - `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭
+   - **"Open semantic view in Workspaces"** 대화상자에서 Workspace 선택 후 `Open`
+2. 좌측 패널에서 `SALES_TRANSACTIONS` Logical Table 선택
+3. **Metrics** 섹션 옆의 **+** 버튼 클릭
+4. 설정:
    - **Name**: `TOTAL_REVENUE`
    - **Expression**: `SUM(SALE_AMOUNT)`
    - **Description**: `총 매출 금액 (원)`
-4. **Add** 클릭
+5. **Add** 클릭
+6. 상단 **Publish changes** 클릭
 
-> 나머지 메트릭은 SQL로 일괄 추가합니다.
+> **팁**: CoCo 패널에서 자연어로도 Metric을 추가할 수 있습니다:
+> <span style="color:blue">SALES_TRANSACTIONS 테이블에 TOTAL_REVENUE 메트릭을 추가해줘. Expression은 SUM(SALE_AMOUNT), Description은 "총 매출 금액 (원)"으로 설정해줘</span>
 
-> Metric 추가도 `ALTER SEMANTIC VIEW`로는 불가능합니다.
-> UI에서 1개를 직접 추가해 본 후, 나머지는 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_03_Metric%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_03_Metric추가.sql</a>을 실행하세요.
+**방법 B: SQL 파일 실행** (일괄 변경 시 편리)
+
+나머지 메트릭을 일괄 추가하려면 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_03_Metric%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_03_Metric추가.sql</a>의 `CREATE OR ALTER SEMANTIC VIEW`를 실행합니다.
+
+> **참고**: Metric 추가도 `ALTER SEMANTIC VIEW`로는 불가능합니다. `CREATE OR ALTER`로 전체 정의를 재선언해야 합니다.
+
+> **중요**: SQL 실행 후에는 Workspace 편집 화면 상단의 **Pull** 버튼을 클릭하여 로컬 `.sv.yaml` 파일을 최신 상태로 동기화하세요. Pull 없이 Workspace에서 Publish changes를 누르면 SQL로 변경한 내용이 덮어씌워질 수 있습니다.
 
 아래는 추가할 Metric 목록입니다. 이 내용이 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_03_Metric%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_03_Metric추가.sql</a>에 모두 반영되어 있습니다.
 
