@@ -430,20 +430,21 @@ Autopilot은 데이터 타입과 컬럼 특성을 분석하여 Fact와 Dimension
 
 Workspace에서 열린 `.sv.yaml` 파일을 CoCo 패널에서 자연어로 수정할 수 있습니다.
 
-1. Workspace에서 `EDU_SALES_SV.sv.yaml` 파일을 열어둔 상태에서 CoCo 패널을 엽니다
-2. 프롬프트에 다음과 같이 입력합니다:
-   ```
-   이 시맨틱뷰에서 UNIT_PRICE, COST_PRICE, RETAIL_PRICE, TOTAL_PURCHASES 컬럼을
-   dimensions에서 facts로 이동시켜줘
-   ```
-3. CoCo가 YAML 수정 사항을 제안하면 확인 후 적용합니다
-4. 상단 **Publish changes** 클릭
-
-> **팁**: CoCo를 활용하면 YAML 구조를 직접 편집하지 않아도 자연어로 Semantic View를 수정할 수 있습니다. Description 추가, Metric 정의, Relationship 설정 등도 같은 방식으로 가능합니다.
+1. Semantic View 편집 화면 진입: 
+   - `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭 
+   - **"Open semantic view in Workspaces"** 대화상자에서 Workspace 선택 후 `Open` 
+   - Workspace에서 Visual 또는 YAML 모드로 열림
+2. Workspace에서 `EDU_SALES_SV.sv.yaml` 파일을 열어둔 상태에서 CoCo 패널을 엽니다
+3. 프롬프트에 다음과 같이 입력합니다:
+   - <span style="color:blue">이 시맨틱뷰에서 UNIT_PRICE, COST_PRICE 컬럼을 facts로 이동시켜줘</span>
+4. CoCo가 YAML 수정 사항을 제안하면 확인 후 적용합니다
+5. 상단 **Publish changes** 클릭
 
 **방법 B: SQL 파일 실행** (일괄 변경 시 편리)
 
-별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_01_Fact%EC%88%98%EC%A0%95.sql" target="_blank">EDU_SALES_SV_01_Fact수정.sql</a>의 `CREATE OR ALTER SEMANTIC VIEW`를 실행하면 위 표의 모든 컬럼이 한번에 Fact로 변경됩니다.
+- 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_01_Fact%EC%88%98%EC%A0%95.sql" target="_blank">EDU_SALES_SV_01_Fact수정.sql</a>의 `CREATE OR ALTER SEMANTIC VIEW`를 실행하면 위 표의 모든 컬럼이 한번에 Fact로 변경됩니다.
+
+> **중요**: SQL로 Semantic View를 변경한 후에는 Workspace 편집 화면 상단의 **Pull** 버튼을 클릭하여 로컬 `.sv.yaml` 파일을 최신 상태로 동기화하세요. Pull 없이 Workspace에서 Publish changes를 누르면 SQL로 변경한 내용이 덮어씌워질 수 있습니다. (<a href="https://docs.snowflake.com/en/sql-reference/sql/alter-semantic-view" target="_blank">ALTER SEMANTIC VIEW 문서</a> 참조)
 
 #### 3.3.2 한국어 Description 추가
 
@@ -461,6 +462,7 @@ Description은 LLM이 컬럼의 의미를 이해하는 데 결정적입니다. *
 > 한두 개는 UI에서 직접 해보면 구조를 이해하기 좋습니다.
 > 나머지 컬럼의 Description도 일괄 반영하려면 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_02_Description%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_02_Description추가.sql</a>의 `CREATE OR ALTER SEMANTIC VIEW`를 실행하세요.
 > (Fact/Dimension 변경과 마찬가지로, 컬럼 단위 Description 변경도 `ALTER SEMANTIC VIEW`로는 불가능합니다.)
+> SQL 실행 후에는 Workspace 상단의 **Pull** 버튼으로 로컬 YAML을 동기화하세요.
 
 아래는 주요 컬럼별 권장 Description입니다. 이 내용이 `EDU_SALES_SV_수정.sql`에 모두 반영되어 있습니다.
 
