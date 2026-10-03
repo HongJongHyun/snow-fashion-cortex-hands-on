@@ -463,8 +463,8 @@ Description은 LLM이 컬럼의 의미를 이해하는 데 결정적입니다. *
 5. **Save** 클릭하여 컬럼 수정 완료
 6. 상단 **Publish changes** 클릭
 
-> **팁**: 한두 개는 Visual 편집기에서 직접 해보면 Semantic View의 구조를 이해하기 좋습니다. CoCo 패널에서 자연어로도 Description을 추가할 수 있습니다:
-> <span style="color:blue">BRAND 컬럼의 description을 "브랜드명. 허용값: TOPTEN, ZIOZIA, OLZEN, ANDZ"로 수정해줘</span>
+> **팁**: 한두 개는 Visual 편집기에서 직접 해보면 Semantic View의 구조를 이해하기 좋습니다. CoCo 패널에서 자연어로 두 번째 컬럼도 수정해 보세요:
+> <span style="color:blue">CHANNEL 컬럼의 description을 "판매 채널. 허용값: 오프라인, 온라인몰, 모바일앱, 라이브커머스"로 수정해줘</span>
 
 **방법 B: SQL 파일 실행** (일괄 변경 시 편리)
 
@@ -515,8 +515,8 @@ Metric은 비즈니스 KPI를 사전 정의하여 LLM이 정확한 집계 SQL을
 5. **Add** 클릭
 6. 상단 **Publish changes** 클릭
 
-> **팁**: CoCo 패널에서 자연어로도 Metric을 추가할 수 있습니다:
-> <span style="color:blue">SALES_TRANSACTIONS 테이블에 TOTAL_REVENUE 메트릭을 추가해줘. Expression은 SUM(SALE_AMOUNT), Description은 "총 매출 금액 (원)"으로 설정해줘</span>
+> **팁**: CoCo 패널에서 자연어로 두 번째 Metric도 추가해 보세요:
+> <span style="color:blue">SALES_TRANSACTIONS 테이블에 TOTAL_QTY_SOLD 메트릭을 추가해줘. Expression은 SUM(QUANTITY), Description은 "총 판매 수량"으로 설정해줘</span>
 
 **방법 B: SQL 파일 실행** (일괄 변경 시 편리)
 
