@@ -368,7 +368,7 @@ Autopilot이 완료되면 Semantic View 편집 화면이 열립니다. 화면 �
 2. 추천된 VQR 중 유용한 것을 클릭 → `Add verified query` 선택
 3. SQL을 확인하고 필요하면 수정 후 저장
 4. **Metrics** 섹션에서도 유용한 추천을 `Accept`로 추가
-5. 상단 `Save` 클릭
+5. 상단 **Publish changes** 클릭
 
 > **팁**: 처음에는 Suggestions에서 추천하는 항목을 받아들이면서 시작하고,
 > 이후 비즈니스 맥락에 맞는 항목을 수동으로 추가하는 것이 효율적입니다.
@@ -420,7 +420,7 @@ Autopilot은 NUMBER 타입 컬럼 중 일부를 Dimension으로 분류합니다.
 3. 컬럼 목록에서 `UNIT_PRICE` 찾기 → 타입 드롭다운을 **Dimension → Fact**로 변경
 4. `PRODUCTS` 엔터티로 이동 → `COST_PRICE`, `RETAIL_PRICE`를 각각 **Fact**로 변경
 5. `CUSTOMERS` 엔터티로 이동 → `TOTAL_PURCHASES`를 **Fact**로 변경
-6. 상단 **Save** 클릭
+6. 상단 **Publish changes** 클릭
 
 > **참고**: `ALTER SEMANTIC VIEW`는 COMMENT, TAG, RENAME, MATERIALIZATION, MAX_STALENESS 변경만 지원합니다.
 > 컬럼 타입 등 구조적 변경이 필요하면 `CREATE OR ALTER SEMANTIC VIEW`로 전체 정의를 다시 작성해야 합니다.
@@ -438,7 +438,7 @@ Description은 LLM이 컬럼의 의미를 이해하는 데 결정적입니다. *
 1. Semantic View 편집 화면에서 `SALES_TRANSACTIONS` 엔터티 선택
 2. `BRAND` 컬럼 옆의 **Edit** (연필 아이콘) 클릭 → Description 입력 필드 활성화
 3. **Description** 필드에 입력: `브랜드명. 허용값: TOPTEN, ZIOZIA, OLZEN, ANDZ`
-4. **Save** 클릭
+4. **Publish changes** 클릭
 
 > 한두 개는 UI에서 직접 해보면 구조를 이해하기 좋습니다.
 > 나머지 컬럼의 Description도 일괄 반영하려면 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_02_Description%EC%B6%94%EA%B0%80.sql" target="_blank">EDU_SALES_SV_02_Description추가.sql</a>의 `CREATE OR ALTER SEMANTIC VIEW`를 실행하세요.
