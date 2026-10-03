@@ -240,25 +240,26 @@ CoCo에게: "PRODUCT_REVIEWS 테이블에서 리뷰 텍스트 샘플 5건을 보
 Semantic View를 만들 때 **Relationship(관계)** 정의가 필수입니다. 관계가 없으면 Cortex Analyst는 테이블 간 JOIN 방법을 모르기 때문에, 여러 테이블에 걸친 질문("TOPTEN 매장별 매출")에 답할 수 없습니다. 아래 다이어그램은 Chapter 3에서 Semantic View에 등록할 JOIN 키를 미리 파악하기 위한 것입니다.
 
 ```
-CUSTOMERS ──────┐
-  (CUSTOMER_ID) │
-                ▼ many_to_one
-         SALES_TRANSACTIONS ◄── PRODUCTS
-           (TXN_ID)              (SKU_ID)
-                │
-                ▼ many_to_one
-              STORES
-           (STORE_ID)
+[ 매출 도메인 — EDU_SALES_SV ]
 
-VENDORS ──────┐
-  (VENDOR_ID) │
-              ▼
-        SUPPLY_ORDERS ──► SHIPMENTS
-          (ORDER_ID)      (ORDER_ID)
-              │
-              ▼
-           PRODUCTS
-           (SKU_ID)
+CUSTOMERS (PK: customer_id)
+     │
+     └──FK: customer_id
+            │
+SALES_TRANSACTIONS (PK: txn_id)──FK: sku_id──► PRODUCTS (PK: sku_id)
+            │
+            └──FK: store_id──► STORES (PK: store_id)
+
+
+[ SCM 도메인 — EDU_SCM_SV ]
+
+VENDORS (PK: vendor_id)
+     │
+     └──FK: vendor_id
+            │
+SUPPLY_ORDERS (PK: order_id)──FK: sku_id──► PRODUCTS (PK: sku_id)
+            │
+            └──FK: order_id──► SHIPMENTS (PK: shipment_id)
 ```
 
 > **참고**: Autopilot(자동 생성)이 Primary Key와 Foreign Key를 감지하여 Relationship을 자동 설정하지만, 명시적 FK 제약이 없는 테이블에서는 누락될 수 있습니다. 위 관계를 미리 파악해두면 Chapter 3에서 수동 보완이 수월합니다.
