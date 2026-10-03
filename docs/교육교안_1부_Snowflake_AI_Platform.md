@@ -15,9 +15,9 @@
 | 1 | Snowflake Cortex AI 플랫폼 개요 | 슬라이드 | 20분 |
 | 2 | 데이터 모델링과 시맨틱 레이어 설계 | 슬라이드 + 화면 | 15분 |
 | 3 | Semantic View 생성과 고도화 | 라이브 데모 | 40분 |
-| 4 | 데이터 사전(Data Dictionary) 구축과 Search 활용 | 라이브 데모 | 30분 |
-| 5 | 고객 VOC Search Service 구축 | 라이브 데모 | 20분 |
-| 6 | Cortex Agent 생성과 도구 연결 | 라이브 데모 | 30분 |
+| 4 | Cortex Agent 생성과 기본 동작 | 라이브 데모 | 20분 |
+| 5 | 데이터 사전 구축과 Agent 정확도 향상 | 라이브 데모 | 30분 |
+| 6 | 고객 VOC Search와 Agent 기능 확장 | 라이브 데모 | 25분 |
 | 7 | Snowflake Cowork (Intelligence) 활용 | 데모 + 체험 | 25분 |
 | 8 | 멀티 도메인 오케스트레이션 | 라이브 데모 | 25분 |
 | 9 | Snowsight CoCo로 반복 개선 | 라이브 데모 | 15분 |
@@ -641,21 +641,130 @@ Verified Query 매칭됨?
 
 ---
 
-## Chapter 4. 데이터 사전(Data Dictionary) 구축과 Search 활용
+## Chapter 4. Cortex Agent 생성과 기본 동작
 
 ### 4.1 학습 목표
+- Agent를 Snowsight UI에서 생성하는 전체 과정 실습
+- Chapter 3에서 구축한 Semantic View를 Analyst 도구로 연결
+- Agent의 기본 매출 질문 응답 확인 및 비즈니스 용어 해석 한계 체험
+
+### 4.2 Step 1: Agent 생성 (Snowsight UI)
+
+1. Snowsight 좌측 메뉴 → `AI & ML` → `Agents`
+2. 우측 상단 `+ Create agent` 클릭
+3. 기본 정보 입력:
+   - **Database/Schema**: `SNOW_FASHION.SEMANTIC`
+   - **Object Name**: `EDU_SALES_AGENT`
+   - **Display Name**: `스노우패션 매출분석(교육)`
+4. **Create** 클릭
+
+> 생성 후 Agent 상세 화면(Overview)으로 이동합니다.
+> 상단 탭에 Overview, **Configuration**, Access, Evaluations, Observability, Preview가 있습니다.
+
+### 4.3 Step 2: Analyst 도구 연결
+
+Agent 상세 화면 → **Configuration** 탭 → **Tools** 서브탭으로 이동합니다.
+
+Tools 화면에는 다음 섹션이 순서대로 나열됩니다:
+
+| 섹션 | 설명 | 설정 |
+|------|------|------|
+| **Web search** | 인터넷 검색을 통해 외부 정보를 참조 | 토글 OFF (사용 안 함) |
+| **Analytical search** | Search Service 위에 AI 함수(AI_FILTER, AI_EXTRACT, AI_AGG) + SQL을 조합하여 대량 문서에 대한 집계·트렌드 분석 수행 (Search Service 추가 후 활성화 가능) | 토글 OFF (이번 교육에서는 사용 안 함) |
+| **Code Execution tool** | Agent가 Python 코드를 생성·실행할 수 있는 격리 샌드박스 (Preview). 대화 세션마다 자동 생성되며, pandas/matplotlib 등이 사전 설치되어 데이터 가공·차트 생성에 활용 | 토글 ON (기본값 유지) |
+| **Query structured data** | Semantic View를 연결하여 자연어 → SQL 변환 (Cortex Analyst) | `+ Add semantic view` |
+| **Search documents and unstructured data** | Cortex Search Service를 연결하여 비정형 텍스트 검색 (기본 RAG) | 이후 Chapter 5, 6에서 추가 |
+| **Custom tools** | Stored Procedure 또는 UDF를 도구로 연결 | 사용 안 함 |
+
+**Analyst 도구 추가:**
+
+1. **Query structured data** 섹션에서 `+ Add semantic view` 클릭
+2. 설정:
+   - **Schema**: `SNOW_FASHION.SEMANTIC`
+   - **Semantic View**: `EDU_SALES_SV`
+   - **Name**: `sales_analytics`
+   - **Description**: `스노우패션 매출, 고객, 상품, 매장 데이터를 SQL로 조회합니다.`
+   - **Warehouse**: Custom → `SF_WH`
+   - **Query timeout**: 비워두기 (기본 타임아웃 적용)
+
+> 우측 상단 **Saved** 표시를 확인합니다 (자동 저장).
+
+### 4.4 Step 3: Instruction 작성 (기본)
+
+Agent 상세 화면 → **Configuration** 탭 → **Instructions** 서브탭으로 이동합니다.
+
+#### Model
+
+- **`auto`** (기본값 유지): Snowflake가 계정에서 사용 가능한 최고 품질 모델을 자동 선택합니다.
+
+#### Orchestration instructions
+
+입력:
+
+```
+당신은 스노우패션의 데이터 분석 전문가입니다.
+
+■ 도구 사용 규칙:
+1. 매출, 실적, KPI, 숫자 기반 분석 → sales_analytics 사용
+2. 수치를 질문한 경우 반드시 sales_analytics를 호출하여 데이터에 근거한 답변을 제공하세요
+```
+
+#### Response instructions
+
+입력:
+
+```
+■ 답변 규칙:
+1. 한국어로 답변하세요
+2. 금액은 원(₩) 단위, 천 단위 구분자 사용 (예: ₩1,234,567)
+3. 수치 데이터와 함께 비즈니스 인사이트를 제공하세요
+4. 차트가 적절한 경우 data_to_chart를 사용하세요
+```
+
+#### Example questions (General 서브탭)
+
+**Configuration** → **General** 서브탭에서:
+
+- **Description**: `스노우패션 4개 브랜드(TOPTEN, ZIOZIA, OLZEN, ANDZ)의 매출·고객·상품 데이터를 분석하는 교육용 에이전트입니다.`
+- **Example questions**:
+  - "브랜드별 총 매출은 얼마야?"
+  - "월별 매출 추이를 보여줘"
+
+### 4.5 Step 4: Agent 기본 테스트
+
+Agent 상세 화면 상단의 **Preview** 탭으로 이동합니다.
+
+> **Show Traces**: 우측 상단 **Show Traces**를 켜면 Agent가 어떤 도구를 어떤 순서로 호출했는지 단계별로 확인할 수 있습니다.
+
+| # | 질문 | 확인 포인트 |
+|---|------|------------|
+| 1 | "브랜드별 총 매출은?" | SQL이 정상 생성되고 4개 브랜드 매출이 출력되는지 |
+| 2 | "탑텐 객단가 추이를 보여줘" | **"객단가"를 정확히 해석하는지 확인** — AVG(SALE_AMOUNT) 대신 다른 계산을 사용하거나, "탑텐"을 브랜드로 매핑하지 못할 수 있음 |
+
+> **한계 확인**: Semantic View의 Description만으로는 "객단가", "탑텐", "라방" 같은 비즈니스 용어/약어를 정확히 해석하지 못할 수 있습니다.
+> - "객단가" → 건당 평균 결제 금액이라는 정의가 Semantic View에 없음
+> - "탑텐" → BRAND = 'TOPTEN' 매핑 정보가 부족
+> - "라방" → "라이브커머스"라는 동의어 정보가 없음
+>
+> **이 문제를 해결하기 위해 Chapter 5에서 데이터 사전을 구축합니다.**
+
+---
+
+## Chapter 5. 데이터 사전 구축과 Agent 정확도 향상
+
+### 5.1 학습 목표
 - 데이터 사전 테이블을 설계하고 데이터를 적재하는 방법
 - Cortex Search Service로 데이터 사전을 검색 가능하게 만드는 방법
-- Agent에서 데이터 사전 검색 → Analyst 정확도 향상 연동 구조 이해
+- Agent에 데이터 사전 도구를 추가하여 비즈니스 용어 해석 정확도 향상 확인
 
-### 4.2 왜 데이터 사전 Search인가?
+### 5.2 왜 데이터 사전이 필요한가?
 
-**Semantic View의 Description만으로는 부족한 이유:**
+Chapter 4에서 확인했듯이, Semantic View의 Description만으로는 비즈니스 용어를 정확히 해석하지 못합니다:
 - Description은 컬럼 단위의 짧은 설명 → 비즈니스 컨텍스트가 부족
 - 현업이 사용하는 동의어/약어를 매핑할 수 없음
 - 테이블 간 관계의 비즈니스적 의미를 설명할 수 없음
 
-**데이터 사전 Search가 해결하는 것:**
+**데이터 사전을 Agent에 연결하면:**
 ```
 현업 질문: "탑텐 객단가 추이 보여줘"
                 │
@@ -670,7 +779,7 @@ Agent 동작:     ▼
         FROM ... WHERE BRAND = 'TOPTEN' GROUP BY 1
 ```
 
-### 4.3 Step 1: 데이터 사전 테이블 설계
+### 5.3 Step 1: 데이터 사전 테이블 설계
 
 데이터 사전은 3가지 유형의 엔트리를 포함합니다:
 
@@ -680,7 +789,7 @@ Agent 동작:     ▼
 | `TERM` | 비즈니스 용어 → 계산식 매핑 | 객단가 → AVG(SALE_AMOUNT) |
 | `VALUE` | 컬럼 고유값 + 설명 | BRAND = 'TOPTEN': 가성비 영캐주얼 |
 
-### 4.4 Step 2: 데이터 사전 테이블 생성 및 적재
+### 5.4 Step 2: 데이터 사전 테이블 생성 및 적재
 
 > 전체 SQL은 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_DATA_DICTIONARY_%EC%83%9D%EC%84%B1.sql" target="_blank">EDU_DATA_DICTIONARY_생성.sql</a>을 실행하세요.
 > 아래는 테이블 구조와 INSERT 예시입니다.
@@ -729,7 +838,7 @@ VALUES
 SELECT ENTRY_TYPE, COUNT(*) FROM SNOW_FASHION.SEMANTIC.EDU_DATA_DICTIONARY GROUP BY ENTRY_TYPE;
 ```
 
-### 4.5 Step 3: 데이터 사전 Cortex Search Service 생성
+### 5.5 Step 3: 데이터 사전 Cortex Search Service 생성
 
 #### 방법 A: Snowsight UI에서 생성
 
@@ -784,85 +893,65 @@ AS (
 );
 ```
 
-#### 데이터 변경 시 Search Service 인덱싱 동작
-
-Cortex Search Service는 `TARGET_LAG`에 설정된 주기로 원본 테이블의 변경을 감지하고 인덱스를 갱신합니다.
-
-| 상황 | 동작 | 비용 |
-|------|------|------|
-| **변경 없음** | 변경 감지만 수행, 인덱스 갱신 없음 | Warehouse 비용 없음 (Cloud Services 비용만 소량 발생) |
-| **행 추가/수정** | **인크리멘탈 갱신** — 변경된 행에 대해서만 임베딩 재계산 및 인덱스 갱신 | 변경된 행의 토큰 수에 비례한 임베딩 비용 |
-| **행 삭제** | 다음 refresh에서 삭제된 행의 인덱스 제거 (임베딩 재계산 없음) | 소량 — Warehouse 비용만 |
-| **스키마 변경** (컬럼 추가/삭제) | **전체 재인덱싱** — 모든 임베딩 재계산 | 전체 데이터에 대한 임베딩 비용 |
-
-> **참고 — Primary Key와 인크리멘탈 갱신**:
-> - 인크리멘탈 갱신(변경된 행만 재임베딩)은 PK 없이도 기본 동작입니다.
-> - Search Service에 PRIMARY KEY를 정의하면 변경 감지가 더 최적화되어 비용과 지연이 줄어듭니다.
-> - 단, Search Service의 PK 컬럼은 **TEXT 타입만** 가능합니다 (NUMBER 불가).
-> - (<a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-costs" target="_blank">Understanding cost for Cortex Search Services</a> 참조)
-
-### 4.6 Step 4: 데이터 사전 검색 테스트
-
-#### Playground에서 테스트
-
-1. `AI & ML` → `Cortex Search` → `EDU_DICT_SEARCH` 클릭하여 서비스 상세 화면 진입
-2. 우측 상단 **Playground** 버튼 클릭
-3. 우측 Settings에서 결과에 포함할 컬럼을 설정:
-   - **Columns**: `DESCRIPTION` (기본값) 외에 `TERM`, `TABLE_NAME`, `COLUMN_NAME` 등 추가
-   - **Limit**: `10`
-
-4. 아래 검색어를 하나씩 입력하고 결과를 확인합니다
-
-| # | 검색어 | 확인 포인트 |
-|---|--------|------------|
-| 1 | `객단가` | 1위 결과에 "AVG(SALE_AMOUNT)" 계산식이 포함되어 있는지 |
-| 2 | `탑텐` | 1위 결과에 "BRAND = 'TOPTEN'" 필터 안내가 포함되어 있는지 |
-| 3 | `라방 매출` | 결과에 "라이브커머스" 관련 설명이 나오는지 |
-| 4 | `평효율` | 1위 결과에 "SUM(SALE_AMOUNT) / AREA_SQM" 계산식이 포함되어 있는지 |
-
 > **검색 정확도 설계 원칙**: Search column(`DESCRIPTION`)만 임베딩되어 인덱싱됩니다.
 > TERM이나 SYNONYMS 컬럼은 Attribute로 반환될 뿐, 검색 매칭에는 직접 사용되지 않습니다.
 > 따라서 **DESCRIPTION 텍스트 안에 용어명과 핵심 동의어를 함께 기술**해야 정확한 검색이 됩니다.
-> 
-> ```
-> -- 좋은 예: DESCRIPTION에 용어명+동의어 포함
-> '객단가(건당매출, 평균주문금액, AOV)는 거래 1건당 평균 결제 금액입니다...'
-> 
-> -- 나쁜 예: DESCRIPTION에 용어명 없음 (TERM/SYNONYMS에만 존재)
-> '거래 1건당 평균 결제 금액입니다...'
-> ```
 
-> **Filter 활용**: Playground 우측 **Filter** 섹션에서 `Add condition`을 클릭하면 Attribute 기반 필터를 설정할 수 있습니다.
-> 예: `DOMAIN = SCM`으로 필터 후 `리드타임` 검색 → SCM 도메인 결과만 반환
+### 5.6 Step 4: Agent에 데이터 사전 도구 추가
 
-#### SQL로 테스트 (참고)
+Agent 상세 화면 → **Configuration** 탭 → **Tools** 서브탭으로 이동합니다.
 
-Playground 외에 SQL로도 검색을 테스트할 수 있습니다.
+1. **Search documents and unstructured data** 섹션에서 `+ Add search service` 클릭
+2. 설정:
+   - **Schema**: `SEMANTIC` (Database: `SNOW_FASHION`)
+   - **Search service**: `EDU_DICT_SEARCH`
+   - **Name**: `dict_search`
+   - **Description**: `데이터 사전을 검색합니다. 비즈니스 용어(객단가, 평효율 등)의 의미와 계산식, 컬럼 설명, 고유값 정보를 찾을 수 있습니다. 생소한 용어나 약어가 나오면 이 도구로 먼저 검색하세요.`
+   - **Advanced configuration**: 기본값 유지 (**Max results**: `4`)
 
-```sql
--- 비즈니스 용어 검색
-SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-  'SNOW_FASHION.SEMANTIC.EDU_DICT_SEARCH',
-  '{
-    "query": "객단가",
-    "columns": ["TERM", "DESCRIPTION", "TABLE_NAME", "COLUMN_NAME"],
-    "limit": 3
-  }'
-);
+**Instruction 업데이트:**
 
--- 도메인 필터 적용 검색
-SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-  'SNOW_FASHION.SEMANTIC.EDU_DICT_SEARCH',
-  '{
-    "query": "리드타임",
-    "columns": ["TERM", "DESCRIPTION", "TABLE_NAME"],
-    "filter": {"@eq": {"DOMAIN": "SCM"}},
-    "limit": 3
-  }'
-);
+**Configuration** → **Instructions** 서브탭에서 Orchestration instructions를 다음으로 교체합니다:
+
+```
+당신은 스노우패션의 데이터 분석 전문가입니다.
+
+■ 도구 사용 규칙:
+
+1. 사용자의 질문에 생소한 비즈니스 용어, 약어, 한글 브랜드명이 포함되어 있으면
+   먼저 dict_search(데이터 사전)를 검색하여 정확한 의미와 계산식을 파악하세요.
+   예: "객단가" → dict_search → "AVG(SALE_AMOUNT)" 확인 → sales_analytics 호출
+
+2. 매출, 실적, KPI, 숫자 기반 분석 → sales_analytics 사용
+   dict_search 결과를 참고하여 정확한 컬럼명과 필터값을 사용하세요.
+
+■ dict_search 활용 시나리오:
+- "탑텐" → dict_search 검색 → BRAND = 'TOPTEN' 확인
+- "라방" → dict_search 검색 → CHANNEL = '라이브커머스' 확인
+- "평효율" → dict_search 검색 → SUM(SALE_AMOUNT) / AREA_SQM 확인
+
+■ 주의: 아래 용어는 dict_search 없이도 바로 사용 가능합니다:
+- 브랜드명: TOPTEN, ZIOZIA, OLZEN, ANDZ (영문 그대로)
+- 기본 지표: 매출, 수량, 할인율 (SALE_AMOUNT, QUANTITY, DISCOUNT_RATE)
 ```
 
-### 4.7 데이터 사전의 확장 가이드
+Response instructions에 추가:
+```
+5. dict_search로 용어를 확인한 경우, 그 의미를 답변에 자연스럽게 포함하세요
+```
+
+### 5.7 Step 5: Agent에서 정확도 향상 확인
+
+Agent **Preview** 탭에서 Chapter 4에서 실패했던 질문을 다시 테스트합니다. **Show Traces**를 켜고 확인하세요.
+
+| # | 질문 | 확인 포인트 |
+|---|------|------------|
+| 1 | "탑텐 객단가 추이 보여줘" | Show Traces에서 **dict_search 호출** 확인 → "객단가=AVG(SALE_AMOUNT)", "탑텐=TOPTEN" 매핑 후 정확한 SQL 생성 |
+| 2 | "라방 매출 현황" | dict_search에서 "라방→라이브커머스" 매핑 후 CHANNEL='라이브커머스' 필터 정확히 적용 |
+
+> **Before vs After**: Chapter 4에서 부정확했던 응답이 데이터 사전 도구 추가 후 정확해지는 것을 확인합니다. 이것이 데이터 사전의 핵심 가치입니다.
+
+### 5.8 데이터 사전 확장 가이드
 
 데이터 사전은 운영하면서 지속적으로 보강합니다:
 
@@ -891,28 +980,24 @@ VALUES
 ALTER CORTEX SEARCH SERVICE SNOW_FASHION.SEMANTIC.EDU_DICT_SEARCH REFRESH;
 ```
 
-> 수동 refresh를 실행하면 서비스가 즉시 원본 데이터의 변경을 감지하고 인덱스를 갱신합니다.
-> INSERT/UPDATE된 행만 인크리멘탈로 처리되므로 전체 재인덱싱보다 빠르고 비용이 적습니다.
-
 ---
 
-## Chapter 5. 고객 VOC Search Service 구축
+## Chapter 6. 고객 VOC Search와 Agent 기능 확장
 
-### 5.1 학습 목표
+### 6.1 학습 목표
 - 고객 리뷰 텍스트를 검색 가능하게 만드는 과정 이해
-- 데이터 사전 Search와의 차이점 파악
-- Agent에서 VOC Search 도구 활용법
+- Agent에 VOC 검색 도구를 추가하여 기능 확장
+- 3개 도구(Analyst + 데이터 사전 + VOC)가 연결된 Agent의 통합 테스트
 
-### 5.2 데이터 사전 Search vs VOC Search
+### 6.2 데이터 사전 Search vs VOC Search
 
 | 구분 | 데이터 사전 Search | VOC Search |
 |------|-------------------|------------|
 | **목적** | 비즈니스 용어 해석 + 컬럼 매핑 | 고객 리뷰 텍스트 검색 |
 | **데이터** | 메타데이터 (수십~수백 건) | 원본 텍스트 (10만건) |
 | **Agent 활용** | Analyst 호출 전 "사전 검색" | 비정형 분석 도구 |
-| **데이터 변경 빈도** | 비정기 (용어 추가/수정 시) | 상시 (리뷰 데이터 유입) |
 
-### 5.3 Step 1: VOC Search Service 생성
+### 6.3 Step 1: VOC Search Service 생성
 
 **방법 A: Snowsight UI에서 생성**
 
@@ -924,39 +1009,24 @@ ALTER CORTEX SEARCH SERVICE SNOW_FASHION.SEMANTIC.EDU_DICT_SEARCH REFRESH;
    - Service name: `EDU_VOC_SEARCH`
    - **Next** 클릭
 
-3. **Select data** — 인덱싱할 데이터 선택:
-   - `Table or view` 선택 (기본값)
-   - 좌측 트리에서 `RAW` → `Tables` → `PRODUCT_REVIEWS` 선택
-   - 우측 Data preview에서 REVIEW_TEXT, BRAND, RATING 등 컬럼 확인
-   - **Next** 클릭
+3. **Select data** — `RAW` → `Tables` → `PRODUCT_REVIEWS` 선택 → **Next** 클릭
 
-4. **Select search column** — 검색 대상 텍스트 컬럼:
-   - `REVIEW_TEXT` 선택 (리뷰 본문이 임베딩되어 검색 대상이 됨)
-   - **Next** 클릭
+4. **Select search column** — `REVIEW_TEXT` 선택 → **Next** 클릭
 
-5. **Select attributes** — 필터용 속성 컬럼:
-   - `BRAND`, `RATING`, `REVIEW_CHANNEL` 선택
-   - 이 컬럼들은 검색 시 `filter` 파라미터로 결과를 필터링할 때 사용됩니다
-   - **Next** 클릭
+5. **Select attributes** — `BRAND`, `RATING`, `REVIEW_CHANNEL` 선택 → **Next** 클릭
 
-6. **Select columns** — 결과에 포함할 추가 컬럼:
-   - `REVIEW_DATE`, `SKU_ID` 선택
-   - 검색에는 사용되지 않지만 결과 반환 시 함께 조회할 수 있는 컬럼입니다
-   - **Next** 클릭
+6. **Select columns** — `REVIEW_DATE`, `SKU_ID` 선택 → **Next** 클릭
 
-7. **Configure indexing** — 인덱싱 설정:
-   - **Target lag**: `1 day`
-   - **Create** 클릭
+7. **Configure indexing** — Target lag: `1 day` → **Create** 클릭
 
 > 10만건의 리뷰 데이터를 임베딩하므로, 데이터 사전(30건)보다 생성 시간이 더 걸립니다.
 
 **방법 B: SQL로 생성**
 
 ```sql
--- VOC 리뷰 검색 서비스 생성
 CREATE OR REPLACE CORTEX SEARCH SERVICE SNOW_FASHION.SEMANTIC.EDU_VOC_SEARCH
-  ON REVIEW_TEXT                                    -- 검색 대상 텍스트
-  ATTRIBUTES BRAND, RATING, REVIEW_CHANNEL          -- 필터 속성
+  ON REVIEW_TEXT
+  ATTRIBUTES BRAND, RATING, REVIEW_CHANNEL
   WAREHOUSE = SF_WH
   TARGET_LAG = '1 day'
   COMMENT = '스노우패션 고객 VOC 리뷰 검색 (10만건 한국어 리뷰)'
@@ -972,249 +1042,56 @@ AS (
 );
 ```
 
-### 5.4 Step 2: VOC Search 테스트
-
-#### Playground에서 테스트
-
-1. `AI & ML` → `Cortex Search` → `EDU_VOC_SEARCH` 클릭하여 서비스 상세 화면 진입
-2. 우측 상단 **Playground** 버튼 클릭
-3. 우측 Settings에서 설정:
-   - **Columns**: `REVIEW_TEXT` 외에 `BRAND`, `RATING`, `REVIEW_CHANNEL` 추가
-   - **Limit**: `5`
-
-4. 아래 검색어를 하나씩 입력하고 결과를 확인합니다
-
-| # | 검색어 | 확인 포인트 |
-|---|--------|------------|
-| 1 | `보풀이 심해요` | 보풀 관련 리뷰가 상위에 나오는지 |
-| 2 | `배송이 빠르네요` | 배송 관련 긍정 리뷰가 나오는지 |
-
-> **참고**: 시맨틱 검색은 의미가 유사한 문장을 찾는 방식이므로, 검색어의 감성(긍정/부정)과 무관하게 주제가 비슷한 리뷰가 함께 나올 수 있습니다. 예를 들어 "지퍼 고장"을 검색해도 지퍼와 관련 없는 리뷰가 상위에 나올 수 있습니다. 이는 임베딩 모델의 특성이며 오류가 아닙니다.
-
-5. **Filter 활용**: 검색 결과의 정확도를 높이려면 필터를 함께 사용합니다.
-   - 우측 Settings의 **Filter** → `Add condition` 클릭
-   - `BRAND` = `TOPTEN` 필터 설정 후 `보풀이 심해요` 검색
-   - TOPTEN 브랜드 리뷰만 필터링되는지 확인
-   - 필터를 추가로 `RATING` = `2` 로 설정하면 저평점 불만 리뷰만 좁혀서 볼 수 있음
-
-> **데이터 사전 Search와의 차이**: 데이터 사전은 메타데이터 30건을 검색하지만,
-> VOC Search는 고객 리뷰 원문 10만건을 의미 검색합니다.
-> 동일한 Cortex Search 엔진이지만 용도와 데이터 규모가 다릅니다.
-
-> **참고**: 교육용 PRODUCT_REVIEWS 데이터는 약 55개 리뷰 템플릿을 브랜드/채널/상품별로 반복 생성한 데모 데이터입니다.
-> 동일한 리뷰 텍스트가 여러 브랜드에 걸쳐 나타나므로 검색 결과에 같은 문장이 반복될 수 있습니다. 이는 오류가 아닙니다.
-
-#### SQL로 테스트 (참고)
-
-Playground 외에 SQL로도 검색을 테스트할 수 있습니다.
-
-```sql
--- 일반 검색
-SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-  'SNOW_FASHION.SEMANTIC.EDU_VOC_SEARCH',
-  '{"query": "보풀이 심해요", "columns": ["REVIEW_TEXT","BRAND","RATING"], "limit": 5}'
-);
-
--- 브랜드 필터 적용
-SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-  'SNOW_FASHION.SEMANTIC.EDU_VOC_SEARCH',
-  '{
-    "query": "보풀이 심해요",
-    "columns": ["REVIEW_TEXT", "BRAND", "RATING"],
-    "filter": {"@eq": {"BRAND": "TOPTEN"}},
-    "limit": 5
-  }'
-);
-```
-
-### 5.5 핵심 설정 파라미터 가이드
-
-| 파라미터 | 설명 | 데이터 사전 | VOC |
-|----------|------|:-:|:-:|
-| `ON` | 검색 대상 컬럼 | DESCRIPTION | REVIEW_TEXT |
-| `ATTRIBUTES` | 필터 속성 | ENTRY_TYPE, DOMAIN | BRAND, RATING |
-| `TARGET_LAG` | 갱신 주기 | '1 day' | '1 day' |
-
----
-
-## Chapter 6. Cortex Agent 생성과 도구 연결
-
-### 6.1 학습 목표
-- Agent를 Snowsight UI에서 생성하는 전체 과정 실습
-- Analyst + Search(데이터 사전) + Search(VOC) 3개 도구를 연결
-- Instruction 작성법과 모범 사례
-- 데이터 사전 Search를 Agent가 "사전 검색"으로 활용하는 패턴
-
-### 6.2 Step 1: Agent 생성 (Snowsight UI)
-
-1. Snowsight 좌측 메뉴 → `AI & ML` → `Agents`
-2. 우측 상단 `+ Create agent` 클릭
-3. 기본 정보 입력:
-   - **Database/Schema**: `SNOW_FASHION.SEMANTIC`
-   - **Object Name**: `EDU_SALES_AGENT`
-   - **Display Name**: `스노우패션 매출분석(교육)`
-4. **Create** 클릭
-
-> 생성 후 Agent 상세 화면(Overview)으로 이동합니다.
-> 상단 탭에 Overview, **Configuration**, Access, Evaluations, Observability, Preview가 있습니다.
-
-### 6.3 Step 2: 도구 추가
+### 6.4 Step 2: Agent에 VOC 도구 추가
 
 Agent 상세 화면 → **Configuration** 탭 → **Tools** 서브탭으로 이동합니다.
 
-Tools 화면에는 다음 섹션이 순서대로 나열됩니다:
-
-| 섹션 | 설명 | 설정 |
-|------|------|------|
-| **Web search** | 인터넷 검색을 통해 외부 정보를 참조 | 토글 OFF (사용 안 함) |
-| **Analytical search** | Search Service 위에 AI 함수(AI_FILTER, AI_EXTRACT, AI_AGG) + SQL을 조합하여 대량 문서에 대한 집계·트렌드 분석 수행 (Search Service 추가 후 활성화 가능) | 토글 OFF (이번 교육에서는 사용 안 함) |
-| **Code Execution tool** | Agent가 Python 코드를 생성·실행할 수 있는 격리 샌드박스 (Preview). 대화 세션마다 자동 생성되며, pandas/matplotlib 등이 사전 설치되어 데이터 가공·차트 생성에 활용 | 토글 ON (기본값 유지) |
-| **Query structured data** | Semantic View를 연결하여 자연어 → SQL 변환 (Cortex Analyst) | `+ Add semantic view` |
-| **Search documents and unstructured data** | Cortex Search Service를 연결하여 비정형 텍스트 검색 (기본 RAG) | `+ Add search service` |
-| **Custom tools** | Stored Procedure 또는 UDF를 도구로 연결 | 사용 안 함 |
-
-
-#### 도구 1: Cortex Analyst (매출 분석)
-
-1. **Query structured data** 섹션에서 `+ Add semantic view` 클릭
+1. **Search documents and unstructured data** 섹션에서 `+ Add search service` 클릭
 2. 설정:
-   - **Schema**: `SNOW_FASHION.SEMANTIC`
-   - **Semantic View**: `EDU_SALES_SV`
-   - **Name**: `sales_analytics`
-   - **Description**: `스노우패션 매출, 고객, 상품, 매장 데이터를 SQL로 조회합니다.`
-   - **Warehouse**: Custom → `SF_WH`
-   - **Query timeout**: 비워두기 (기본 타임아웃 적용)
-
-#### 도구 2: Cortex Search — 데이터 사전
-
-3. **Search documents and unstructured data** 섹션에서 `+ Add search service` 클릭
-4. 설정:
-   - **Schema**: `SEMANTIC` (Database: `SNOW_FASHION`)
-   - **Search service**: `EDU_DICT_SEARCH`
-   - **Name**: `dict_search`
-   - **Description**: `데이터 사전을 검색합니다. 비즈니스 용어(객단가, 평효율 등)의 의미와 계산식, 컬럼 설명, 고유값 정보를 찾을 수 있습니다. 생소한 용어나 약어가 나오면 이 도구로 먼저 검색하세요.`
-   - **Advanced configuration** (나머지는 기본값 유지):
-     - **Max results**: `4` (기본값 — Search Service가 반환할 최대 문서 수)
-     - **Target results**: 비워두기 (고품질 결과 목표 수)
-     - **ID column**: 비워두기 (검색 결과에 하이퍼링크를 생성할 때 사용하는 고유 식별자 컬럼)
-     - **Title column**: 비워두기 (검색 결과 인용 시 출처 카드에 표시되는 제목 컬럼)
-     - **Source stage**: 비워두기 (문서 원본이 저장된 Snowflake Stage. 앱 내 문서 미리보기에 필요)
-     - **Relative path column**: 비워두기 (Source stage 내 파일 경로를 담은 컬럼)
-     - **Indexed columns**: `+ Add column row`로 컬럼별 설명 추가 가능. Agent가 각 컬럼의 용도를 이해하여 검색·필터링 품질이 향상됨. **Filter column** 체크 시 최대 5개까지 필터 컬럼으로 지정할 수 있으며, Agent가 검색 시 해당 컬럼으로 자동 필터링 조건을 적용함
-     - **Named scoring profile**: 비워두기 (Search Service에 정의된 커스텀 스코어링 프로필 선택)
-
-#### 도구 3: Cortex Search — VOC
-
-5. 다시 `+ Add search service` 클릭
-6. 설정:
    - **Schema**: `SEMANTIC` (Database: `SNOW_FASHION`)
    - **Search service**: `EDU_VOC_SEARCH`
    - **Name**: `voc_search`
    - **Description**: `고객 리뷰(VOC) 텍스트를 검색합니다. 10만건의 한국어 리뷰에서 사이즈, 품질, 배송, 가격 등에 대한 고객 의견을 조회합니다.`
-   - **Advanced configuration** (나머지는 기본값 유지):
-     - **Max results**: `4` (기본값)
-     - **Target results**: 비워두기
-     - **ID column / Title column**: 비워두기
-     - **Source stage / Relative path column**: 비워두기
-     - **Indexed columns**: 비워두기 (필요 시 BRAND, RATING 등을 Filter column으로 추가 가능)
-     - **Named scoring profile**: 비워두기
+   - **Advanced configuration**: 기본값 유지 (**Max results**: `4`)
 
-> 모든 도구 추가 후 우측 상단 **Saved** 표시를 확인합니다 (자동 저장).
+**Instruction 업데이트:**
 
-### 6.4 Step 3: Instruction 작성
-
-Agent 상세 화면 → **Configuration** 탭 → **Instructions** 서브탭으로 이동합니다.
-
-Instructions 화면에는 다음 항목이 순서대로 나열됩니다:
-
-#### Model
-
-- Agent의 오케스트레이션(작업 분해, 도구 선택, 응답 생성)에 사용할 LLM 모델을 선택합니다.
-- **`auto`** (기본값): Snowflake가 계정에서 사용 가능한 최고 품질 모델을 자동 선택합니다.
-- 특정 모델을 고정하고 싶다면 드롭다운에서 선택합니다 (예: `claude-sonnet-4-6`).
-- 설정: **`auto`** (기본값 유지)
-
-#### Orchestration instructions
-
-Agent가 작업을 분해하고 도구를 선택하는 방식을 자연어로 지시합니다. 어떤 질문에 어떤 도구를 사용할지, 도구 호출 순서 등을 명시합니다.
-
-입력:
+**Configuration** → **Instructions** 서브탭에서 Orchestration instructions에 다음 규칙을 추가합니다:
 
 ```
-당신은 스노우패션의 데이터 분석 전문가입니다.
-
-■ 도구 사용 규칙:
-
-1. 사용자의 질문에 생소한 비즈니스 용어, 약어, 한글 브랜드명이 포함되어 있으면
-   먼저 dict_search(데이터 사전)를 검색하여 정확한 의미와 계산식을 파악하세요.
-   예: "객단가" → dict_search → "AVG(SALE_AMOUNT)" 확인 → sales_analytics 호출
-
-2. 매출, 실적, KPI, 숫자 기반 분석 → sales_analytics 사용
-   dict_search 결과를 참고하여 정확한 컬럼명과 필터값을 사용하세요.
-
 3. 고객 리뷰, VOC, 불만사항, 고객 의견 → voc_search 사용
 
 4. 복합 질문 → 여러 도구를 순차적으로 사용
    예: "매출 하락 원인 분석" → sales_analytics(수치 확인) + voc_search(고객 의견)
-
-■ dict_search 활용 시나리오:
-- "탑텐" → dict_search 검색 → BRAND = 'TOPTEN' 확인
-- "라방" → dict_search 검색 → CHANNEL = '라이브커머스' 확인
-- "25년 FW" → dict_search 검색 → SEASON = 'FW25' 확인
-- "평효율" → dict_search 검색 → SUM(SALE_AMOUNT) / AREA_SQM 확인
-
-■ 주의: 아래 용어는 dict_search 없이도 바로 사용 가능합니다:
-- 브랜드명: TOPTEN, ZIOZIA, OLZEN, ANDZ (영문 그대로)
-- 기본 지표: 매출, 수량, 할인율 (SALE_AMOUNT, QUANTITY, DISCOUNT_RATE)
 ```
 
-#### Response instructions
-
-Agent가 사용자에게 답변을 생성하는 방식을 지시합니다. 답변 언어, 톤, 형식 등을 지정합니다.
-
-입력:
-
+Response instructions에 추가:
 ```
-■ 답변 규칙:
-1. 한국어로 답변하세요
-2. 금액은 원(₩) 단위, 천 단위 구분자 사용 (예: ₩1,234,567)
-3. 수치 데이터와 함께 비즈니스 인사이트를 제공하세요
-4. 차트가 적절한 경우 data_to_chart를 사용하세요
-5. 리뷰 검색 결과는 원문을 인용하세요
-6. dict_search로 용어를 확인한 경우, 그 의미를 답변에 자연스럽게 포함하세요
+6. 리뷰 검색 결과는 원문을 인용하세요
 ```
 
-#### Budget configuration (Optional)
+**Example questions 추가** (General 서브탭):
+- "사이즈 불만 리뷰를 찾아줘"
+- "라방 매출이 전월 대비 어떻게 변했어?"
 
-Agent의 단일 응답 생성에 대한 리소스 제한을 설정합니다. 둘 중 하나라도 먼저 도달하면 응답 생성이 중단됩니다.
+### 6.5 Step 3: Agent 통합 테스트
 
-- **Time Limit (seconds)**: 최대 실행 시간 (초 단위). 설정: `No limit` (기본값 유지)
-- **Token Limit**: 오케스트레이션에 사용할 최대 토큰 수. Cortex Analyst, Cortex Search 등 도구가 사용하는 토큰은 포함되지 않음. 설정: `No limit` (기본값 유지)
+Agent **Preview** 탭에서 3개 도구가 모두 연결된 최종 Agent를 테스트합니다. **Show Traces**를 켜고 확인하세요.
 
-#### Example questions (General 서브탭)
+| # | 질문 | 확인 포인트 |
+|---|------|------------|
+| 1 | "사이즈 불만 리뷰 검색" | 매출 도구가 아닌 **voc_search**를 올바르게 선택하는지 |
+| 2 | "TOPTEN 매출 하락 원인 분석" | **sales_analytics**(수치 확인) + **voc_search**(고객 의견) 복합 호출 |
 
-**Configuration** → **General** 서브탭에서 다음 항목을 설정합니다.
+> **Show Traces 확인 포인트:**
+> 1. **올바른 도구 라우팅**: 리뷰 질문(#1)은 voc_search, 복합 질문(#2)은 여러 도구 순차 호출
+> 2. **할루시네이션 방지**: 질문의 전제("하락")가 데이터와 다를 때 데이터에 근거하여 사실을 정정하는지
 
-- **Display name**: `스노우패션 매출분석(교육)` (이미 입력됨)
-- **Description**: Agent의 용도와 사용 방법을 설명합니다. Agent를 선택하는 사용자에게 표시되며, Agent의 동작이나 로직에는 영향을 주지 않습니다.
-
-  입력 예: `스노우패션 4개 브랜드(TOPTEN, ZIOZIA, OLZEN, ANDZ)의 매출·고객·상품 데이터를 분석하고, 데이터 사전과 고객 리뷰(VOC)를 검색할 수 있는 교육용 에이전트입니다.`
-
-- **Example questions**: `Add question` 버튼으로 최대 15개의 추천 질문을 등록합니다. 사용자가 대화를 시작할 때 도움이 되는 질문으로 표시됩니다.
-
-  등록할 질문:
-  - "브랜드별 이번 달 매출은 얼마야?"
-  - "탑텐 객단가 추이를 보여줘"
-  - "사이즈 불만 리뷰를 찾아줘"
-  - "라방 매출이 전월 대비 어떻게 변했어?"
-
-> 모든 설정 완료 후 우측 상단 **Save** 버튼을 클릭하여 저장합니다.
-
-### 6.5 Step 4: SQL로 Agent 생성 (전체 코드)
+### 6.6 SQL로 Agent 생성 (전체 코드)
 
 > **별도 SQL 파일**: <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_AGENT_%EC%83%9D%EC%84%B1.sql" target="_blank">`EDU_SALES_AGENT_생성.sql`</a>
 
-위 Step 1~3에서 UI로 설정한 내용을 SQL로 표현하면 아래와 같습니다. 전체 코드는 별도 SQL 파일을 참조하세요.
+위 Chapter 4~6에서 UI로 설정한 최종 내용을 SQL로 표현하면 아래와 같습니다. 전체 코드는 별도 SQL 파일을 참조하세요.
 
 ```sql
 CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
@@ -1246,38 +1123,6 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
     voc_search: { search_service: "SNOW_FASHION.SEMANTIC.EDU_VOC_SEARCH", max_results: 4, ... }
   $$;
 ```
-
-### 6.6 Step 5: Agent 테스트 시나리오
-
-Agent 상세 화면 상단의 **Preview** 탭으로 이동합니다.
-
-Preview 화면에는 다음이 표시됩니다:
-- Agent 이름 (`EDU_SALES_AGENT`)과 Description
-- General 서브탭에서 등록한 **Example questions** 버튼들
-- 하단 입력창 (`Enter a message to test your agent`)
-- 우측 상단: **New thread** (대화 초기화), **Show Traces** (도구 호출 과정 확인), **Preview in Snowflake CoWork** (CoWork에서 열기)
-
-Example questions 버튼을 클릭하거나 직접 질문을 입력하여 테스트합니다.
-
-#### 테스트 시나리오
-
-| # | 질문 | 확인 포인트 |
-|---|------|------------|
-| 1 | "브랜드별 총 매출" | SQL이 정상 생성되고 4개 브랜드 매출이 출력되는지 |
-| 2 | "탑텐 객단가 추이" | BRAND='TOPTEN' 필터와 객단가 계산이 올바른지, 차트가 생성되는지 |
-| 3 | "라방 매출 현황" | "라방"을 "라이브커머스"로 정확히 매핑하는지 (dict_search 호출 여부 확인) |
-| 4 | "사이즈 불만 리뷰 검색" | 매출 도구가 아닌 voc_search를 올바르게 선택하는지 |
-| 5 | "ANDZ 매출 하락 원인 분석" | 질문의 전제("하락")가 데이터와 다를 때 사실에 근거하여 정정하는지 (할루시네이션 방지) |
-
-> **참고**: Agent는 Semantic View의 메타데이터만으로 용어를 해석할 수 있다고 판단하면 dict_search를 호출하지 않을 수 있습니다. dict_search는 Semantic View에 정보가 없는 약어나 고유 용어에서 주로 활용됩니다. Trace에서 도구 호출 여부를 확인하고, dict_search 없이도 정확한 결과가 나오는지를 함께 확인하세요.
-
-> **Show Traces로 확인하기**: 우측 상단 **Show Traces**를 켜면 Agent가 어떤 도구를 어떤 순서로 호출했는지 단계별로 확인할 수 있습니다.
->
-> 확인할 핵심 포인트:
-> 1. **올바른 도구 라우팅**: 매출 질문은 sales_analytics, 리뷰 질문(#4)은 voc_search로 정확히 분기하는지
-> 2. **SQL 정확성**: 생성된 SQL의 SELECT/WHERE 절이 질문 의도에 맞는지
-> 3. **할루시네이션 방지**: 질문의 전제가 데이터와 다를 때(#5) 데이터에 근거하여 사실을 정정하는지
-> 4. **dict_search 활용**: 약어(#3 "라방")에서 dict_search가 호출되었는지, 호출되지 않았다면 결과가 정확한지
 
 > **참고 — Publish와 버전 관리**: 우측 상단 **Publish** 버튼을 누르면 현재 Draft(LIVE) 상태가 불변의 Named Version(`VERSION$1`, `VERSION$2`, ...)으로 확정됩니다. Publish할 때마다 버전이 누적되며, alias(`production` 등)를 부여하여 API/CoWork 트래픽을 특정 버전으로 라우팅하거나 롤백할 수 있습니다. 이번 교육에서는 Preview 테스트까지만 진행합니다.
 
