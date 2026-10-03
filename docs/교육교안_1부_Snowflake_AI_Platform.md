@@ -424,20 +424,16 @@ Autopilot은 데이터 타입과 컬럼 특성을 분석하여 Fact와 Dimension
 | STORES | AREA_SQM | **Fact** | 매장 면적 합계/평균 집계 |
 | CUSTOMERS | TOTAL_PURCHASES | **Fact** | 고객별 구매횟수 집계 |
 
-**Snowsight UI에서 수정**
+**방법 A: YAML 편집기에서 수정** (권장)
 
-> Fact/Dimension 변경은 UI에서 클릭으로 변경합니다.
-> `ALTER SEMANTIC VIEW`로는 컬럼 타입(Fact/Dimension)을 변경할 수 없으므로, SQL로 변경하려면 `CREATE OR ALTER SEMANTIC VIEW`로 전체 정의를 다시 작성해야 합니다.
-
-1. Semantic View 편집 화면 진입: `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭 → **"Open semantic view in Workspaces"** 대화상자에서 Workspace 선택 후 `Open` (Workspace에서 `.sv.yaml` 파일로 열림)
-2. 왼쪽 Logical Table 목록에서 각 테이블을 클릭하여 컬럼 목록 확인
-3. 위 표의 컬럼이 **Fact**로 되어 있는지 확인하고, Dimension으로 되어 있다면 타입 드롭다운을 **Fact**로 변경
+1. Semantic View 편집 화면 진입: `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭 → **"Open semantic view in Workspaces"** 대화상자에서 Workspace 선택 후 `Open`
+2. 상단 `Visual` / `YAML` 토글에서 **YAML** 선택
+3. 해당 컬럼을 `dimensions:` 섹션에서 잘라내어 `facts:` 섹션으로 이동
 4. 상단 **Publish changes** 클릭
 
-> **참고**: `ALTER SEMANTIC VIEW`는 COMMENT, TAG, RENAME, MATERIALIZATION, MAX_STALENESS 변경만 지원합니다.
-> 컬럼 타입 등 구조적 변경이 필요하면 `CREATE OR ALTER SEMANTIC VIEW`로 전체 정의를 다시 작성해야 합니다.
-> 본 단계의 Fact/Dimension 수정을 SQL로 실행하려면 별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_01_Fact%EC%88%98%EC%A0%95.sql" target="_blank">EDU_SALES_SV_01_Fact수정.sql</a>을 참고하세요.
-> (<a href="https://docs.snowflake.com/en/sql-reference/sql/alter-semantic-view" target="_blank">ALTER SEMANTIC VIEW 문서</a> 참조)
+**방법 B: SQL 파일 실행** (일괄 변경 시 편리)
+
+별도 파일 <a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_SALES_SV_01_Fact%EC%88%98%EC%A0%95.sql" target="_blank">EDU_SALES_SV_01_Fact수정.sql</a>의 `CREATE OR ALTER SEMANTIC VIEW`를 실행하면 위 표의 모든 컬럼이 한번에 Fact로 변경됩니다.
 
 #### 3.3.2 한국어 Description 추가
 
@@ -447,7 +443,7 @@ Description은 LLM이 컬럼의 의미를 이해하는 데 결정적입니다. *
 
 > BRAND 컬럼의 Description을 UI에서 직접 수정해 봅니다.
 
-1. Semantic View 편집 화면에서 `SALES_TRANSACTIONS` 엔터티 선택
+1. Semantic View 편집 화면에서 `SALES_TRANSACTIONS` Logical Table 선택
 2. `BRAND` 컬럼 옆의 **Edit** (연필 아이콘) 클릭 → Description 입력 필드 활성화
 3. **Description** 필드에 입력: `브랜드명. 허용값: TOPTEN, ZIOZIA, OLZEN, ANDZ`
 4. **Publish changes** 클릭
