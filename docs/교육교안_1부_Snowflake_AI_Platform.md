@@ -279,7 +279,11 @@ SUPPLY_ORDERS (PK: order_id)──FK: sku_id──► PRODUCTS (PK: sku_id)
 
 #### 3.2.1 생성 경로
 1. Snowsight 좌측 메뉴 → `AI & ML` → `Cortex Analyst` → **Semantic views** 탭
-2. 우측 상단 `Create with Autopilot` 클릭
+2. 우측 상단 **Create in Workspaces** 클릭 → Workspace 선택 후 `Open`
+
+> **참고**: Semantic View 편집 환경이 Workspace 기반으로 변경되었습니다.
+> Semantic View를 생성하거나 편집하면 선택한 Workspace에 `.sv.yaml` 파일이 생성되며, 이 파일을 통해 Visual 편집기 또는 YAML 편집기로 작업할 수 있습니다. Git 연동된 Workspace를 사용하면 버전 관리도 가능합니다.
+
 3. **Provide context** 단계: 기존 SQL 쿼리나 Tableau/Power BI 파일을 업로드하여 Autopilot의 정확도를 높일 수 있지만, 이번 교육에서는 우측 하단 `Skip` 클릭하여 건너뜁니다.
 4. **Name your semantic view**:
    - **Name**: `EDU_SALES_SV`
@@ -423,7 +427,7 @@ Autopilot은 데이터 타입과 컬럼 특성을 분석하여 Fact와 Dimension
 > Fact/Dimension 변경은 UI에서 클릭으로 변경합니다.
 > `ALTER SEMANTIC VIEW`로는 컬럼 타입(Fact/Dimension)을 변경할 수 없으므로, SQL로 변경하려면 `CREATE OR ALTER SEMANTIC VIEW`로 전체 정의를 다시 작성해야 합니다.
 
-1. `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭하여 편집 화면 진입
+1. Semantic View 편집 화면 진입: `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭 → **"Open semantic view in Workspaces"** 대화상자에서 Workspace 선택 후 `Open` (Workspace에서 `.sv.yaml` 파일로 열림)
 2. 왼쪽 Logical Table 목록에서 각 테이블을 클릭하여 컬럼 목록 확인
 3. 위 표의 컬럼이 **Fact**로 되어 있는지 확인하고, Dimension으로 되어 있다면 타입 드롭다운을 **Fact**로 변경
 4. 상단 **Publish changes** 클릭
@@ -564,7 +568,7 @@ Verified Query 매칭됨?
 
 #### 3.5.1 Snowsight에서 테스트
 
-1. `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 선택하여 편집 화면 진입
+1. Semantic View 편집 화면 진입: `AI & ML` → `Cortex Analyst` → `EDU_SALES_SV` 클릭 → Workspace에서 열기
 2. 우측 상단 **Playground** 탭 클릭
 3. 하단 "Enter prompt" 입력창에 아래 질문을 하나씩 입력하고 **Run** 클릭하여 결과를 확인합니다
 
