@@ -738,13 +738,13 @@ Agent 상세 화면 상단의 **Preview** 탭으로 이동합니다.
 
 | # | 질문 | 확인 포인트 |
 |---|------|------------|
-| 1 | "브랜드별 총 매출은?" | SQL이 정상 생성되고 4개 브랜드 매출이 출력되는지 |
-| 2 | "탑텐 객단가 추이를 보여줘" | **"객단가"를 정확히 해석하는지 확인** — AVG(SALE_AMOUNT) 대신 다른 계산을 사용하거나, "탑텐"을 브랜드로 매핑하지 못할 수 있음 |
+| 1 | "브랜드별 총 매출은?" | SQL이 정상 생성되고 4개 브랜드 매출이 출력되는지 (정상 동작 확인) |
+| 2 | "라방 매출이 얼마야?" | **"라방"이 "라이브커머스"로 매핑되는지 확인** — CHANNEL='라이브커머스' 필터가 적용되지 않거나 오류 발생 가능 |
+| 3 | "매장별 평효율 순위를 보여줘" | **"평효율"(매출/면적)을 정확히 계산하는지 확인** — 평효율이 Metric으로 정의되어 있지 않아 부정확한 계산 가능 |
 
-> **한계 확인**: Semantic View의 Description만으로는 "객단가", "탑텐", "라방" 같은 비즈니스 용어/약어를 정확히 해석하지 못할 수 있습니다.
-> - "객단가" → 건당 평균 결제 금액이라는 정의가 Semantic View에 없음
-> - "탑텐" → BRAND = 'TOPTEN' 매핑 정보가 부족
-> - "라방" → "라이브커머스"라는 동의어 정보가 없음
+> **한계 확인**: Semantic View의 Description과 Metric 정의만으로는 사내 약어나 복합 비즈니스 지표를 정확히 해석하지 못할 수 있습니다.
+> - "라방" → "라이브커머스"라는 약어 매핑이 Semantic View에 없음
+> - "평효율" → SUM(SALE_AMOUNT) / AREA_SQM 이라는 계산식이 Metric으로 정의되어 있지 않음
 >
 > **이 문제를 해결하기 위해 Chapter 5에서 데이터 사전을 구축합니다.**
 
@@ -759,24 +759,23 @@ Agent 상세 화면 상단의 **Preview** 탭으로 이동합니다.
 
 ### 5.2 왜 데이터 사전이 필요한가?
 
-Chapter 4에서 확인했듯이, Semantic View의 Description만으로는 비즈니스 용어를 정확히 해석하지 못합니다:
-- Description은 컬럼 단위의 짧은 설명 → 비즈니스 컨텍스트가 부족
+Chapter 4에서 확인했듯이, Semantic View의 Description과 Metric 정의만으로는 사내 약어나 복합 비즈니스 지표를 정확히 해석하지 못합니다:
+- "라방" → "라이브커머스"라는 약어 매핑이 Semantic View에 없음
+- "평효율" → SUM(SALE_AMOUNT) / AREA_SQM 이라는 계산식이 Metric으로 정의되어 있지 않음
 - 현업이 사용하는 동의어/약어를 매핑할 수 없음
-- 테이블 간 관계의 비즈니스적 의미를 설명할 수 없음
 
 **데이터 사전을 Agent에 연결하면:**
 ```
-현업 질문: "탑텐 객단가 추이 보여줘"
+현업 질문: "라방 평효율 순위 보여줘"
                 │
 Agent 동작:     ▼
-  1) [dict_search] "객단가" 검색
-     → 결과: "객단가 = 건당 평균 결제 금액. 계산: AVG(SALE_AMOUNT). 
-              테이블: SALES_TRANSACTIONS. 관련 메트릭: AVG_ORDER_VALUE"
-  2) [dict_search] "탑텐" 검색
-     → 결과: "탑텐 = TOPTEN 브랜드. 컬럼: BRAND. 값: 'TOPTEN'"
+  1) [dict_search] "라방" 검색
+     → 결과: "라방 = 라이브커머스. 컬럼: CHANNEL. 값: '라이브커머스'"
+  2) [dict_search] "평효율" 검색
+     → 결과: "평효율 = 매장 면적당 매출. 계산: SUM(SALE_AMOUNT) / AREA_SQM"
   3) [sales_analytics] 정확한 SQL 생성
-     → SELECT DATE_TRUNC('MONTH', TXN_DATE), AVG(SALE_AMOUNT) 
-        FROM ... WHERE BRAND = 'TOPTEN' GROUP BY 1
+     → SELECT STORE_NAME, SUM(SALE_AMOUNT) / AREA_SQM AS 평효율
+        FROM ... WHERE CHANNEL = '라이브커머스' GROUP BY 1 ORDER BY 2 DESC
 ```
 
 ### 5.3 Step 1: 데이터 사전 테이블 설계
@@ -946,10 +945,10 @@ Agent **Preview** 탭에서 Chapter 4에서 실패했던 질문을 다시 테스
 
 | # | 질문 | 확인 포인트 |
 |---|------|------------|
-| 1 | "탑텐 객단가 추이 보여줘" | Show Traces에서 **dict_search 호출** 확인 → "객단가=AVG(SALE_AMOUNT)", "탑텐=TOPTEN" 매핑 후 정확한 SQL 생성 |
-| 2 | "라방 매출 현황" | dict_search에서 "라방→라이브커머스" 매핑 후 CHANNEL='라이브커머스' 필터 정확히 적용 |
+| 1 | "라방 매출이 얼마야?" | Show Traces에서 **dict_search 호출** 확인 → "라방=라이브커머스, CHANNEL='라이브커머스'" 매핑 후 정확한 SQL 생성 |
+| 2 | "매장별 평효율 순위를 보여줘" | dict_search에서 "평효율=SUM(SALE_AMOUNT)/AREA_SQM" 계산식 확인 후 정확한 SQL 생성 |
 
-> **Before vs After**: Chapter 4에서 부정확했던 응답이 데이터 사전 도구 추가 후 정확해지는 것을 확인합니다. 이것이 데이터 사전의 핵심 가치입니다.
+> **Before vs After**: Chapter 4에서 부정확했던 "라방", "평효율" 질문이 데이터 사전 도구 추가 후 정확해지는 것을 확인합니다. 이것이 데이터 사전의 핵심 가치입니다.
 
 ### 5.8 데이터 사전 확장 가이드
 
