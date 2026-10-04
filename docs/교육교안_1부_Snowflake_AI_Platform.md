@@ -1647,22 +1647,7 @@ Snowsight `AI & ML` → `Agents` → Agent 선택 → `Observability` 탭:
 | 응답 시간 | Observability 타임스탬프 | Budget/웨어하우스 조정 |
 | 사용자 만족도 | Cowork 피드백 | 전반적 개선 |
 
-### 9.5 피드백 기반 개선 루프
-
-```
-Cowork 👎 피드백 수집
-   │
-문제 분류:
-   ├── Agent가 용어를 모름 → EDU_DATA_DICTIONARY에 항목 추가
-   ├── SQL 부정확 → VQR 추가 또는 Semantic View 개선
-   ├── 도구 선택 오류 → Planning Instruction 수정
-   ├── 검색 부적절 → Search 필터/설정 조정
-   └── 답변 형식 불만 → Response Instruction 수정
-   │
-수정 적용 → 재테스트 → 재배포
-```
-
-### 9.6 Agent 버전 관리
+### 9.5 Agent 버전 관리
 
 ```sql
 -- LIVE 버전을 커밋하여 새 Named Version 생성 (예: VERSION$2)
@@ -1684,7 +1669,7 @@ SHOW VERSIONS IN AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT;
 ALTER AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT ADD LIVE VERSION FROM LAST;
 ```
 
-### 9.7 비용 확인
+### 9.6 비용 확인
 
 #### 비용 구조
 
@@ -1768,7 +1753,7 @@ ORDER BY 1 DESC, CREDITS DESC;
 | VQR 활용 | VQR 매칭 시 SQL 생성 정확도 향상 + 지연 감소 |
 | 데이터 사전 활용 | Agent가 사전에서 바로 답 얻으면 Analyst 호출 줄어듦 |
 
-### 9.8 운영 체크리스트
+### 9.7 운영 체크리스트
 
 | 주기 | 작업 | 담당 |
 |------|------|------|
