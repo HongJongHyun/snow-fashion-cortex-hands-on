@@ -925,19 +925,21 @@ AS (
 
 ### 5.6 Step 4: Agent에 데이터 사전 도구 추가
 
-Agent 상세 화면 → **Configuration** 탭 → **Tools** 서브탭으로 이동합니다.
+Agent 상세 화면 → **Configuration** 탭으로 이동하여 다음 3단계를 수행합니다.
 
-1. **Search documents and unstructured data** 섹션에서 `+ Add search service` 클릭
+**1) Tools 서브탭 — dict_search 도구 추가**
+
+1. **Tools** 서브탭 → **Search documents and unstructured data** 섹션에서 `+ Add search service` 클릭
 2. 설정:
    - **Schema**: `SEMANTIC` (Database: `SNOW_FASHION`)
    - **Search service**: `EDU_DICT_SEARCH`
    - **Name**: `dict_search`
-   - **Description**: `데이터 사전을 검색합니다. 비즈니스 용어(객단가, 평효율 등)의 의미와 계산식, 컬럼 설명, 고유값 정보를 찾을 수 있습니다. 생소한 용어나 약어가 나오면 이 도구로 먼저 검색하세요.`
+   - **Description**: `데이터 사전을 검색합니다. 비즈니스 용어(순매출, 주력상품, 객단가, 평효율 등)의 의미와 계산식, 회사 고유 규칙을 찾을 수 있습니다. 생소한 용어나 약어가 나오면 이 도구로 먼저 검색하세요.`
    - **Advanced configuration**: 기본값 유지 (**Max results**: `4`)
 
-**Instruction 업데이트:**
+**2) Instructions 서브탭 — Orchestration instructions 교체**
 
-**Configuration** → **Instructions** 서브탭에서 Orchestration instructions를 다음으로 교체합니다:
+> Chapter 4에서 작성한 Orchestration instructions를 아래 내용으로 **전체 교체**합니다. 기존 규칙(1~2번)은 유지하면서 dict_search 관련 규칙이 추가됩니다.
 
 ```
 당신은 스노우패션의 데이터 분석 전문가입니다.
@@ -946,14 +948,16 @@ Agent 상세 화면 → **Configuration** 탭 → **Tools** 서브탭으로 이�
 
 1. 사용자의 질문에 생소한 비즈니스 용어, 약어, 한글 브랜드명이 포함되어 있으면
    먼저 dict_search(데이터 사전)를 검색하여 정확한 의미와 계산식을 파악하세요.
-   예: "객단가" → dict_search → "AVG(SALE_AMOUNT)" 확인 → sales_analytics 호출
+   예: "순매출" → dict_search → "SUM(SALE_AMOUNT) WHERE DISCOUNT_RATE < 1.0" 확인 → sales_analytics 호출
 
 2. 매출, 실적, KPI, 숫자 기반 분석 → sales_analytics 사용
    dict_search 결과를 참고하여 정확한 컬럼명과 필터값을 사용하세요.
 
+3. 수치를 질문한 경우 반드시 sales_analytics를 호출하여 데이터에 근거한 답변을 제공하세요
+
 ■ dict_search 활용 시나리오:
-- "탑텐" → dict_search 검색 → BRAND = 'TOPTEN' 확인
-- "라방" → dict_search 검색 → CHANNEL = '라이브커머스' 확인
+- "순매출" → dict_search 검색 → SUM(SALE_AMOUNT) WHERE DISCOUNT_RATE < 1.0 확인
+- "주력상품" → dict_search 검색 → CATEGORY IN ('아우터', '상의') 확인
 - "평효율" → dict_search 검색 → SUM(SALE_AMOUNT) / AREA_SQM 확인
 
 ■ 주의: 아래 용어는 dict_search 없이도 바로 사용 가능합니다:
@@ -961,9 +965,15 @@ Agent 상세 화면 → **Configuration** 탭 → **Tools** 서브탭으로 이�
 - 기본 지표: 매출, 수량, 할인율 (SALE_AMOUNT, QUANTITY, DISCOUNT_RATE)
 ```
 
-Response instructions에 추가:
+**3) Instructions 서브탭 — Response instructions에 1줄 추가**
+
+> Chapter 4에서 작성한 Response instructions(1~4번)은 그대로 유지하고, 아래 5번을 **추가**합니다.
+
 ```
 5. dict_search로 용어를 확인한 경우, 그 의미를 답변에 자연스럽게 포함하세요
+```
+
+> 모든 설정 후 **Save** 클릭.
 ```
 
 ### 5.7 Step 5: Agent에서 정확도 향상 확인
