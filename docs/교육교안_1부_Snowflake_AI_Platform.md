@@ -1276,6 +1276,27 @@ Snowsight `AI & ML` → `Agents` → `Open settings` 에서 수정:
 - Agent Toolsets를 활용한 Agent 간 조합
 - 데이터 사전 Search가 멀티 도메인에서 더 중요해지는 이유
 
+```
+┌─────────────────────────────────────┐
+│       EDU_UNIFIED_AGENT             │
+│                                     │
+│   ┌───────────────────────┐         │
+│   │  sales_analytics      │─────────┼──▶ EDU_SALES_SV
+│   │  (Cortex Analyst)     │         │
+│   ├───────────────────────┤         │
+│   │  scm_analytics ★NEW   │─────────┼──▶ EDU_SCM_SV
+│   │  (Cortex Analyst)     │         │
+│   ├───────────────────────┤         │
+│   │  dict_search          │─────────┼──▶ EDU_DICT_SEARCH
+│   │  (Cortex Search)      │         │
+│   ├───────────────────────┤         │
+│   │  voc_search           │─────────┼──▶ EDU_VOC_SEARCH
+│   │  (Cortex Search)      │         │
+│   └───────────────────────┘         │
+│                                     │
+└─────────────────────────────────────┘
+```
+
 ### 8.2 왜 멀티 도메인인가?
 
 단일 Semantic View의 한계:
