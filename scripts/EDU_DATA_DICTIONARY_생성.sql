@@ -54,6 +54,14 @@ VALUES
  '디스카운트, 할인비율, 프로모션율',
  '할인율(디스카운트, 할인비율, 프로모션율)은 정가 대비 할인된 비율입니다. DISCOUNT_RATE 컬럼. 0.00=무할인, 0.30=30%할인. 범위: 0.00~0.50. 테이블: SALES_TRANSACTIONS.', '매출'),
 
+('TERM', 'SALES_TRANSACTIONS', 'SALE_AMOUNT', '순매출',
+ '순수매출, 실매출, 정상매출, net revenue, net sales',
+ '순매출(순수매출, 실매출, 정상매출, net revenue)은 100% 할인 거래(사은품, 직원구매, 프로모션 전량할인)를 제외한 매출입니다. 계산: SUM(SALE_AMOUNT) WHERE DISCOUNT_RATE < 1.0. DISCOUNT_RATE = 1.0인 거래는 실질 매출이 아니므로 제외합니다. 테이블: SALES_TRANSACTIONS.', '매출'),
+
+('TERM', 'PRODUCTS', 'CATEGORY', '주력상품',
+ '주력 상품, 핵심상품, 전략상품, core product, flagship',
+ '주력상품(핵심상품, 전략상품, core product)은 스노우패션이 전략적으로 집중하는 상품 카테고리입니다. 주력상품 = CATEGORY IN (''아우터'', ''상의''). 아우터와 상의만 주력상품으로 분류하며, 하의/액세서리/언더웨어는 비주력상품입니다. 테이블: PRODUCTS.', '상품'),
+
 ('TERM', NULL, NULL, '전년동기대비',
  'YoY, 전년대비, 전년비, 작년대비, year over year',
  '전년동기대비(YoY, 전년대비, 전년비, 작년대비, year over year) 분석은 올해의 특정 기간과 작년 같은 기간을 비교하는 것입니다. 계산: (올해매출 - 작년매출) / 작년매출 * 100. TXN_DATE 컬럼의 YEAR() 함수 사용.', '매출'),

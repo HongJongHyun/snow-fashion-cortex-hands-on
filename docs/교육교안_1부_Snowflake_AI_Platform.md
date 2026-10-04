@@ -835,14 +835,14 @@ CREATE OR REPLACE TABLE SNOW_FASHION.SEMANTIC.EDU_DATA_DICTIONARY (
 );
 ```
 
-**INSERT 예시 — 비즈니스 용어 (TERM)**
+**INSERT 예시 — 회사 고유 규칙이 포함된 비즈니스 용어 (TERM)**
 ```sql
 INSERT INTO SNOW_FASHION.SEMANTIC.EDU_DATA_DICTIONARY 
   (ENTRY_TYPE, TABLE_NAME, COLUMN_NAME, TERM, SYNONYMS, DESCRIPTION, DOMAIN)
 VALUES
-('TERM', 'SALES_TRANSACTIONS', 'SALE_AMOUNT', '객단가',
- '건당매출, 평균주문금액, 평균결제금액, AOV, average order value',
- '객단가는 거래 1건당 평균 결제 금액입니다. 계산: AVG(SALE_AMOUNT). 메트릭: AVG_ORDER_VALUE.', '매출');
+('TERM', 'SALES_TRANSACTIONS', 'SALE_AMOUNT', '순매출',
+ '순수매출, 실매출, 정상매출, net revenue, net sales',
+ '순매출(순수매출, 실매출, 정상매출, net revenue)은 100% 할인 거래(사은품, 직원구매)를 제외한 매출입니다. 계산: SUM(SALE_AMOUNT) WHERE DISCOUNT_RATE < 1.0.', '매출');
 ```
 
 **INSERT 예시 — 컬럼 값 설명 (VALUE)**
@@ -856,7 +856,7 @@ VALUES
 ```
 
 > **<a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_DATA_DICTIONARY_%EC%83%9D%EC%84%B1.sql" target="_blank">EDU_DATA_DICTIONARY_생성.sql</a>에 포함된 전체 데이터:**
-> - TERM 14건: 매출액, 객단가, 거래건수, 구매고객수, 평효율, 마진율, 할인율, 전년동기대비, 전월대비, 배송지연, 벤더품질, 리드타임, 가용재고, 재고상태
+> - TERM 16건: 매출액, 객단가, 거래건수, 구매고객수, 평효율, 마진율, 할인율, **순매출**, **주력상품**, 전년동기대비, 전월대비, 배송지연, 벤더품질, 리드타임, 가용재고, 재고상태
 > - VALUE 16건: 브랜드 4개, 채널 4개, 멤버십 2개, 매장유형 2개, 시즌 4개
 
 **적재 확인**
