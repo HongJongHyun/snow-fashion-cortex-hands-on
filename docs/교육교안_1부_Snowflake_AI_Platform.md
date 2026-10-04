@@ -20,8 +20,7 @@
 | 6 | 고객 VOC Search와 Agent 기능 확장 | 라이브 데모 | 25분 |
 | 7 | Snowflake Cowork (Intelligence) 활용 | 데모 + 체험 | 25분 |
 | 8 | 멀티 도메인 오케스트레이션 | 라이브 데모 | 25분 |
-| 9 | Snowsight CoCo로 반복 개선 | 라이브 데모 | 15분 |
-| 10 | 모니터링, 피드백, 비용 관리 | 슬라이드 + 데모 | 20분 |
+| 9 | 반복 개선, 모니터링, 비용 관리 | 슬라이드 + 데모 | 25분 |
 
 ---
 
@@ -1553,13 +1552,15 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
 
 ---
 
-## Chapter 9. Snowsight CoCo로 반복 개선
+## Chapter 9. 반복 개선, 모니터링, 비용 관리
 
 ### 9.1 학습 목표
-- Agent 테스트 → 문제 발견 → CoCo로 수정하는 반복 프로세스
-- 수동 SQL vs CoCo 자연어 수정 비교
+- Agent 테스트 → 문제 발견 → CoCo로 수정하는 반복 개선 프로세스
+- Agent 모니터링과 피드백 기반 개선 루프
+- Agent 버전 관리
+- Cortex AI 비용 구조 이해 및 확인
 
-### 9.2 CoCo를 활용한 개선 프로세스
+### 9.2 CoCo를 활용한 반복 개선 프로세스
 
 ```
 1. Agent 테스트 (Playground 또는 Cowork)
@@ -1628,16 +1629,7 @@ CoCo에게: "EDU_UNIFIED_AGENT의 Response Instruction에 추가해줘:
 > **참고**: Orchestration Instruction은 도구 선택/순서 등 **분석 전략**에 관한 지침, Response Instruction은 답변 형식/톤 등 **응답 방식**에 관한 지침입니다. 이 시나리오는 응답에 비교 기간을 표시하라는 내용이므로 Response 쪽이 적절합니다.
 확인: Snowsight → `AI & ML` → `Agents` → `EDU_UNIFIED_AGENT` → `Configuration` → `Instructions` 서브탭에서 Response 지침에 문구가 추가되었는지 확인
 
----
-
-## Chapter 10. 모니터링, 피드백, 비용 관리
-
-### 10.1 학습 목표
-- Agent 응답 품질 모니터링 방법
-- 사용자 피드백 수집 → 반영 프로세스
-- Cortex AI 비용 구조 이해 및 확인
-
-### 10.2 Agent 모니터링
+### 9.4 Agent 모니터링
 
 Snowsight `AI & ML` → `Agents` → Agent 선택 → `Observability` 탭:
 - 사용자별 질문 내역 및 대화 로그
@@ -1655,7 +1647,7 @@ Snowsight `AI & ML` → `Agents` → Agent 선택 → `Observability` 탭:
 | 응답 시간 | Observability 타임스탬프 | Budget/웨어하우스 조정 |
 | 사용자 만족도 | Cowork 피드백 | 전반적 개선 |
 
-### 10.3 피드백 기반 개선 루프
+### 9.5 피드백 기반 개선 루프
 
 ```
 Cowork 👎 피드백 수집
@@ -1670,7 +1662,7 @@ Cowork 👎 피드백 수집
 수정 적용 → 재테스트 → 재배포
 ```
 
-### 10.4 Agent 버전 관리
+### 9.6 Agent 버전 관리
 
 ```sql
 -- LIVE 버전을 커밋하여 새 Named Version 생성 (예: VERSION$2)
@@ -1692,7 +1684,7 @@ SHOW VERSIONS IN AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT;
 ALTER AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT ADD LIVE VERSION FROM LAST;
 ```
 
-### 10.5 비용 확인
+### 9.7 비용 확인
 
 #### 비용 구조
 
@@ -1776,7 +1768,7 @@ ORDER BY 1 DESC, CREDITS DESC;
 | VQR 활용 | VQR 매칭 시 SQL 생성 정확도 향상 + 지연 감소 |
 | 데이터 사전 활용 | Agent가 사전에서 바로 답 얻으면 Analyst 호출 줄어듦 |
 
-### 10.6 운영 체크리스트
+### 9.8 운영 체크리스트
 
 | 주기 | 작업 | 담당 |
 |------|------|------|
