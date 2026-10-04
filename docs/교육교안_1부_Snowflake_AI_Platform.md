@@ -687,7 +687,7 @@ Tools 화면에는 다음 섹션이 순서대로 나열됩니다:
    - **Warehouse**: Custom → `SF_WH`
    - **Query timeout**: 비워두기 (기본 타임아웃 적용)
 
-> 우측 상단 **Saved** 표시를 확인합니다 (자동 저장).
+> 설정 후 우측 상단 **Save** 버튼을 클릭하여 저장합니다.
 
 ### 4.4 Step 3: Instruction 작성 (기본)
 
