@@ -978,7 +978,7 @@ Agent 상세 화면 → **Configuration** 탭으로 이동하여 다음 3단계�
 
 ### 5.7 Step 5: Agent에서 정확도 향상 확인
 
-Agent **Preview** 탭에서 Chapter 4에서 실패했던 질문을 다시 테스트합니다. **Show Traces**를 켜고 확인하세요.
+Agent **Preview** 탭에서 Chapter 4에서 테스트했던 질문을 다시 시도합니다. **Show Traces**를 켜고 확인하세요.
 
 | # | 질문 | 확인 포인트 |
 |---|------|------------|
