@@ -1427,7 +1427,7 @@ Chapter 6에서 만든 `EDU_SALES_AGENT`는 매출 Semantic View + 데이터사�
 ```sql
 CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
   COMMENT = '스노우패션 통합 분석 (매출 + SCM + VOC + 데이터사전) 교육용'
-  PROFILE = '{"display_name": "스노우패션 통합분석(교육)"}'
+  PROFILE = '{"display_name": "스노우패션 통합분석(교육)", ...}'
   FROM SPECIFICATION
   $$
   orchestration:
@@ -1437,10 +1437,28 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
   instructions:
     orchestration: |
       당신은 스노우패션의 통합 데이터 분석 전문가입니다.
-      -- (도구 선택 규칙, 복합 질문 처리 등 — 전체는 SQL 파일 참조)
+      ■ 도구 사용 규칙:
+      1. 생소한 용어/약어 → dict_search 먼저 검색
+      2. 매출/고객/상품/매장 분석 → sales_analytics (dict_search 결과 참고)
+      3. 재고/발주/배송/벤더 분석 → scm_analytics
+      4. 수치 질문 → 반드시 sales_analytics 또는 scm_analytics 호출
+      5. 고객 리뷰/VOC → voc_search
+      6. 복합 질문 → 여러 도구 순차 사용
+         - "품절 상품 매출 영향" → scm_analytics + sales_analytics
+         - "배송 지연 고객 불만" → scm_analytics + voc_search
+      -- (dict_search 시나리오: 순매출, 주력상품, 가용재고, 배송지연 등 — 전체는 SQL 파일 참조)
 
     response: |
-      한국어 답변. ₩ 단위, 천단위 구분자. 인사이트 + 실행 가능한 제안 포함.
+      1. 한국어 답변. 2. ₩ 단위, 천단위 구분자.
+      3. 수치 + 인사이트. 4. 차트 적극 활용.
+      5. dict_search 결과 자연스럽게 포함. 6. 리뷰 원문 인용.
+      7. 복수 도구 사용 시 각 분석 결과 명확히 구분. 8. 실행 가능한 제안 포함.
+
+    sample_questions:
+      - question: "이번 달 브랜드별 매출은?"
+      - question: "품절 위험 상품은?"
+      - question: "배송 지연이 매출에 영향을 주고 있을까?"
+      - question: "탑텐 고객 불만 TOP 3는?"
 
   tools:
     - tool_spec: { type: cortex_analyst_text_to_sql, name: sales_analytics, ... }
@@ -1448,10 +1466,11 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
     - tool_spec: { type: cortex_search, name: dict_search, ... }
     - tool_spec: { type: cortex_search, name: voc_search, ... }
     - tool_spec: { type: data_to_chart, name: data_to_chart, ... }
+    - tool_spec: { type: code_execution, name: code_execution }
 
   tool_resources:
-    sales_analytics: { semantic_view: "SNOW_FASHION.SEMANTIC.EDU_SALES_SV", ... }
-    scm_analytics: { semantic_view: "SNOW_FASHION.SEMANTIC.EDU_SCM_SV", ... }
+    sales_analytics: { semantic_view: "SNOW_FASHION.SEMANTIC.EDU_SALES_SV", warehouse: SF_WH }
+    scm_analytics: { semantic_view: "SNOW_FASHION.SEMANTIC.EDU_SCM_SV", warehouse: SF_WH }
     dict_search: { search_service: "SNOW_FASHION.SEMANTIC.EDU_DICT_SEARCH", max_results: 5, ... }
     voc_search: { search_service: "SNOW_FASHION.SEMANTIC.EDU_VOC_SEARCH", max_results: 10, ... }
   $$;
