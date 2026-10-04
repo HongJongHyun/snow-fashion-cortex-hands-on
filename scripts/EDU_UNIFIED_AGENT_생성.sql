@@ -8,7 +8,7 @@
 
 CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
   COMMENT = '스노우패션 통합 분석 (매출 + SCM + VOC + 데이터사전) 교육용'
-  PROFILE = '{"display_name": "스노우패션 통합분석(교육)", "description": "스노우패션 4개 브랜드의 매출·고객·상품·매장 데이터와 SCM(재고/발주/배송/벤더) 데이터를 통합 분석하고, 데이터 사전과 고객 리뷰(VOC)를 검색할 수 있는 교육용 에이전트입니다."}'
+  PROFILE = '{"display_name": "스노우패션 통합분석(교육)"}'
   FROM SPECIFICATION
   $$
   orchestration:

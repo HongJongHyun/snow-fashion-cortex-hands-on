@@ -7,7 +7,7 @@
 
 CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
   COMMENT = '스노우패션 매출분석 교육용 에이전트 (Analyst + 데이터사전 + VOC)'
-  PROFILE = '{"display_name": "스노우패션 매출분석(교육)", "description": "스노우패션 4개 브랜드(TOPTEN, ZIOZIA, OLZEN, ANDZ)의 매출·고객·상품 데이터를 분석하고, 데이터 사전과 고객 리뷰(VOC)를 검색할 수 있는 교육용 에이전트입니다."}'
+  PROFILE = '{"display_name": "스노우패션 매출분석(교육)"}'
   FROM SPECIFICATION
   $$
   orchestration:
