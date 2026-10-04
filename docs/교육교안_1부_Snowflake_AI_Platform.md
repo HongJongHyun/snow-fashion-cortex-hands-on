@@ -1184,7 +1184,7 @@ Agent **Preview** 탭에서 3개 도구가 모두 연결된 최종 Agent를 테�
 ```sql
 CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
   COMMENT = '스노우패션 매출분석 교육용 에이전트 (Analyst + 데이터사전 + VOC)'
-  PROFILE = '{"display_name": "스노우패션 매출분석(교육)"}'
+  PROFILE = '{"display_name": "스노우패션 매출분석(교육)", ...}'
   FROM SPECIFICATION
   $$
   orchestration:
@@ -1193,10 +1193,24 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
   instructions:
     orchestration: |
       당신은 스노우패션의 데이터 분석 전문가입니다.
-      -- (도구 사용 규칙, dict_search 활용 시나리오 등 — 전체는 SQL 파일 참조)
+      ■ 도구 사용 규칙:
+      1. 생소한 용어/약어 → dict_search 먼저 검색
+      2. 매출/KPI 분석 → sales_analytics (dict_search 결과 참고)
+      3. 수치 질문 → 반드시 sales_analytics 호출
+      4. 고객 리뷰/VOC → voc_search
+      5. 복합 질문 → 여러 도구 순차 사용
+      -- (dict_search 활용 시나리오, 주의사항 등 — 전체는 SQL 파일 참조)
 
     response: |
-      한국어 답변. ₩ 단위, 천단위 구분자. 차트 적극 활용.
+      1. 한국어 답변. 2. ₩ 단위, 천단위 구분자.
+      3. 수치 + 인사이트. 4. 차트 적극 활용.
+      5. dict_search 결과 자연스럽게 포함. 6. 리뷰 원문 인용.
+
+    sample_questions:
+      - question: "브랜드별 이번 달 매출은 얼마야?"
+      - question: "브랜드별 순매출 보여줘"
+      - question: "사이즈 불만 리뷰를 찾아줘"
+      - question: "라방 매출이 전월 대비 어떻게 변했어?"
 
   tools:
     - tool_spec: { type: cortex_analyst_text_to_sql, name: sales_analytics, ... }
@@ -1206,7 +1220,7 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
     - tool_spec: { type: code_execution, name: code_execution }
 
   tool_resources:
-    sales_analytics: { semantic_view: "SNOW_FASHION.SEMANTIC.EDU_SALES_SV", ... }
+    sales_analytics: { semantic_view: "SNOW_FASHION.SEMANTIC.EDU_SALES_SV", warehouse: SF_WH }
     dict_search: { search_service: "SNOW_FASHION.SEMANTIC.EDU_DICT_SEARCH", max_results: 4, ... }
     voc_search: { search_service: "SNOW_FASHION.SEMANTIC.EDU_VOC_SEARCH", max_results: 4, ... }
   $$;

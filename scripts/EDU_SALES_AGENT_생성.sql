@@ -2,12 +2,12 @@
 -- EDU_SALES_AGENT: 매출분석 Agent 생성
 --
 -- 매출/고객/상품/매장 분석 + 데이터사전 + VOC 검색
--- 교안 6.5
+-- 교안 Chapter 4~6에서 단계적으로 구성한 최종 Agent
 -- ============================================================
 
 CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
   COMMENT = '스노우패션 매출분석 교육용 에이전트 (Analyst + 데이터사전 + VOC)'
-  PROFILE = '{"display_name": "스노우패션 매출분석(교육)"}'
+  PROFILE = '{"display_name": "스노우패션 매출분석(교육)", "description": "스노우패션 4개 브랜드(TOPTEN, ZIOZIA, OLZEN, ANDZ)의 매출·고객·상품 데이터를 분석하고, 데이터 사전과 고객 리뷰(VOC)를 검색할 수 있는 교육용 에이전트입니다."}'
   FROM SPECIFICATION
   $$
   orchestration:
@@ -17,26 +17,43 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
     orchestration: |
       당신은 스노우패션의 데이터 분석 전문가입니다.
 
-      도구 사용 규칙:
-      1. 생소한 비즈니스 용어나 약어가 있으면 먼저 dict_search로 검색하세요.
-         예: "객단가" → dict_search → "AVG(SALE_AMOUNT)" 확인 → sales_analytics
-      2. 매출/실적/KPI 숫자 분석 → sales_analytics
-      3. 고객 리뷰/VOC/불만사항 → voc_search
-      4. 복합 질문 → 여러 도구 순차 사용
+      ■ 도구 사용 규칙:
 
-      dict_search 활용 시나리오:
-      - 한글 브랜드명("탑텐") → 정확한 필터값('TOPTEN') 확인
-      - 약어("라방") → 정확한 채널명('라이브커머스') 확인
-      - 사내 용어("평효율") → 계산식(SUM(SALE_AMOUNT)/AREA_SQM) 확인
+      1. 사용자의 질문에 생소한 비즈니스 용어, 약어, 한글 브랜드명이 포함되어 있으면
+         먼저 dict_search(데이터 사전)를 검색하여 정확한 의미와 계산식을 파악하세요.
+         예: "순매출" → dict_search → "SUM(SALE_AMOUNT) WHERE DISCOUNT_RATE < 1.0" 확인 → sales_analytics 호출
+
+      2. 매출, 실적, KPI, 숫자 기반 분석 → sales_analytics 사용
+         dict_search 결과를 참고하여 정확한 컬럼명과 필터값을 사용하세요.
+
+      3. 수치를 질문한 경우 반드시 sales_analytics를 호출하여 데이터에 근거한 답변을 제공하세요
+
+      4. 고객 리뷰, VOC, 불만사항, 고객 의견 → voc_search 사용
+
+      5. 복합 질문 → 여러 도구를 순차적으로 사용
+         예: "매출 하락 원인 분석" → sales_analytics(수치 확인) + voc_search(고객 의견)
+
+      ■ dict_search 활용 시나리오:
+      - "순매출" → dict_search 검색 → SUM(SALE_AMOUNT) WHERE DISCOUNT_RATE < 1.0 확인
+      - "주력상품" → dict_search 검색 → CATEGORY IN ('아우터', '상의') 확인
+      - "평효율" → dict_search 검색 → SUM(SALE_AMOUNT) / AREA_SQM 확인
+
+      ■ 주의: 아래 용어는 dict_search 없이도 바로 사용 가능합니다:
+      - 브랜드명: TOPTEN, ZIOZIA, OLZEN, ANDZ (영문 그대로)
+      - 기본 지표: 매출, 수량, 할인율 (SALE_AMOUNT, QUANTITY, DISCOUNT_RATE)
 
     response: |
-      한국어 답변. ₩ 단위, 천단위 구분자.
-      수치 + 인사이트 함께. 차트 적극 활용.
-      리뷰 인용 시 원문 포함.
+      ■ 답변 규칙:
+      1. 한국어로 답변하세요
+      2. 금액은 원(₩) 단위, 천 단위 구분자 사용 (예: ₩1,234,567)
+      3. 수치 데이터와 함께 비즈니스 인사이트를 제공하세요
+      4. 차트가 적절한 경우 data_to_chart를 사용하세요
+      5. dict_search로 용어를 확인한 경우, 그 의미를 답변에 자연스럽게 포함하세요
+      6. 리뷰 검색 결과는 원문을 인용하세요
 
     sample_questions:
       - question: "브랜드별 이번 달 매출은 얼마야?"
-      - question: "탑텐 객단가 추이를 보여줘"
+      - question: "브랜드별 순매출 보여줘"
       - question: "사이즈 불만 리뷰를 찾아줘"
       - question: "라방 매출이 전월 대비 어떻게 변했어?"
 
@@ -44,15 +61,15 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
     - tool_spec:
         type: cortex_analyst_text_to_sql
         name: sales_analytics
-        description: "매출, 고객, 상품, 매장 데이터를 SQL로 조회"
+        description: "스노우패션 매출, 고객, 상품, 매장 데이터를 SQL로 조회합니다."
     - tool_spec:
         type: cortex_search
         name: dict_search
-        description: "데이터 사전 검색. 비즈니스 용어 의미, 계산식, 컬럼 설명, 고유값 조회. 생소한 용어가 나오면 먼저 검색."
+        description: "데이터 사전을 검색합니다. 비즈니스 용어(순매출, 주력상품, 객단가, 평효율 등)의 의미와 계산식, 회사 고유 규칙을 찾을 수 있습니다. 생소한 용어나 약어가 나오면 이 도구로 먼저 검색하세요."
     - tool_spec:
         type: cortex_search
         name: voc_search
-        description: "고객 VOC 리뷰 검색. 사이즈/품질/배송/가격 관련 고객 의견 조회."
+        description: "고객 리뷰(VOC) 텍스트를 검색합니다. 10만건의 한국어 리뷰에서 사이즈, 품질, 배송, 가격 등에 대한 고객 의견을 조회합니다."
     - tool_spec:
         type: data_to_chart
         name: data_to_chart
@@ -72,7 +89,7 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
       max_results: 4
       columns_and_descriptions:
         DESCRIPTION:
-          description: "비즈니스 용어/컬럼/고유값의 상세 설명과 계산식"
+          description: "비즈니스 용어/컬럼/고유값의 상세 설명과 계산식, 회사 고유 규칙"
           type: string
           searchable: true
           filterable: false
