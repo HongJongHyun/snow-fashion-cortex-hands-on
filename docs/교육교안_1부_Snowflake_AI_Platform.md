@@ -1410,7 +1410,30 @@ CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SCM_SV
   COMMENT = '스노우패션 SCM 분석 - 재고/발주/배송/벤더 (교육용)';
 ```
 
-### 8.4 통합 Agent 생성
+### 8.4 데이터 사전에 SCM 용어 확인
+
+Chapter 5에서 실행한 `EDU_DATA_DICTIONARY_생성.sql`에는 SCM 도메인 용어가 이미 포함되어 있습니다:
+
+```sql
+-- 이미 적재된 SCM 용어 확인
+SELECT TERM, DESCRIPTION 
+FROM SNOW_FASHION.SEMANTIC.EDU_DATA_DICTIONARY 
+WHERE DOMAIN = 'SCM';
+```
+
+| TERM | 핵심 내용 |
+|------|----------|
+| 배송지연 | DELAY_DAYS > 0이면 지연. 테이블: SHIPMENTS |
+| 벤더품질 | QUALITY_SCORE 0~100. 테이블: VENDORS |
+| 리드타임 | 발주→입고 소요 일수. LEAD_TIME_DAYS. 테이블: VENDORS |
+| 가용재고 | ON_HAND_QTY - RESERVED_QTY. 테이블: INVENTORY_SNAPSHOT |
+| 재고상태 | STATUS 허용값: 정상, 부족, 과잉. 테이블: INVENTORY_SNAPSHOT |
+
+> 이 용어들이 있기 때문에 통합 Agent가 "품절 위험", "배송 지연", "가용재고" 같은 SCM 질문에서도 dict_search를 활용하여 정확한 컬럼과 조건을 찾을 수 있습니다.
+>
+> 추가 SCM 용어가 필요하면 Chapter 5.8의 확장 가이드를 참고하여 데이터 사전에 항목을 추가하세요.
+
+### 8.5 통합 Agent 생성
 
 Chapter 6에서 만든 `EDU_SALES_AGENT`는 매출 Semantic View + 데이터사전 + VOC 3개 도구를 사용합니다. 여기서는 SCM Semantic View를 추가하여 **매출 + SCM + VOC + 데이터사전** 4개 영역을 하나의 Agent에서 분석할 수 있는 통합 Agent를 만듭니다.
 
@@ -1476,7 +1499,7 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
   $$;
 ```
 
-### 8.5 생성 결과 확인
+### 8.6 생성 결과 확인
 
 **Semantic View 확인:**
 
@@ -1496,7 +1519,7 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
 4. `Configuration` → `Instructions` 서브탭에서 Orchestration/Response 지침이 입력되어 있는지 확인
 5. `Preview` 탭으로 이동 → 다음 8.6 데모 시나리오에서 동작을 테스트합니다.
 
-### 8.6 멀티 도메인 데모 시나리오
+### 8.7 멀티 도메인 데모 시나리오
 
 `Preview` 탭에서 아래 질문들을 테스트합니다. 복수 도구를 순차 사용하여 영역 간 연결 분석이 되는지 확인하세요.
 
@@ -1514,7 +1537,7 @@ Q: "배송 지연이 잦은 협력업체 상품에 대한 고객 불만은?"
   3) 종합: "XX벤더의 니트 상품 배송 지연 → 고객 리뷰에서 '배송 느림' 불만 다수"
 ```
 
-### 8.7 CoWork에 통합 Agent 등록
+### 8.8 CoWork에 통합 Agent 등록
 
 데모 테스트가 완료되면 통합 Agent도 CoWork에 등록합니다.
 
