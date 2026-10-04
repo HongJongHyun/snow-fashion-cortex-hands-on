@@ -646,7 +646,8 @@ Verified Query 매칭됨?
 ### 4.1 학습 목표
 - Agent를 Snowsight UI에서 생성하는 전체 과정 실습
 - Chapter 3에서 구축한 Semantic View를 Analyst 도구로 연결
-- Agent의 기본 매출 질문 응답 확인 및 비즈니스 용어 해석 한계 체험
+- Instruction 작성으로 Agent의 동작 방식 설정
+- Agent의 기본 매출 질문 응답 확인 및 회사 고유 규칙 적용 한계 체험
 
 ```
 ┌─────────────────────────────────┐
