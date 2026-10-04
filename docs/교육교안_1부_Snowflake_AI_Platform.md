@@ -1100,9 +1100,11 @@ AS (
 
 ### 6.4 Step 2: Agent에 VOC 도구 추가
 
-Agent 상세 화면 → **Configuration** 탭 → **Tools** 서브탭으로 이동합니다.
+Agent 상세 화면 → **Configuration** 탭으로 이동하여 다음 4단계를 수행합니다.
 
-1. **Search documents and unstructured data** 섹션에서 `+ Add search service` 클릭
+**1) Tools 서브탭 — voc_search 도구 추가**
+
+1. **Tools** 서브탭 → **Search documents and unstructured data** 섹션에서 `+ Add search service` 클릭
 2. 설정:
    - **Schema**: `SEMANTIC` (Database: `SNOW_FASHION`)
    - **Search service**: `EDU_VOC_SEARCH`
@@ -1110,25 +1112,55 @@ Agent 상세 화면 → **Configuration** 탭 → **Tools** 서브탭으로 이�
    - **Description**: `고객 리뷰(VOC) 텍스트를 검색합니다. 10만건의 한국어 리뷰에서 사이즈, 품질, 배송, 가격 등에 대한 고객 의견을 조회합니다.`
    - **Advanced configuration**: 기본값 유지 (**Max results**: `4`)
 
-**Instruction 업데이트:**
+**2) Instructions 서브탭 — Orchestration instructions 교체**
 
-**Configuration** → **Instructions** 서브탭에서 Orchestration instructions에 다음 규칙을 추가합니다:
+> Chapter 5에서 작성한 Orchestration instructions를 아래 내용으로 **전체 교체**합니다. 기존 규칙(1~3번, dict_search 시나리오)은 유지하면서 voc_search 관련 규칙(4~5번)이 추가됩니다.
 
 ```
-3. 고객 리뷰, VOC, 불만사항, 고객 의견 → voc_search 사용
+당신은 스노우패션의 데이터 분석 전문가입니다.
 
-4. 복합 질문 → 여러 도구를 순차적으로 사용
+■ 도구 사용 규칙:
+
+1. 사용자의 질문에 생소한 비즈니스 용어, 약어, 한글 브랜드명이 포함되어 있으면
+   먼저 dict_search(데이터 사전)를 검색하여 정확한 의미와 계산식을 파악하세요.
+   예: "순매출" → dict_search → "SUM(SALE_AMOUNT) WHERE DISCOUNT_RATE < 1.0" 확인 → sales_analytics 호출
+
+2. 매출, 실적, KPI, 숫자 기반 분석 → sales_analytics 사용
+   dict_search 결과를 참고하여 정확한 컬럼명과 필터값을 사용하세요.
+
+3. 수치를 질문한 경우 반드시 sales_analytics를 호출하여 데이터에 근거한 답변을 제공하세요
+
+4. 고객 리뷰, VOC, 불만사항, 고객 의견 → voc_search 사용
+
+5. 복합 질문 → 여러 도구를 순차적으로 사용
    예: "매출 하락 원인 분석" → sales_analytics(수치 확인) + voc_search(고객 의견)
+
+■ dict_search 활용 시나리오:
+- "순매출" → dict_search 검색 → SUM(SALE_AMOUNT) WHERE DISCOUNT_RATE < 1.0 확인
+- "주력상품" → dict_search 검색 → CATEGORY IN ('아우터', '상의') 확인
+- "평효율" → dict_search 검색 → SUM(SALE_AMOUNT) / AREA_SQM 확인
+
+■ 주의: 아래 용어는 dict_search 없이도 바로 사용 가능합니다:
+- 브랜드명: TOPTEN, ZIOZIA, OLZEN, ANDZ (영문 그대로)
+- 기본 지표: 매출, 수량, 할인율 (SALE_AMOUNT, QUANTITY, DISCOUNT_RATE)
 ```
 
-Response instructions에 추가:
+**3) Instructions 서브탭 — Response instructions에 1줄 추가**
+
+> Chapter 5에서 작성한 Response instructions(1~5번)은 그대로 유지하고, 아래 6번을 **추가**합니다.
+
 ```
 6. 리뷰 검색 결과는 원문을 인용하세요
 ```
 
-**Example questions 추가** (General 서브탭):
+**4) General 서브탭 — Example questions 추가**
+
+> 기존 질문은 유지하고 아래 2개를 **추가**합니다.
+
 - "사이즈 불만 리뷰를 찾아줘"
 - "라방 매출이 전월 대비 어떻게 변했어?"
+
+> 모든 설정 후 **Save** 클릭.
 
 ### 6.5 Step 3: Agent 통합 테스트
 
