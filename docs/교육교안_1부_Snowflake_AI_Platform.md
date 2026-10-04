@@ -1681,7 +1681,16 @@ ALTER AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT ADD LIVE VERSION FROM LAST;
 | Warehouse | SQL 실행 시간 (크레딧) |
 | Code Execution | Preview — 별도 과금 구조 미공개 |
 
-> **참고**: Cortex Search 비용은 `METERING_DAILY_HISTORY`의 `CORTEX_SEARCH` 타입 외에 전용 뷰 `CORTEX_SEARCH_DAILY_USAGE_HISTORY`, `CORTEX_SEARCH_SERVING_USAGE_HISTORY`에서 상세 확인 가능합니다.
+**서비스별 비용 확인 뷰:**
+
+| 항목 | 조회 뷰 (SNOWFLAKE.ACCOUNT_USAGE) | 비고 |
+|------|----------------------------------|------|
+| 전체 서비스 (일별 크레딧) | `METERING_DAILY_HISTORY` | SERVICE_TYPE으로 필터 |
+| Cortex Agent | `METERING_DAILY_HISTORY` (SERVICE_TYPE = 'CORTEX_AGENTS') | 오케스트레이션 토큰 |
+| Cortex Analyst | `CORTEX_ANALYST_USAGE_HISTORY` | 사용자별/요청별 상세 |
+| Cortex Search (일별) | `CORTEX_SEARCH_DAILY_USAGE_HISTORY` | 서비스별 서빙/임베딩 |
+| Cortex Search (서빙 상세) | `CORTEX_SEARCH_SERVING_USAGE_HISTORY` | 쿼리별 상세 |
+| CoWork | `METERING_DAILY_HISTORY` (SERVICE_TYPE = 'SNOWFLAKE_COWORK') | |
 
 #### 비용 조회 SQL
 
@@ -1711,9 +1720,9 @@ ORDER BY USAGE_DATE DESC, CREDITS_USED DESC;
 > WHERE USAGE_DATE >= DATEADD('DAY', -7, CURRENT_DATE()) ORDER BY 1;
 > ```
 
-#### 상세 비용 조회 (전용 뷰)
+#### 전용 뷰 조회 SQL
 
-Cortex Search와 Cortex Analyst는 전용 뷰에서 서비스별/사용자별 상세 내역을 확인할 수 있습니다.
+위 표의 전용 뷰를 사용하면 서비스별 상세 내역을 확인할 수 있습니다.
 
 ```sql
 -- Cortex Search: 교육용 서비스별 일별 크레딧 (서빙/임베딩)
