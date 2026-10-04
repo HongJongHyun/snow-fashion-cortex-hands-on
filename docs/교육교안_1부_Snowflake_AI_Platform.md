@@ -1329,9 +1329,10 @@ Snowsight `AI & ML` → `Agents` → `Open settings` 에서 수정:
 ## Chapter 8. 멀티 도메인 오케스트레이션
 
 ### 8.1 학습 목표
-- 여러 Semantic View를 하나의 Agent에 연결하는 방법
-- Agent Toolsets를 활용한 Agent 간 조합
+- SCM 도메인용 Semantic View를 추가로 생성하는 방법
+- 여러 Semantic View를 하나의 Agent에 연결하여 통합 Agent 구성
 - 데이터 사전 Search가 멀티 도메인에서 더 중요해지는 이유
+- 크로스 도메인 질문(매출+SCM, SCM+VOC)에서의 Agent 동작 확인
 
 ```
 ┌─────────────────────────────────────┐
