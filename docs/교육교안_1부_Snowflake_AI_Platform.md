@@ -1680,6 +1680,7 @@ ALTER AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT ADD LIVE VERSION FROM LAST;
 | Cortex Search | 웨어하우스 리프레시 + 임베딩 토큰 + 서빙(GB-month) + 스토리지 |
 | Warehouse | SQL 실행 시간 (크레딧) |
 | Code Execution | Preview — 별도 과금 구조 미공개 |
+| CoCo (Cortex Code) | 토큰 사용량 (크레딧). Snowsight/CLI/Desktop 환경별 별도 집계 |
 
 **서비스별 비용 확인 뷰:**
 
@@ -1691,6 +1692,9 @@ ALTER AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT ADD LIVE VERSION FROM LAST;
 | Cortex Search (일별) | `CORTEX_SEARCH_DAILY_USAGE_HISTORY` | 서비스별 서빙/임베딩 |
 | Cortex Search (서빙 상세) | `CORTEX_SEARCH_SERVING_USAGE_HISTORY` | 쿼리별 상세 |
 | CoWork | `METERING_DAILY_HISTORY` (SERVICE_TYPE = 'SNOWFLAKE_COWORK') | |
+| CoCo (Snowsight) | `METERING_DAILY_HISTORY` (SERVICE_TYPE = 'CORTEX_CODE_SNOWSIGHT') | Snowsight 내 CoCo |
+| CoCo (CLI) | `METERING_DAILY_HISTORY` (SERVICE_TYPE = 'CORTEX_CODE_CLI') | CoCo CLI |
+| CoCo (Desktop) | `METERING_DAILY_HISTORY` (SERVICE_TYPE = 'CORTEX_CODE_DESKTOP') | CoCo Desktop |
 
 #### 비용 조회 SQL
 
@@ -1708,7 +1712,10 @@ WHERE SERVICE_TYPE IN (
     'AI_FUNCTIONS',         -- AI_COMPLETE, AI_EXTRACT 등
     'CORTEX_SEARCH',        -- Cortex Search 서빙/인덱싱
     'CORTEX_AI_GUARDRAILS', -- AI 가드레일
-    'SNOWFLAKE_COWORK'      -- CoWork
+    'SNOWFLAKE_COWORK',     -- CoWork
+    'CORTEX_CODE_SNOWSIGHT', -- CoCo (Snowsight)
+    'CORTEX_CODE_CLI',       -- CoCo (CLI)
+    'CORTEX_CODE_DESKTOP'    -- CoCo (Desktop)
   )
   AND USAGE_DATE >= DATEADD('DAY', -30, CURRENT_DATE())
 ORDER BY USAGE_DATE DESC, CREDITS_USED DESC;
