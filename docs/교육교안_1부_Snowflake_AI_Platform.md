@@ -648,6 +648,18 @@ Verified Query 매칭됨?
 - Chapter 3에서 구축한 Semantic View를 Analyst 도구로 연결
 - Agent의 기본 매출 질문 응답 확인 및 비즈니스 용어 해석 한계 체험
 
+```
+┌─────────────────────────────────┐
+│        EDU_SALES_AGENT          │
+│                                 │
+│   ┌───────────────────────┐     │
+│   │  sales_analytics      │     │
+│   │  (Cortex Analyst)     │─────┼──▶ EDU_SALES_SV
+│   └───────────────────────┘     │
+│                                 │
+└─────────────────────────────────┘
+```
+
 ### 4.2 Step 1: Agent 생성 (Snowsight UI)
 
 1. Snowsight 좌측 메뉴 → `AI & ML` → `Agents`
@@ -755,6 +767,22 @@ Agent 상세 화면 상단의 **Preview** 탭으로 이동합니다.
 - 데이터 사전 테이블을 설계하고 데이터를 적재하는 방법
 - Cortex Search Service로 데이터 사전을 검색 가능하게 만드는 방법
 - Agent에 데이터 사전 도구를 추가하여 회사 고유 비즈니스 규칙 적용 확인
+
+```
+┌─────────────────────────────────┐
+│        EDU_SALES_AGENT          │
+│                                 │
+│   ┌───────────────────────┐     │
+│   │  sales_analytics      │     │
+│   │  (Cortex Analyst)     │─────┼──▶ EDU_SALES_SV
+│   └───────────────────────┘     │
+│   ┌───────────────────────┐     │
+│   │  dict_search  ★NEW    │     │
+│   │  (Cortex Search)      │─────┼──▶ EDU_DICT_SEARCH
+│   └───────────────────────┘     │
+│                                 │
+└─────────────────────────────────┘
+```
 
 ### 5.2 왜 데이터 사전이 필요한가?
 
@@ -985,6 +1013,26 @@ ALTER CORTEX SEARCH SERVICE SNOW_FASHION.SEMANTIC.EDU_DICT_SEARCH REFRESH;
 - 고객 리뷰 텍스트를 검색 가능하게 만드는 과정 이해
 - Agent에 VOC 검색 도구를 추가하여 기능 확장
 - 3개 도구(Analyst + 데이터 사전 + VOC)가 연결된 Agent의 통합 테스트
+
+```
+┌─────────────────────────────────┐
+│        EDU_SALES_AGENT          │
+│                                 │
+│   ┌───────────────────────┐     │
+│   │  sales_analytics      │     │
+│   │  (Cortex Analyst)     │─────┼──▶ EDU_SALES_SV
+│   └───────────────────────┘     │
+│   ┌───────────────────────┐     │
+│   │  dict_search          │     │
+│   │  (Cortex Search)      │─────┼──▶ EDU_DICT_SEARCH
+│   └───────────────────────┘     │
+│   ┌───────────────────────┐     │
+│   │  voc_search   ★NEW    │     │
+│   │  (Cortex Search)      │─────┼──▶ EDU_VOC_SEARCH
+│   └───────────────────────┘     │
+│                                 │
+└─────────────────────────────────┘
+```
 
 ### 6.2 데이터 사전 Search vs VOC Search
 
