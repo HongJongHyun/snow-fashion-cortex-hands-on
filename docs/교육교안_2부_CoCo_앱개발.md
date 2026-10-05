@@ -762,10 +762,19 @@ Snowflake App Runtime은 **Node.js(Next.js) 기반 웹 앱**을 Snowflake 내에
 | **UI 자유도** | 제한적 (Streamlit 위젯) | 높음 (React 컴포넌트, 단 Snowflake 보안 샌드박스 내) |
 | **적합한 앱** | 대시보드, 데이터 탐색, 분석 도구 | 관리 포털, CRUD 앱, 복잡한 워크플로우 |
 | **개발 속도** | 매우 빠름 (Python만으로) | 중간 (프론트엔드 지식 필요) |
-| **인터랙션** | 기본 위젯 | 인라인 편집, 드래그앤드롭, 키보드 단축키 등 |
 | **멀티페이지** | 지원 (`st.navigation`, `pages/`) | Next.js 파일 기반 라우팅으로 자유롭게 구성 |
 | **개발 환경** | Snowsight Workspace 또는 CoCo Desktop | CoCo Desktop 필수 (Snowsight CoCo 미지원) |
 | **배포** | Workspace에서 Deploy 버튼 | `snow app deploy` |
+
+#### App Runtime에서만 가능한 인터랙션
+
+| 기능 | Streamlit | App Runtime |
+|------|:-:|:-:|
+| 인라인 데이터 편집 (셀 클릭 → 수정) | X | O |
+| 실시간 검색 (입력 중 자동 필터링) | X | O |
+| 키보드 단축키 | X | O |
+| 탭 전환 시 페이지 리로드 없이 유지 | X | O |
+| 커스텀 차트 (D3.js, Recharts 등) | 제한적 | O |
 
 #### 선택 기준 요약
 
@@ -1000,19 +1009,7 @@ SNOW_FASHION.RAW 스키마의 데이터를 활용한 스노우패션 운영 관�
 
 > **반복 빌드 패턴 정리**: Chapter 4(Streamlit)에서와 마찬가지로, 한 번에 모든 것을 만들지 않고 **핵심 기능 → 페이지 확장 → UI 마무리** 순서로 점진적으로 발전시킵니다. App Runtime에서는 각 Step마다 배포하여 실제 데이터 연동을 확인하는 것이 핵심입니다.
 
-### 5.7 App Runtime의 장점 정리 (Streamlit 대비)
-
-Streamlit으로는 구현이 어려운 기능들:
-
-| 기능 | Streamlit | App Runtime |
-|------|:-:|:-:|
-| 인라인 데이터 편집 (셀 클릭 → 수정) | X | O |
-| 실시간 검색 (입력 중 자동 필터링) | X | O |
-| 키보드 단축키 | X | O |
-| 탭 전환 시 페이지 리로드 없이 유지 | X | O |
-| 커스텀 차트 (D3.js, Recharts 등) | 제한적 | O |
-
-### 5.8 CoCo Desktop 고급 기능
+### 5.7 CoCo Desktop 고급 기능
 
 | 기능 | 설명 |
 |------|------|
