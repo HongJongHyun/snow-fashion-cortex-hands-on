@@ -580,126 +580,136 @@ GRANT WRITE ON WORKSPACE <workspace_name> TO ROLE <role>;
 ## Chapter 4. Snowsight CoCo로 Streamlit 리포트 생성
 
 ### 4.1 학습 목표
-- Snowsight CoCo에게 자연어로 Streamlit 앱을 만들어달라고 요청하는 과정 체험
-- 생성된 코드를 수정하고 배포하는 워크플로우
+- CoCo에게 자연어로 Streamlit 앱을 만들어달라고 요청하는 과정 체험
+- 한 번에 완벽한 앱을 만들기보다 **단계적으로 기능을 추가하는 반복 빌드 워크플로우** 실습
+- 생성된 코드를 확인하고 배포하는 과정
 
 ### 4.2 데모 시나리오: 브랜드별 매출 대시보드
 
-#### Step 1: Streamlit 앱 생성 및 CoCo 열기
+CoCo와 대화하며 4단계로 앱을 점진적으로 발전시킵니다.
+
+```
+Step 1: 데이터 테이블 → Step 2: 차트 추가 → Step 3: 필터 추가 → Step 4: 디자인 마무리 → Step 5: 배포
+```
+
+#### Step 1: Streamlit 앱 생성 — 데이터 테이블 먼저
+
+> 가장 먼저 데이터가 제대로 조회되는지 확인합니다. 차트나 필터 없이 **테이블만** 보여주는 앱을 만듭니다.
 
 1. Snowsight → `Projects` → `Workspaces` → Workspace 선택
 2. `+ Add new` → `Streamlit app` → 앱 이름 입력 (예: `sales_dashboard`) → Enter
-3. 자동 생성된 `streamlit_app.py` 파일이 열림 — **샘플 코드가 이미 채워진 상태**
-4. 에디터에서 **Ctrl+A** (macOS: Cmd+A) → **Delete** 키로 샘플 코드 전체 삭제
-5. 우측 CoCo 패널에서 아래 프롬프트를 입력:
+3. 자동 생성된 `streamlit_app.py` 파일이 열림 — **Ctrl+A** (macOS: Cmd+A) → **Delete** 키로 샘플 코드 전체 삭제
+4. 우측 CoCo 패널에서 아래 프롬프트를 입력:
 
 ```
-아래 조건에 맞는 Streamlit 대시보드 앱을 streamlit_app.py에 작성해줘.
+아래 조건에 맞는 Streamlit 앱을 streamlit_app.py에 작성해줘.
 
 ## 사전 작업
 - 먼저 SHOW COLUMNS IN TABLE SNOW_FASHION.RAW.SALES_TRANSACTIONS 를 실행해서
   실제 컬럼명과 데이터 타입을 확인한 뒤, 아래 요구사항에 맞는 컬럼을 사용할 것
-- 날짜 컬럼 (DATE 타입), 브랜드 컬럼 (TEXT 타입), 매출 금액 컬럼 (NUMBER 타입)을
-  실제 컬럼명 기준으로 코드에 적용할 것
 
 ## 데이터 소스
 - 테이블: SNOW_FASHION.RAW.SALES_TRANSACTIONS
-- 필요한 컬럼 역할:
-  - 거래 일자 (DATE 타입 컬럼)
-  - 브랜드명 (TEXT 타입 컬럼)
-  - 매출 금액 (NUMBER 타입 컬럼)
+- 필요한 컬럼 역할: 거래 일자(DATE 타입), 브랜드명(TEXT 타입), 매출 금액(NUMBER 타입)
 
 ## Snowflake 연결 방법
 - st.connection("snowflake") 를 사용해 Snowflake에 연결할 것
 - session = conn.session() 으로 Snowpark 세션 획득
 - SQL 실행은 session.sql("...").to_pandas() 를 사용할 것
 - USE WAREHOUSE, USE DATABASE, USE SCHEMA 구문은 쓰지 말 것
-- 쿼리에서 테이블을 참조할 때는 항상 fully qualified name
+- 쿼리에서 테이블은 항상 fully qualified name
   (SNOW_FASHION.RAW.SALES_TRANSACTIONS) 을 사용할 것
 
-## 필터 UI (st.sidebar 에 배치)
+## 집계 쿼리
+- DATE_TRUNC('MONTH', <날짜컬럼>) AS MONTH 으로 월 단위 집계
+- 브랜드별 월별 매출 합계: SUM(<매출컬럼>) AS TOTAL_SALES
+- MONTH 컬럼은 pandas에서 pd.to_datetime()으로 변환
+- 정렬: MONTH ASC, BRAND ASC
+
+## 화면 구성
+- st.title("브랜드별 매출 대시보드")
+- 집계 결과를 st.dataframe으로 표시
+- MONTH은 'YYYY-MM' 형식, TOTAL_SALES는 천 단위 구분 기호 포함
+
+## 에러 처리
+- 쿼리 실행 중 예외 발생 시: st.error(f"데이터 조회 실패: {e}") 표시
+```
+
+5. CoCo가 코드를 생성하면 **Run** 버튼으로 미리보기 — 테이블에 브랜드별 월별 매출이 잘 나오는지 확인
+
+> **팁**: 첫 프롬프트에서 CoCo에게 **스키마를 직접 조회하도록 지시**하면 컬럼명 오류를 방지할 수 있습니다.
+
+#### Step 2: 차트 추가
+
+> 데이터가 잘 나오면, 시각화를 추가합니다.
+
+CoCo에게 다음 프롬프트를 입력:
+
+```
+현재 앱에 차트를 추가해줘.
+
+- 테이블 위에 브랜드별 월별 매출 추이 라인 차트 추가 (st.altair_chart 사용)
+- X축: MONTH (yearmonth 형식, %Y-%m), Y축: TOTAL_SALES ("매출 (원)"), Color: BRAND
+- 차트 제목: "브랜드별 월별 매출 추이"
+- 범례 위치: 오른쪽
+- use_container_width=True
+- 기존 테이블은 차트 아래에 유지
+```
+
+**Run** 으로 확인 — 라인 차트에 4개 브랜드가 색상으로 구분되는지 확인
+
+#### Step 3: 필터 추가
+
+> 차트가 잘 되면, 사용자가 원하는 조건으로 필터링할 수 있게 합니다.
+
+```
+사이드바에 필터를 추가해줘.
+
+## 필터 UI (st.sidebar)
 1. 브랜드 멀티셀렉트
    - 데이터에서 브랜드 컬럼의 고유값을 조회해 선택지로 사용
    - 기본값: 전체 선택
-2. 기간 선택 (시작일 / 종료일을 각각 st.date_input 으로 구성)
+2. 기간 선택 (시작일/종료일을 각각 st.date_input 으로 구성)
    - 기본 시작일: 데이터의 날짜 컬럼 최솟값
    - 기본 종료일: 데이터의 날짜 컬럼 최댓값
 
-## 필터 적용 쿼리 구성 방식
+## 필터 적용
 - SQL은 f-string으로 구성할 것 (Snowpark session.sql()은 named binding 미지원)
-- 브랜드 목록이 비어 있을 경우("전체") 브랜드 필터를 WHERE 절에서 제외할 것
-- 날짜 필드는 TO_DATE('{date_str}') 형태로 변환해 사용할 것
+- 브랜드 목록이 비어 있으면 브랜드 필터를 WHERE 절에서 제외
+- 날짜는 TO_DATE('{date_str}') 형태로 변환
+- 필터 결과가 0건이면 st.warning("조건에 해당하는 데이터가 없습니다.") 표시, 차트와 테이블은 렌더링하지 말 것
 
-## 집계 쿼리
-- 날짜 컬럼을 월 단위로 집계: DATE_TRUNC('MONTH', <날짜컬럼>) AS MONTH
-- 브랜드별 월별 매출 합계: SUM(<매출컬럼>) AS TOTAL_SALES
-- 결과 컬럼: MONTH (date), BRAND (str), TOTAL_SALES (float)
-- MONTH 컬럼은 pandas에서 datetime 타입으로 변환할 것: pd.to_datetime(df['MONTH'])
-- 정렬: MONTH ASC, BRAND ASC
-
-## 차트 (st.altair_chart 사용)
-- 라인 차트: X축 = MONTH(월), Y축 = TOTAL_SALES(매출), Color = BRAND(브랜드)
-- X축 포맷: yearmonth 형식으로 표시 (%Y-%m)
-- Y축 레이블: "매출 (원)"
-- 차트 제목: "브랜드별 월별 매출 추이"
-- 범례 위치: 오른쪽
-- 차트 너비: use_container_width=True
-
-## 데이터 테이블
-- 차트 아래에 st.dataframe 으로 집계 결과 표시
-- MONTH 컬럼은 'YYYY-MM' 문자열 형식으로 변환해 표시
-- TOTAL_SALES 컬럼은 천 단위 구분 기호(,)를 포함한 정수 형식으로 표시
-- st.dataframe(df, use_container_width=True)
-
-## 에러 처리
-- 필터 결과가 0건인 경우: st.warning("조건에 해당하는 데이터가 없습니다.") 표시,
-  차트와 테이블은 렌더링하지 말 것
-- 쿼리 실행 중 예외 발생 시: st.error(f"데이터 조회 실패: {e}") 표시
-
-## 기타
-- 앱 제목: st.title("브랜드별 매출 대시보드")
-- import: streamlit, altair, pandas (추가 패키지 설치 불필요)
+## 캐싱
 - @st.cache_data 로 브랜드 목록 조회 결과 캐싱 (ttl=600)
 - 집계 쿼리 결과도 @st.cache_data 로 캐싱 (필터값을 인자로 받는 함수로 분리)
 ```
 
-> **팁**: 프롬프트 첫 단계에서 CoCo에게 **스키마를 직접 조회하도록 지시**하면 컬럼명 오류를 방지할 수 있습니다. 테이블 이름만 알면 되므로 범용적으로 재사용 가능한 패턴입니다.
+**Run** 으로 확인 — 사이드바에서 브랜드/기간을 변경하면 차트와 테이블이 함께 업데이트되는지 확인
 
-#### Step 2: CoCo가 생성한 코드 확인
+#### Step 4: 디자인 마무리
 
-1. CoCo가 `streamlit_app.py`에 코드를 작성하면, 내용을 읽어보고 의도한 구조인지 확인
-2. 주요 확인 포인트:
-   - Snowflake 연결 방식이 `st.connection("snowflake")`를 사용하는지
-   - SQL에서 테이블명이 fully qualified name(`SNOW_FASHION.RAW.SALES_TRANSACTIONS`)인지
-   - 필터(브랜드, 기간)가 사이드바에 배치되었는지
-   - 차트와 데이터 테이블이 모두 포함되었는지
-
-#### Step 3: 미리보기 및 수정
-
-1. **Run** 버튼으로 미리보기 확인
-2. 수정이 필요하면 CoCo에게 추가 요청:
+> 기본 기능이 완성되면, 디자인과 UX를 다듬습니다. 여러 수정을 한번에 요청합니다.
 
 ```
-차트 위에 브랜드별 총 매출 합계를 KPI 카드로 보여주는 섹션을 추가해줘
+다음 사항을 한번에 수정해줘:
+1. 차트 위에 브랜드별 총 매출 합계를 KPI 카드로 보여주는 섹션 추가
+2. 차트 색상을 브랜드별로 지정 (TOPTEN=파란색, ZIOZIA=빨간색, OLZEN=초록색, ANDZ=주황색)
+3. KPI 카드도 동일한 색상 적용
+4. 화면 좌우 여백 최소화 (wide layout)
 ```
 
-```
-차트 색상을 브랜드별로 다르게 설정해줘.
-TOPTEN은 파란색, ZIOZIA는 빨간색, OLZEN은 초록색, ANDZ는 주황색
-```
+**Run** 으로 최종 형태 확인
 
-```
-KPI 카드도 브랜드별로 동일한 색상을 적용해서 표시해줘
-```
-
-```
-화면 좌우 여백을 최소화해서 넓게 사용할 수 있게 해줘
-```
-
-#### Step 4: 배포
+#### Step 5: 배포
 
 1. **Deploy** → 배포 설정 → **Deploy** 클릭
 2. `Projects` → `Streamlit`에서 배포된 앱 확인
+
+> **반복 빌드 패턴 정리**: 실무에서 CoCo를 사용할 때도 이 패턴이 효과적입니다.
+> 1. **데이터 확인** — 테이블로 데이터가 맞는지 먼저 검증
+> 2. **시각화** — 차트를 추가하여 트렌드 파악
+> 3. **인터랙션** — 필터를 추가하여 탐색 가능하게
+> 4. **디자인** — KPI 카드, 색상, 레이아웃 등 UX 마무리
 
 ### 4.3 Streamlit in Snowflake(SiS)의 한계
 
