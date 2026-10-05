@@ -676,7 +676,9 @@ CoCo에게 다음 프롬프트를 입력:
 ## 필터 적용
 - SQL은 f-string으로 구성할 것 (Snowpark session.sql()은 named binding 미지원)
 - 브랜드 목록이 비어 있으면 브랜드 필터를 WHERE 절에서 제외
-- 날짜는 TO_DATE('{date_str}') 형태로 변환
+- st.date_input은 datetime.date 객체를 반환하므로, .date()를 다시 호출하지 말 것.
+  날짜를 문자열로 변환할 때는 str(date_value) 또는 date_value.strftime('%Y-%m-%d') 사용
+- SQL에서 날짜는 TO_DATE('{date_str}') 형태로 변환
 - 필터 결과가 0건이면 st.warning("조건에 해당하는 데이터가 없습니다.") 표시, 차트와 테이블은 렌더링하지 말 것
 
 ## 캐싱
