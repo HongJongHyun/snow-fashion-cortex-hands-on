@@ -25,7 +25,12 @@
 
 ## Chapter 1. Cortex Code(CoCo) 소개 및 환경 비교
 
-### 1.1 CoCo란?
+### 1.1 학습 목표
+- CoCo의 개념과 주요 기능 이해
+- Snowsight CoCo, CLI, Desktop 3가지 환경의 차이점 및 선택 기준
+- 1부에서 UI/SQL로 수행한 작업을 CoCo로 어떻게 대체할 수 있는지 이해
+
+### 1.2 CoCo란?
 
 Cortex Code(CoCo)는 Snowflake의 **AI 코딩 에이전트**입니다. 자연어로 요청하면:
 - SQL 작성 및 실행
@@ -35,7 +40,7 @@ Cortex Code(CoCo)는 Snowflake의 **AI 코딩 에이전트**입니다. 자연어
 - Agent 생성/수정
 - 파일 편집, 배포까지 자동 수행
 
-### 1.2 CoCo의 3가지 환경
+### 1.3 CoCo의 3가지 환경
 
 | 환경 | 실행 위치 | 주요 용도 |
 |------|-----------|-----------|
@@ -43,7 +48,7 @@ Cortex Code(CoCo)는 Snowflake의 **AI 코딩 에이전트**입니다. 자연어
 | **CoCo CLI** | 로컬 터미널 | 자동화/CI/CD, 스크립트 실행, 비대화형 작업 |
 | **CoCo Desktop** | 로컬 IDE 앱 | 본격적인 앱 개발, 멀티파일 프로젝트, App Runtime 배포 |
 
-### 1.3 CoCo가 할 수 있는 것 (1부 복습 연계)
+### 1.4 CoCo가 할 수 있는 것 (1부 복습 연계)
 
 1부에서는 주로 **Snowsight UI + SQL**로 작업했습니다:
 - Semantic View 생성 → Snowsight UI
@@ -58,7 +63,7 @@ Cortex Code(CoCo)는 Snowflake의 **AI 코딩 에이전트**입니다. 자연어
 
 ---
 
-### 1.4 Snowsight CoCo
+### 1.5 Snowsight CoCo
 
 **접속 방법**: Snowsight 내 여러 곳에서 접근 가능
 - Snowsight 우측 하단 CoCo 아이콘
@@ -82,7 +87,7 @@ Cortex Code(CoCo)는 Snowflake의 **AI 코딩 에이전트**입니다. 자연어
 - Semantic View/Agent 수정
 - Cowork 오토메이션 설정
 
-### 1.5 CoCo CLI
+### 1.6 CoCo CLI
 
 **접속 방법**: 터미널에서 `cortex` 명령어 실행
 
@@ -97,7 +102,7 @@ Cortex Code(CoCo)는 Snowflake의 **AI 코딩 에이전트**입니다. 자연어
 - CI/CD 파이프라인에서 Snowflake 작업 실행
 - 스크립트 기반 대량 작업
 
-### 1.6 CoCo Desktop
+### 1.7 CoCo Desktop
 
 **접속 방법**: 전용 데스크톱 앱 설치 후 실행
 
@@ -119,7 +124,7 @@ Cortex Code(CoCo)는 Snowflake의 **AI 코딩 에이전트**입니다. 자연어
 - Semantic View/Agent 일괄 고도화
 - 로컬 데이터 파일 → Snowflake 적재
 
-### 1.7 환경 선택 가이드
+### 1.8 환경 선택 가이드
 
 **Snowsight CoCo vs Desktop/CLI:**
 
@@ -146,13 +151,18 @@ Desktop과 CLI는 동일한 기능을 제공하며, **사용자 선호도와 환
 
 ## Chapter 2. CoCo 연결 설정
 
-### 2.1 Snowsight CoCo (별도 설정 불필요)
+### 2.1 학습 목표
+- Snowsight CoCo, CLI, Desktop 각 환경의 연결 설정 방법
+- PAT(Personal Access Token) 또는 Key Pair 인증 설정
+- 연결 확인 및 트러블슈팅
+
+### 2.2 Snowsight CoCo (별도 설정 불필요)
 
 Snowsight에 로그인하면 CoCo가 자동으로 활성화됩니다.
 - Snowsight 우측 하단의 CoCo 아이콘 클릭
 - 또는 Workspace에서 파일 열면 CoCo 패널 자동 표시
 
-### 2.2 CoCo CLI 설치 및 연결
+### 2.3 CoCo CLI 설치 및 연결
 
 #### Step 1: 설치
 
@@ -280,7 +290,7 @@ cortex
 > /connections
 ```
 
-### 2.3 CoCo Desktop 설치 및 연결
+### 2.4 CoCo Desktop 설치 및 연결
 
 #### Step 1: 설치
 
@@ -312,14 +322,19 @@ CoCo Desktop은 **로컬 디렉토리 기반**으로 작업합니다:
 
 ## Chapter 3. Workspace에서 Streamlit 앱 개발
 
-### 3.1 Workspace란?
+### 3.1 학습 목표
+- Workspace의 개념과 Development App / Deployed App 차이 이해
+- Workspace에서 Streamlit 앱을 생성하고 배포하는 전체 워크플로우 실습
+- Git 연동 및 Shared Workspace를 활용한 협업 모델 이해
+
+### 3.2 Workspace란?
 
 Snowsight Workspace는 Snowflake 내장 **파일 기반 개발 환경**입니다.
 - 코드 편집기 + 파일 탐색기 + 터미널
 - Streamlit 앱을 작성하고 바로 미리보기 가능
 - 배포(Deploy) 버튼으로 다른 사용자에게 공개
 
-### 3.2 핵심 개념
+### 3.3 핵심 개념
 
 #### Development App vs Deployed App
 
@@ -346,7 +361,7 @@ my-streamlit-app/
 
 > `snowflake.yml`은 Workspace에서 Streamlit 앱을 만들면 **자동 생성**되며, 배포 설정(Compute Pool, Query Warehouse, Runtime 등)을 저장합니다. Deploy 대화상자에서 변경한 설정도 이 파일에 반영됩니다.
 
-### 3.3 리소스 관리
+### 3.4 리소스 관리
 
 Workspace의 Streamlit 앱(Container Runtime)은 **Compute Pool** 위에서 실행됩니다. 비용은 Compute Pool 노드 가동 시간 기반으로 과금되므로, 리소스 관리가 중요합니다.
 
@@ -453,7 +468,7 @@ CREATE COMPUTE POOL IF NOT EXISTS SF_COMPUTE_POOL
 
 > **시스템 풀 사용 시**: 별도 생성 없이 `SYSTEM_COMPUTE_POOL_CPU`를 선택하면 됩니다. 노드당 최대 3개 앱이 공유 실행되며, 전용 풀처럼 MIN_NODES를 유지할 필요가 없어 간편합니다. 단, 리소스를 다른 앱과 공유하므로 성능 변동이 있을 수 있습니다.
 
-### 3.4 Workspace에서 Streamlit 앱 만들기
+### 3.5 Workspace에서 Streamlit 앱 만들기
 
 1. Snowsight → `Projects` → `Workspaces`
 2. 기존 Workspace 선택 또는 `+` 로 새 Workspace 생성
@@ -462,7 +477,7 @@ CREATE COMPUTE POOL IF NOT EXISTS SF_COMPUTE_POOL
 5. 자동으로 starter 파일이 생성됨 (`streamlit_app.py`, `pyproject.toml`, `snowflake.yml`) — `streamlit_app.py`에는 예제 코드가 미리 작성되어 있음
 5. `Run` 버튼 → 우측에 미리보기 표시
 
-### 3.5 배포하기
+### 3.6 배포하기
 
 1. 프로젝트 패널 상단의 **Deploy** 클릭
 2. 배포 설정:
@@ -483,7 +498,7 @@ CREATE COMPUTE POOL IF NOT EXISTS SF_COMPUTE_POOL
 6. **Deploy** 클릭
 7. 배포 완료 후 `Projects` → `Streamlit`에서 확인 가능
 
-### 3.6 협업 모델
+### 3.7 협업 모델
 
 | 모델 | 설명 | 적합한 팀 |
 |------|------|-----------|
@@ -704,7 +719,12 @@ SiS는 Snowflake 내장 Streamlit 환경으로 빠른 데이터 시각화에 적
 
 ## Chapter 5. Snowflake App Runtime 소개
 
-### 5.1 App Runtime이란?
+### 5.1 학습 목표
+- App Runtime의 개념과 Streamlit 대비 장점 이해
+- Streamlit vs App Runtime 선택 기준
+- App Runtime의 리소스 구조 (Compute Pool, Application Service)
+
+### 5.2 App Runtime이란?
 
 Snowflake App Runtime은 **Node.js(Next.js) 기반 웹 앱**을 Snowflake 내에서 빌드하고 배포하는 플랫폼입니다.
 
@@ -713,7 +733,7 @@ Snowflake App Runtime은 **Node.js(Next.js) 기반 웹 앱**을 Snowflake 내에
 - 별도의 Docker, CI/CD 파이프라인 불필요
 - Snowflake 인증/RBAC을 그대로 상속
 
-### 5.2 Streamlit vs App Runtime: 언제 무엇을 쓸까?
+### 5.3 Streamlit vs App Runtime: 언제 무엇을 쓸까?
 
 | 기준 | Streamlit | App Runtime |
 |------|-----------|-------------|
@@ -736,7 +756,7 @@ Snowflake App Runtime은 **Node.js(Next.js) 기반 웹 앱**을 Snowflake 내에
 "사내 관리 포털을 만들고 싶다"           → App Runtime
 ```
 
-### 5.3 App Runtime 리소스 구조
+### 5.4 App Runtime 리소스 구조
 
 ```
 로컬 프로젝트 (Next.js)
@@ -765,7 +785,7 @@ Snowflake App Runtime은 **Node.js(Next.js) 기반 웹 앱**을 Snowflake 내에
 | **Artifact Repository** | 빌드된 패키지 버전을 저장 (immutable). 기본값: `<앱이름>_REPO` |
 | **app.yml** | 배포 설정 파일 — 데이터베이스, 스키마, 웨어하우스, 인스턴스 수, install/build/run 명령 등 정의 |
 
-### 5.4 App Runtime의 장점 (Streamlit 대비)
+### 5.5 App Runtime의 장점 (Streamlit 대비)
 
 Streamlit으로는 구현이 어려운 기능들:
 
@@ -985,7 +1005,11 @@ snow app deploy
 
 ## Chapter 7. 정리: 어떤 도구를 언제 쓸 것인가
 
-### 7.1 전체 도구 맵
+### 7.1 학습 목표
+- 1부 + 2부에서 다룬 전체 도구를 역할별로 정리
+- 상황별 적합한 도구 선택 기준 확립
+
+### 7.2 전체 도구 맵
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -1012,7 +1036,7 @@ snow app deploy
 └─────────────────────────────────────────────────┘
 ```
 
-### 7.2 역할별 추천 도구
+### 7.3 역할별 추천 도구
 
 | 역할 | 주요 도구 | 보조 도구 |
 |------|-----------|-----------|
@@ -1022,7 +1046,7 @@ snow app deploy
 | **앱 개발자** | CoCo Desktop | Snowsight Workspace |
 | **팀 리더** | Cowork (오토메이션) | Snowsight CoCo |
 
-### 7.3 1부 + 2부 전체 워크플로우
+### 7.4 1부 + 2부 전체 워크플로우
 
 ```
 1. 데이터 준비 (테이블 생성, 데이터 적재)
