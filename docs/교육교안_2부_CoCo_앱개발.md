@@ -1093,8 +1093,8 @@ SNOW_FASHION.RAW 스키마의 데이터를 활용한 스노우패션 운영 관�
 |------|------|
 | Snowsight CoCo | <a href="https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight" target="_blank">CoCo in Snowsight</a> |
 | CoCo CLI | <a href="https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli" target="_blank">CoCo CLI</a> |
-| CoCo Desktop | <a href="https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code" target="_blank">Overview of Snowflake CoCo</a> |
-| Streamlit in Workspaces | <a href="https://docs.snowflake.com/en/developer-guide/streamlit/workspaces" target="_blank">Streamlit in Snowflake in Workspaces</a> |
+| CoCo Desktop | <a href="https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop" target="_blank">CoCo Desktop</a> |
+| Streamlit in Workspaces | <a href="https://docs.snowflake.com/en/developer-guide/streamlit/streamlit-in-workspaces/streamlit-in-workspaces-overview" target="_blank">Streamlit in Snowflake in Workspaces</a> |
 | App Runtime | <a href="https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/about-snowflake-app-runtime" target="_blank">Snowflake App Runtime</a> |
 | app.yml 설정 | <a href="https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/app-yml" target="_blank">app.yml manifest for Snowflake App Runtime</a> |
 
