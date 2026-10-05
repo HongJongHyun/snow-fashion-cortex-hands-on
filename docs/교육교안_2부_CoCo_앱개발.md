@@ -15,9 +15,8 @@
 | 2 | CoCo 연결 설정 | 핸즈온 | 20분 |
 | 3 | Workspace에서 Streamlit 앱 개발 | 슬라이드 + 데모 | 30분 |
 | 4 | Snowsight CoCo로 Streamlit 리포트 생성 | 라이브 데모 | 25분 |
-| 5 | Snowflake App Runtime 소개 | 슬라이드 + 데모 | 25분 |
-| 6 | CoCo Desktop으로 앱 빌드 | 라이브 데모 | 30분 |
-| 7 | 정리: 어떤 도구를 언제 쓸 것인가 | 슬라이드 | 10분 |
+| 5 | CoCo Desktop으로 App Runtime 앱 빌드 | 슬라이드 + 라이브 데모 | 50분 |
+| 6 | 정리: 어떤 도구를 언제 쓸 것인가 | 슬라이드 | 10분 |
 | 부록 A | 교육 환경 사전 준비 | 참고 | — |
 | 부록 B | 참고 자료 | 참고 | — |
 
@@ -734,16 +733,17 @@ SiS는 Snowflake 내장 Streamlit 환경으로 빠른 데이터 시각화에 적
 | **인터랙션** | 필터/버튼 기반 단방향 조작 | 실시간 양방향 인터랙션, 폼 기반 데이터 입력/수정 | O — React 상태 관리, 폼/CRUD 자유롭게 구현 |
 | **배포** | Snowflake 내부 사용자 공유 | 외부(비인증) 사용자 접근, 커스텀 도메인 | X — App Runtime도 Snowflake 인증 사용자만 접근 가능 |
 
-> **이런 한계를 넘어서려면 → CoCo Desktop + App Runtime**을 활용합니다 (Chapter 5~6).
+> **이런 한계를 넘어서려면 → CoCo Desktop + App Runtime**을 활용합니다 (Chapter 5).
 
 ---
 
-## Chapter 5. Snowflake App Runtime 소개
+## Chapter 5. CoCo Desktop으로 App Runtime 앱 빌드
 
 ### 5.1 학습 목표
 - App Runtime의 개념과 Streamlit 대비 장점 이해
-- Streamlit vs App Runtime 선택 기준
-- App Runtime의 리소스 구조 (Compute Pool, Application Service)
+- 로컬 프로젝트 기반 개발 방식과 Git을 활용한 팀 협업 모델 이해
+- CoCo Desktop에서 자연어로 App Runtime 앱을 **단계적으로 빌드하고 배포**하는 과정 체험
+- 각 Step마다 배포(`snow app deploy`)하여 실제 동작을 확인하는 반복 빌드 워크플로우 실습
 
 ### 5.2 App Runtime이란?
 
@@ -806,7 +806,185 @@ Snowflake App Runtime은 **Node.js(Next.js) 기반 웹 앱**을 Snowflake 내에
 | **Artifact Repository** | 빌드된 패키지 버전을 저장 (immutable). 기본값: `<앱이름>_REPO` |
 | **app.yml** | 배포 설정 파일 — 데이터베이스, 스키마, 웨어하우스, 인스턴스 수, install/build/run 명령 등 정의 |
 
-### 5.5 App Runtime의 장점 (Streamlit 대비)
+### 5.5 프로젝트 관리와 협업
+
+#### 5.5.1 로컬 프로젝트 구조
+
+CoCo Desktop에서 `/snowflake-apps` 스킬로 앱을 생성하면 **로컬에 다음과 같은 프로젝트 폴더**가 만들어집니다:
+
+```
+my-snow-fashion-app/
+├── app.yml              ← 앱 설정 (제목, 웨어하우스, 컴퓨트풀 등)
+├── src/
+│   ├── app/             ← Next.js 페이지 및 라우팅
+│   ├── components/      ← 재사용 UI 컴포넌트
+│   └── lib/             ← Snowflake 쿼리 등 유틸리티
+├── public/              ← 정적 파일 (이미지, 아이콘)
+├── package.json         ← 의존성 관리
+└── ...
+```
+
+> **핵심**: 이 폴더는 일반적인 Next.js 프로젝트와 동일한 구조입니다. 별도의 Snowflake 전용 도구 없이도 로컬에서 코드를 확인하고 수정할 수 있습니다.
+
+#### 5.5.2 개인 실습에서의 프로젝트 관리
+
+- 로컬 폴더에서 소스 코드를 직접 열어 구조를 파악할 수 있음
+- VS Code, WebStorm 등 **익숙한 IDE로 코드 탐색 및 직접 수정 가능**
+- CoCo Desktop은 AI 기반 코드 생성, IDE는 세밀한 수동 편집 — 병행 활용
+- `snow app deploy` 명령으로 Snowflake에 배포
+
+> **Streamlit과의 차이**: Workspace의 Streamlit은 Snowsight 브라우저 내에서 코드를 편집합니다. App Runtime은 로컬 파일시스템에 프로젝트가 존재하므로, 익숙한 도구(IDE, 터미널 등)를 자유롭게 사용할 수 있습니다.
+
+#### 5.5.3 팀 협업으로의 확장
+
+실제 프로젝트에서는 로컬 프로젝트를 **Git 저장소로 관리**하여 팀 협업이 가능합니다:
+
+```
+[개인 실습]                        [팀 프로젝트]
+로컬 폴더                          Git 저장소 (GitHub/GitLab)
+  └─ CoCo Desktop으로 생성/수정      ├─ 브랜치별 기능 개발
+  └─ snow app deploy                 ├─ PR 리뷰 → 머지
+                                     ├─ CI/CD → 자동 배포
+                                     └─ 버전 관리 및 롤백
+```
+
+**Git 연동 흐름**:
+- **초기화**: `git init` → `git remote add origin <repo-url>` → `git push`
+- **브랜치 전략**: feature 브랜치에서 개발 → main 머지 시 배포
+- **코드 리뷰**: PR(Pull Request)을 통해 변경사항 검토 후 머지
+- **CI/CD**: GitHub Actions 등으로 `snow app deploy` 자동화 가능
+
+> **오늘 실습에서는** Git 설정 없이 로컬 폴더에서 직접 빌드/배포합니다. 실제 프로젝트에서는 위 워크플로우를 적용하면 팀 협업, 코드 리뷰, 자동 배포까지 자연스럽게 확장됩니다.
+
+#### 5.5.4 Streamlit vs App Runtime: 프로젝트 관리 비교
+
+| 항목 | Streamlit (Workspace) | App Runtime |
+|------|----------------------|-------------|
+| 코드 위치 | Snowsight 내 편집기 (Stage) | 로컬 프로젝트 폴더 |
+| 코드 수정 | Snowsight 편집기 또는 파일 업로드 | 로컬 IDE + CoCo Desktop |
+| 버전 관리 | Git-backed Workspace 또는 수동 백업 | Git 네이티브 (로컬 파일이므로 자연스럽게 적용) |
+| 팀 협업 | Shared Workspace 또는 Git-backed Workspace | Git 워크플로우 (브랜치, PR, 리뷰) |
+| CI/CD | 별도 구성 필요 | `snow app deploy` 기반 자동화 용이 |
+
+### 5.6 데모: 운영 관리 포털 — 반복 빌드
+
+CoCo Desktop에서 자연어로 App Runtime 앱을 **4단계로 점진적으로 발전**시킵니다. **각 Step마다 배포하여 실제 동작을 확인**합니다.
+
+```
+Step 1: 매출 대시보드 → 배포 → 확인
+  ↓
+Step 2: + 재고 현황 페이지 → 재배포 → 확인
+  ↓
+Step 3: + 발주 관리 페이지 → 재배포 → 확인
+  ↓
+Step 4: UI 마무리 → 재배포 → 최종 확인
+```
+
+> **참고**: App Runtime은 Snowflake 내부에서 실행되므로, 로컬 환경에서는 Snowflake 데이터에 접근할 수 없습니다. `npm run dev`로 로컬 서버를 띄워도 데이터 연결이 되지 않으므로, 코드 변경 후 반드시 **배포(`snow app deploy`)하여 실제 동작을 확인**합니다. 재배포 시 기존 앱이 업데이트됩니다.
+
+#### Step 1: 프로젝트 생성 + 매출 대시보드
+
+1. CoCo Desktop 실행
+2. `File` → `Open Folder` → 새 폴더 생성 (예: `sf-operations-portal`) → 열기
+3. CoCo Desktop 채팅에서 `/snowflake-apps` 스킬을 호출하여 앱 생성:
+
+```
+/snowflake-apps
+
+SNOW_FASHION.RAW 스키마의 데이터를 활용한 스노우패션 운영 관리 포털을 만들어줘.
+우선 첫 번째 페이지 "매출 대시보드"만 만들자.
+
+## 사전 작업
+- 먼저 SHOW TABLES IN SCHEMA SNOW_FASHION.RAW 을 실행해서 어떤 테이블이 있는지 확인할 것
+- STORES, SALES_TRANSACTIONS 테이블의 컬럼을 SHOW COLUMNS 로 조회할 것
+- 조회한 컬럼명과 타입을 기반으로 코드에 적용할 것
+
+## Snowflake 연결
+- 서버 컴포넌트에서 Snowflake SDK를 사용해 쿼리 실행
+- 테이블은 항상 fully qualified name (SNOW_FASHION.RAW.테이블명) 사용
+- SF_WH 웨어하우스를 사용
+
+## 페이지: 매출 대시보드
+- 상단 KPI 카드 4개 (카드마다 배경색 구분): 총 매출, 거래 건수, 평균 거래 단가, 활성 매장 수
+- 차트 영역 (가로 2열):
+  - 브랜드별 매출 막대 차트 (Bar Chart)
+  - 월별 매출 추이 선 차트 (Line Chart), 브랜드별 선 색상 구분
+- 하단: 매장별 상세 테이블 (STORES JOIN, 정렬/검색 가능)
+- 차트: recharts 사용
+- 숫자: 천 단위 구분 기호
+```
+
+4. CoCo가 프로젝트를 생성하면, **로컬 폴더에 파일이 생성된 것을 확인** — 좌측 파일 탐색기에서 `app.yml`, `src/` 등 구조를 살펴봅니다.
+
+5. **배포**: CoCo에게 요청합니다:
+
+```
+이 앱을 Snowflake에 배포해줘
+```
+
+6. 배포 완료 후 브라우저에서 확인 — KPI 카드, 차트, 테이블이 실제 데이터로 표시되는지 확인
+
+> **팁**: 배포 URL은 `*.snowflakecomputing.app` 형태로 자동 생성됩니다. CoCo가 브라우저를 열어줍니다.
+
+#### Step 2: 재고 현황 페이지 추가
+
+```
+두 번째 페이지 "재고 현황"을 추가해줘.
+
+## 사전 작업
+- INVENTORY_SNAPSHOT, STORES 테이블의 컬럼을 SHOW COLUMNS 로 조회하여 확인할 것
+
+## 페이지: 재고 현황
+- KPI 카드: 전체 SKU 수, 재고 부족 항목 수(빨간색 강조), 입고 대기 수량
+- 도넛 차트: 재고 STATUS별 비율
+- 재고 부족 알림 테이블:
+  - ON_HAND_QTY < REORDER_POINT 인 항목 조회
+  - STORES와 JOIN하여 매장명, 브랜드 표시
+  - 부족 수량이 큰 순서로 정렬, 부족 수량 셀은 빨간색 텍스트
+  - 행 클릭 시 해당 SKU의 최근 입고 이력을 펼쳐서 표시
+```
+
+**재배포**:
+```
+수정된 앱을 다시 배포해줘
+```
+
+브라우저에서 확인 — 재고 현황 페이지로 이동하여 도넛 차트와 부족 알림 테이블이 정상 동작하는지 확인
+
+#### Step 3: 발주 관리 페이지 추가
+
+```
+세 번째 페이지 "발주 관리"를 추가해줘.
+
+## 사전 작업
+- SUPPLY_ORDERS, SHIPMENTS 테이블의 컬럼을 SHOW COLUMNS 로 조회하여 확인할 것
+
+## 페이지: 발주 관리
+- KPI 카드: 진행중 발주 건수, 이번 달 발주 총액, 지연 발주 건수(빨간색)
+- 발주 상태 분포 가로 막대 차트 (STATUS별 건수)
+- 발주 목록 테이블:
+  - 필터: STATUS 드롭다운 + 브랜드 드롭다운
+  - 상태별 뱃지 색상 구분 (완료=초록, 진행중=파랑, 지연=빨강)
+  - 행 클릭 시 해당 발주의 배송 상태(SHIPMENTS JOIN)를 펼쳐서 표시
+```
+
+**재배포** → 브라우저에서 확인
+
+#### Step 4: 마무리
+
+```
+전체 앱을 다듬어줘:
+1. 앱 제목 "스노우패션 운영 관리 포털"
+2. 3개 페이지 간 네비게이션 일관성 확인
+3. 로딩 스피너 추가
+4. 좌우 여백 최소화
+```
+
+**재배포** → 최종 확인
+
+> **반복 빌드 패턴 정리**: Chapter 4(Streamlit)에서와 마찬가지로, 한 번에 모든 것을 만들지 않고 **핵심 기능 → 페이지 확장 → UI 마무리** 순서로 점진적으로 발전시킵니다. App Runtime에서는 각 Step마다 배포하여 실제 데이터 연동을 확인하는 것이 핵심입니다.
+
+### 5.7 App Runtime의 장점 정리 (Streamlit 대비)
 
 Streamlit으로는 구현이 어려운 기능들:
 
@@ -818,200 +996,7 @@ Streamlit으로는 구현이 어려운 기능들:
 | 탭 전환 시 페이지 리로드 없이 유지 | X | O |
 | 커스텀 차트 (D3.js, Recharts 등) | 제한적 | O |
 
----
-
-## Chapter 6. CoCo Desktop으로 앱 빌드
-
-### 6.1 학습 목표
-- CoCo Desktop에서 자연어로 Streamlit 앱을 생성하는 과정 체험
-- CoCo Desktop에서 App Runtime(Next.js) 앱을 생성하고 배포하는 과정 체험
-- Desktop 환경의 장점 (멀티파일 관리, 로컬 테스트, 서브에이전트)
-
-### 6.2 데모 1: CoCo Desktop으로 Streamlit 앱 만들기
-
-#### Step 1: CoCo Desktop에서 프로젝트 폴더 열기
-
-1. CoCo Desktop 실행
-2. `File` → `Open Folder` → 원하는 위치에 새 폴더 생성 (예: `sf-streamlit-demo`) → 열기
-3. CoCo Desktop 채팅 패널이 열리면 준비 완료
-
-#### Step 2: CoCo에게 앱 생성 요청
-
-```
-아래 조건에 맞는 스노우패션 고객 세그먼트 분석 Streamlit 앱을 만들어줘.
-
-## 사전 작업
-- 먼저 아래 두 테이블의 컬럼을 SHOW COLUMNS 로 조회해서 실제 컬럼명을 확인한 뒤 코드에 적용할 것
-  - SNOW_FASHION.RAW.CUSTOMERS (고객 마스터)
-  - SNOW_FASHION.RAW.SALES_TRANSACTIONS (거래 내역)
-- 두 테이블은 CUSTOMER_ID 컬럼으로 JOIN 가능
-
-## Snowflake 연결 방법
-- conn = st.connection("snowflake") 로 연결
-- session = conn.session() 으로 Snowpark 세션 획득
-- SQL 실행은 session.sql("...").to_pandas() 를 사용
-- 테이블은 항상 fully qualified name (SNOW_FASHION.RAW.CUSTOMERS 등) 사용
-- USE WAREHOUSE, USE DATABASE, USE SCHEMA 구문은 쓰지 말 것
-
-## 필터 UI (st.sidebar 에 배치)
-1. 브랜드 멀티셀렉트 — SALES_TRANSACTIONS의 브랜드 컬럼 고유값 조회, 기본값: 전체 선택
-2. 기간 선택 — 시작일/종료일 각각 st.date_input. 기본값: 거래 데이터의 날짜 최솟값 ~ 최댓값
-3. 멤버십 등급 멀티셀렉트 — CUSTOMERS의 멤버십 컬럼 고유값 조회, 기본값: 전체 선택
-
-## 페이지 구성 (st.tabs 로 탭 분리)
-
-### 탭 1: 고객 분포
-- CUSTOMERS 테이블에서 브랜드별(JOIN 사용) 고객 수를 연령대별, 성별, 지역별로 집계
-- 연령대별 고객 수: 가로 막대 차트 (st.altair_chart)
-- 성별 분포: 파이 차트 (altair mark_arc)
-- 지역별 분포: 가로 막대 차트
-- 각 차트 위에 st.subheader 로 제목 표시
-
-### 탭 2: 멤버십별 매출 기여도
-- CUSTOMERS와 SALES_TRANSACTIONS를 JOIN하여 멤버십 등급별 매출 합계 집계
-- 파이 차트로 등급별 매출 비중 표시 (altair mark_arc)
-- 파이 차트 아래에 등급별 매출 합계, 거래 건수, 고객 수를 테이블로 표시
-
-### 탭 3: 코호트 분석
-- CUSTOMERS의 가입일자를 월 단위로 집계 (DATE_TRUNC('MONTH', ...))하여 코호트 정의
-- 코호트별 월별 매출 합계를 히트맵 또는 라인 차트로 표시
-- X축: 거래 월, Y축: 가입 코호트(월), 값: 매출 합계
-
-## 차트 공통
-- 모든 차트는 st.altair_chart 사용, use_container_width=True
-- pandas datetime 변환 필요 시: pd.to_datetime() 사용
-- 숫자 포맷: 천 단위 구분 기호(,) 적용
-
-## 에러 처리
-- 필터 결과 0건: st.warning("조건에 해당하는 데이터가 없습니다.") 표시
-- 쿼리 예외: st.error(f"데이터 조회 실패: {e}") 표시
-
-## 기타
-- 앱 제목: st.title("고객 세그먼트 분석")
-- import: streamlit, altair, pandas (추가 패키지 설치 불필요)
-- @st.cache_data(ttl=600)로 필터 옵션 및 집계 쿼리 결과 캐싱
-- 집계 쿼리는 필터값을 인자로 받는 함수로 분리할 것
-```
-
-#### Step 3: Snowflake에 배포
-
-```bash
-# CoCo에게 요청
-"이 Streamlit 앱을 SNOW_FASHION.ANALYTICS 스키마에 배포해줘. Warehouse는 SF_WH를 사용해"
-```
-
-또는 수동으로:
-```bash
-snow streamlit deploy --database SNOW_FASHION --schema ANALYTICS --query-warehouse SF_WH
-```
-
-#### Step 4: 배포 확인
-
-배포 완료 후 CoCo에게 요청:
-```
-배포가 잘 됐는지 브라우저를 열어 확인해줘.
-```
-
-또는 Snowsight에서 직접 확인: `Projects` → `Streamlit` → 배포된 앱 선택
-
-### 6.3 데모 2: CoCo Desktop으로 App Runtime 앱 만들기
-
-#### Step 1: 새 프로젝트 폴더 열기
-
-1. `File` → `Open Folder` → 새 폴더 생성 (예: `sf-operations-portal`) → 열기
-
-> **주의**: Streamlit 데모 폴더와 별도로 새 폴더를 만들어야 합니다. App Runtime은 Next.js 기반으로 프로젝트 구조가 다릅니다.
-
-#### Step 2: 앱 생성 요청
-
-CoCo Desktop 채팅에서 `/snowflake-apps` 스킬을 호출합니다. 이 스킬은 자동으로 Next.js 기반 App Runtime 앱을 생성하므로, "React로 만들어줘"나 "App Runtime으로" 같은 지정은 불필요합니다.
-
-```
-/snowflake-apps
-
-SNOW_FASHION.RAW 스키마의 데이터를 활용한 스노우패션 운영 관리 포털을 만들어줘.
-
-## 사전 작업
-- 먼저 SHOW TABLES IN SCHEMA SNOW_FASHION.RAW 를 실행해서 어떤 테이블이 있는지 확인할 것
-- 그 중 매장, 매출, 재고, 발주, 배송 관련 테이블을 찾아서 각 테이블의 컬럼을 SHOW COLUMNS 로 조회할 것
-- 조회한 컬럼명과 타입을 기반으로 테이블 간 JOIN 키를 파악하고 코드에 적용할 것
-
-## Snowflake 연결
-- Snowflake App Runtime의 서버 컴포넌트에서 Snowflake SDK를 사용해 쿼리 실행
-- 테이블은 항상 fully qualified name (SNOW_FASHION.RAW.테이블명) 사용
-- SF_WH 웨어하우스를 사용
-
-## 페이지 구성 (3개 탭 또는 네비게이션)
-
-### 페이지 1: 매출 대시보드
-- 상단 KPI 카드 4개 (카드마다 배경색 구분):
-  - 총 매출 합계, 총 거래 건수, 평균 거래 단가, 활성 매장 수
-- 차트 영역 (가로 2열 배치):
-  - 브랜드별 매출 막대 차트 (Bar Chart)
-  - 월별 매출 추이 선 차트 (Line Chart), 브랜드별로 선 색상 구분
-- 하단에 매장별 상세 테이블:
-  - STORES와 SALES_TRANSACTIONS를 JOIN하여 매장명, 브랜드, 지역, 매출 합계, 거래 건수 표시
-  - 컬럼 헤더 클릭 시 정렬, 상단에 검색 입력란 (매장명/브랜드 필터)
-  - **테이블의 매장 행을 클릭하면** 해당 매장의 월별 매출 추이 차트와 거래 상세 목록이 하단에 펼쳐짐
-
-### 페이지 2: 재고 현황
-- 상단 KPI 카드: 전체 SKU 수, 재고 부족 항목 수 (빨간색 강조), 입고 대기 수량
-- 도넛 차트 (Donut/Pie): 재고 STATUS별 비율 (정상 / 부족 / 과잉 등)
-- 재고 부족 알림 테이블:
-  - INVENTORY_SNAPSHOT에서 ON_HAND_QTY < REORDER_POINT 인 항목 조회
-  - STORES와 JOIN하여 매장명, 브랜드 표시
-  - 컬럼: SKU, 매장명, 브랜드, 현재 재고, 발주점, 부족 수량
-  - 부족 수량이 큰 순서로 정렬, 부족 수량 셀은 빨간색 텍스트
-  - **행 클릭 시** 해당 SKU의 최근 입고 이력(SUPPLY_ORDERS)을 펼쳐서 표시
-
-### 페이지 3: 발주 관리
-- 상단 KPI 카드: 진행중 발주 건수, 이번 달 발주 총액, 지연 발주 건수 (빨간색)
-- 발주 상태 분포 막대 차트 (Horizontal Bar): STATUS별 건수
-- 발주 목록 테이블:
-  - 필터: STATUS 드롭다운 (전체 / 각 상태값) + 브랜드 드롭다운
-  - 컬럼: 발주ID, 브랜드, SKU, 주문일, 예상 납기, 수량, 금액, 상태
-  - 상태별 뱃지 색상 구분 (예: 완료=초록, 진행중=파랑, 지연=빨강)
-  - **행 클릭 시** 해당 발주의 배송 상태(SHIPMENTS 테이블 JOIN)를 펼쳐서 표시
-
-## 공통 UI
-- 상단에 앱 제목: "스노우패션 운영 관리 포털"
-- 깔끔하고 모던한 레이아웃, 좌우 여백 최소화
-- 숫자는 천 단위 구분 기호(,) 적용
-- 차트 라이브러리는 recharts 사용
-- 로딩 중에는 스피너 표시
-
-## 에러 처리
-- 쿼리 실패 시 사용자에게 에러 메시지 표시
-- 데이터가 0건인 경우 "해당 데이터가 없습니다" 안내
-```
-
-#### Step 3: Snowflake에 배포
-
-CoCo Desktop 채팅창에서 앱 프로젝트 폴더가 열린 상태로 요청합니다:
-
-```bash
-# CoCo Desktop 채팅창에서 요청
-"이 앱을 SNOW_FASHION.ANALYTICS 스키마에 배포해줘. Warehouse는 SF_WH를 사용해"
-```
-
-> **참고**: CoCo Desktop은 현재 열려 있는 프로젝트 폴더를 기준으로 작업합니다. App Runtime 소스 코드(`app.yml`, `package.json` 등)가 있는 폴더에서 CoCo를 실행해야 합니다.
-
-수동으로 CLI에서 배포하려면, 터미널에서 앱 프로젝트 폴더로 이동한 뒤 실행합니다:
-```bash
-cd ~/snow-fashion-apps/sf-operations-portal
-snow app deploy
-```
-
-#### Step 4: 배포 확인
-
-배포 완료 후 CoCo에게 요청:
-```
-배포가 잘 됐는지 브라우저를 열어 확인해줘.
-```
-
-배포된 앱은 `*.snowflakecomputing.app` URL로 접근 가능합니다.
-
-### 6.4 CoCo Desktop의 고급 기능
+### 5.8 CoCo Desktop 고급 기능
 
 | 기능 | 설명 |
 |------|------|
@@ -1024,13 +1009,13 @@ snow app deploy
 
 ---
 
-## Chapter 7. 정리: 어떤 도구를 언제 쓸 것인가
+## Chapter 6. 정리: 어떤 도구를 언제 쓸 것인가
 
-### 7.1 학습 목표
+### 6.1 학습 목표
 - 1부 + 2부에서 다룬 전체 도구를 역할별로 정리
 - 상황별 적합한 도구 선택 기준 확립
 
-### 7.2 전체 도구 맵
+### 6.2 전체 도구 맵
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -1057,7 +1042,7 @@ snow app deploy
 └─────────────────────────────────────────────────┘
 ```
 
-### 7.3 역할별 추천 도구
+### 6.3 역할별 추천 도구
 
 | 역할 | 주요 도구 | 보조 도구 |
 |------|-----------|-----------|
@@ -1067,7 +1052,7 @@ snow app deploy
 | **앱 개발자** | CoCo Desktop | Snowsight Workspace |
 | **팀 리더** | Cowork (오토메이션) | Snowsight CoCo |
 
-### 7.4 1부 + 2부 전체 워크플로우
+### 6.4 1부 + 2부 전체 워크플로우
 
 ```
 1. 데이터 준비 (테이블 생성, 데이터 적재)
@@ -1080,9 +1065,9 @@ snow app deploy
    ↓
 5. Cowork에서 현업 사용                                 ← 1부
    ↓
-6. 대시보드/리포트 (Streamlit)                          ← 2부
+6. 대시보드/리포트 (Streamlit)                          ← 2부 Ch4
    ↓
-7. 관리 포털/고급 앱 (App Runtime)                      ← 2부
+7. 관리 포털/고급 앱 (App Runtime)                      ← 2부 Ch5
    ↓
 8. 모니터링 → 피드백 → 개선 반복                        ← 1부 + 2부
 ```
