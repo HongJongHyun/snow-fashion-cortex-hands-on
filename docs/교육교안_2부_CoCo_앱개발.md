@@ -704,8 +704,20 @@ CoCo에게 다음 프롬프트를 입력:
 
 #### Step 5: 배포
 
-1. **Deploy** → 배포 설정 → **Deploy** 클릭
-2. `Projects` → `Streamlit`에서 배포된 앱 확인
+1. 에디터 상단의 **Deploy** 버튼 클릭
+2. **Deploy app** 대화상자에서 설정:
+
+| 항목 | 설정 값 |
+|------|---------|
+| **App title** | `Sales_dashboard` (앱 좌측 상단과 대시보드에 표시) |
+| **App ID** | `SALES_DASHBOARD` (URL에 사용, 자동 생성됨) |
+| **App location** | `SNOW_FASHION.SEMANTIC` (Database/Schema 선택) |
+| **Compute pool** | `SYSTEM_COMPUTE_POOL_CPU` |
+| **Query warehouse** | `SF_WH` (앱의 SQL 쿼리가 실행될 웨어하우스) |
+| **Artifact repositories** | 기본값 유지 (Snowflake 관리 저장소) |
+
+3. **Deploy** 클릭
+4. 배포 완료 후 `Projects` → `Streamlit`에서 배포된 앱 확인
 
 > **반복 빌드 패턴 정리**: 실무에서 CoCo를 사용할 때도 이 패턴이 효과적입니다.
 > 1. **데이터 확인** — 테이블로 데이터가 맞는지 먼저 검증
