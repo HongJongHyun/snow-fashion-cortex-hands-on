@@ -840,16 +840,22 @@ my-snow-fashion-app/
 실제 프로젝트에서는 로컬 프로젝트를 **Git 저장소로 관리**하여 팀 협업이 가능합니다:
 
 ```
-[개인 실습]                        [팀 프로젝트]
-로컬 폴더                          Git 저장소 (GitHub/GitLab)
-  └─ CoCo Desktop으로 생성/수정      ├─ 브랜치별 기능 개발
-  └─ snow app deploy                 ├─ PR 리뷰 → 머지
-                                     ├─ CI/CD → 자동 배포
-                                     └─ 버전 관리 및 롤백
+[개인 실습 — 오늘]                  [팀 프로젝트 — 실무]
+                                    
+로컬 폴더                          원격 Git 저장소 (GitHub/GitLab)
+  └─ CoCo Desktop으로 생성/수정        ↑ push / ↓ pull
+  └─ snow app deploy               로컬 폴더 (git clone)
+                                      └─ CoCo Desktop으로 생성/수정
+   ↓ Git 초기화하면                    └─ feature 브랜치에서 작업
+   바로 팀 프로젝트로 전환 가능          └─ PR 리뷰 → main 머지
+                                      └─ CI/CD → snow app deploy 자동화
 ```
+
+> **핵심**: 팀 프로젝트에서도 각 개발자의 **로컬 폴더는 그대로 존재**합니다. 차이점은 그 로컬 폴더가 Git 저장소의 클론(clone)이라는 것입니다. 개인 실습에서 만든 폴더에 `git init` → `git remote add`만 하면 바로 팀 프로젝트 구조로 전환할 수 있습니다.
 
 **Git 연동 흐름**:
 - **초기화**: `git init` → `git remote add origin <repo-url>` → `git push`
+- **기존 저장소 참여**: `git clone <repo-url>` → 로컬에 프로젝트 폴더 생성 → CoCo Desktop에서 해당 폴더 열기
 - **브랜치 전략**: feature 브랜치에서 개발 → main 머지 시 배포
 - **코드 리뷰**: PR(Pull Request)을 통해 변경사항 검토 후 머지
 - **CI/CD**: GitHub Actions 등으로 `snow app deploy` 자동화 가능
