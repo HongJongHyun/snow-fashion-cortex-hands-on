@@ -1314,15 +1314,26 @@ Agent 상세 화면 상단의 `+ Add to Snowflake CoWork` 버튼을 클릭합니
 
 ### 7.5 커스터마이징
 
-**1. Agent 프로필 설정 (개별 Agent):**
+**설정 화면 진입:**
 
-Snowsight `AI & ML` → `Agents` → Agent 선택 → `Edit` 에서 **Display name** 수정 가능.
+Snowsight 좌측 메뉴 `AI & ML` → **Agent Studio** 페이지 → 우측 상단 **`Settings`** 버튼 클릭
 
-> **참고**: PROFILE에는 `color` 속성도 있으나, 현재 CoWork UI에서 반영이 확인되지 않으므로 교육에서는 Display name 설정만 다룹니다.
+> Agent Studio 페이지에는 두 개의 탭이 있습니다:
+> - **All agents**: 계정 내 모든 Agent 목록
+> - **Snowflake CoWork**: CoWork에 등록된 Agent 목록 (여기서 `Add existing agent`로도 등록 가능)
 
-**2. CoWork 인터페이스 설정 (전체 CoWork):**
+Settings를 클릭하면 **"Agents settings"** 화면이 열리며, 좌측에 두 개의 메뉴가 있습니다:
 
-Snowsight `AI & ML` → `Agents` → `Open settings` 에서 수정:
+**1. Tools and connectors:**
+
+- **Web search**: Agent가 웹 검색을 사용할 수 있도록 허용하는 토글. 활성화하면 Agent 빌더가 Agent에 웹 검색 도구를 추가할 수 있습니다. 검색 쿼리는 Snowflake 외부로 전송됩니다.
+- **Connectors**: MCP(Model Context Protocol) 커넥터를 관리하는 영역. `Browse connectors`로 사전 제공 커넥터를 찾거나, `Add custom`으로 커스텀 MCP 서버를 연결할 수 있습니다. MCP 커넥터를 추가하면 Agent가 외부 도구(Slack, Jira, GitHub 등)와 연동할 수 있습니다.
+
+> **교육에서는** Web search와 Connectors 설정을 변경할 필요 없습니다. 이런 확장 기능이 있다는 것만 소개합니다.
+
+**2. Snowflake CoWork:**
+
+CoWork 인터페이스의 외형을 커스터마이징합니다:
 
 | 항목 | 설명 |
 |------|------|
@@ -1330,6 +1341,10 @@ Snowsight `AI & ML` → `Agents` → `Open settings` 에서 수정:
 | Welcome message | 사용자가 처음 접속 시 보이는 메시지 |
 | Color theme | CoWork 인터페이스 색상 (hex 코드 지원) |
 | Full-length logo / Compact logo | 네비게이션 로고 및 브라우저 탭 아이콘 (투명 배경 PNG 권장) |
+
+**3. Agent 프로필 설정 (개별 Agent):**
+
+Agent Studio → Agent 선택 → `Configuration` 탭에서 **Display name**, **Avatar**, **Color** 수정 가능. 이 설정은 CoWork에서 해당 Agent가 표시되는 이름과 아이콘에 반영됩니다.
 
 ### 7.6 데모 시나리오: 비즈니스 사용자 관점
 
