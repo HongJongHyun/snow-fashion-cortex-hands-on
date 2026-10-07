@@ -1241,16 +1241,42 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
 
 Agent 상세 화면 상단의 `+ Add to Snowflake CoWork` 버튼을 클릭합니다.
 
-> **참고**: 이 버튼을 누르지 않으면 CoWork 화면의 Agent 목록에 표시되지 않습니다. 등록하지 않은 Agent는 직접 링크 또는 Snowsight UI(Preview 탭)에서만 접근 가능합니다.  
+> **`+ Add to Snowflake CoWork` 버튼이 비활성화(회색)인 경우**:
 >
+> 마우스를 올리면 "You do not have MODIFY privilege to add agents to Snowflake CoWork" 메시지가 표시됩니다. 이는 **CoWork 오브젝트가 아직 생성되지 않았거나, 현재 역할에 MODIFY 권한이 없기 때문**입니다.
+>
+> **처음 사용하는 계정이라면** 아래 SQL을 ACCOUNTADMIN 역할로 실행하세요:
+>
+> ```sql
+> -- 1. ACCOUNTADMIN 역할 사용
+> USE ROLE ACCOUNTADMIN;
+>
+> -- 2. CoWork 오브젝트 생성 (계정당 1회만 실행)
+> CREATE SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
+>
+> -- 3. Agent를 CoWork에 추가
+> ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT
+>   ADD AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT;
+>
+> -- 4. 필요한 역할에 CoWork 사용 권한 부여
+> GRANT USAGE ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT
+>   TO ROLE PUBLIC;
+> ```
+>
+> 실행 후 Agent 상세 화면을 새로고침하면 `+ Add to Snowflake CoWork` 버튼이 활성화됩니다. 이미 Step 3에서 SQL로 추가했으므로, 버튼을 다시 누를 필요는 없습니다.
+>
+> **이미 CoWork 오브젝트가 있는 계정**에서 버튼이 비활성화된 경우에는 현재 역할에 MODIFY 권한만 부여하면 됩니다:
+> ```sql
+> GRANT MODIFY ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT
+>   TO ROLE <현재_사용_역할>;
+> ```
+
 > **CoWork 오브젝트와 Agent 가시성**: Snowflake CoWork에는 Agent 목록을 중앙 관리하는 "CoWork 오브젝트"라는 계정 수준 설정이 있습니다. 이 오브젝트의 존재 여부에 따라 Agent 표시 방식이 달라집니다.
 >
 > | CoWork 오브젝트 | Agent 표시 방식 |
 > |---|---|
 > | **없음** (기본) | USAGE 권한이 있는 모든 Agent가 **자동 표시** |
 > | **있음** | `+ Add to Snowflake CoWork`으로 **명시 등록한 Agent만** 표시 |
->
-> CoWork 오브젝트는 Snowsight에서 `AI & ML → Agents → Open settings`를 처음 클릭하거나, SQL `CREATE SNOWFLAKE INTELLIGENCE` 명령을 실행하면 생성됩니다. Agent를 만드는 것만으로는 생성되지 않습니다. 현재 교육 환경에서는 이미 존재하므로 위 버튼으로 등록해야 합니다.
 
 #### CoWork에서 질문하기
 
