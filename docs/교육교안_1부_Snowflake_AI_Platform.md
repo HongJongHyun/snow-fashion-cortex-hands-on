@@ -1342,10 +1342,6 @@ CoWork 인터페이스의 외형을 커스터마이징합니다:
 | Color theme | CoWork 인터페이스 색상 (hex 코드 지원) |
 | Full-length logo / Compact logo | 네비게이션 로고 및 브라우저 탭 아이콘 (투명 배경 PNG 권장) |
 
-**3. Agent 프로필 설정 (개별 Agent):**
-
-Agent Studio → Agent 선택 → `Configuration` 탭에서 **Display name** 수정 가능. SQL의 PROFILE JSON에서는 `display_name` 외에 `avatar`, `color` 속성도 지원됩니다.
-
 ### 7.6 데모 시나리오: 비즈니스 사용자 관점
 
 ```
