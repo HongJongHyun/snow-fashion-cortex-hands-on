@@ -320,8 +320,10 @@ cortex
 
 CoCo Desktop은 **로컬 디렉토리 기반**으로 작업합니다:
 
-1. 작업 폴더 생성: `~/snow-fashion-apps`
-2. CoCo Desktop → `File` → `Open Folder` → 해당 폴더 선택
+1. 1부에서 다운로드한 교육 파일셋을 압축 해제하면 `snow-fashion-cortex-hands-on-main` 폴더가 생성됩니다. 이 폴더를 작업 디렉토리로 사용합니다.
+2. CoCo Desktop → `File` → `Open Folder` → `snow-fashion-cortex-hands-on-main` 폴더 선택
+
+> **새 폴더가 필요한 경우**: App Runtime 앱은 별도의 프로젝트 폴더가 필요합니다. Chapter 5 데모에서 CoCo가 `snow-fashion-cortex-hands-on-main` 하위에 앱 폴더를 자동 생성합니다.
 
 ---
 
