@@ -313,7 +313,7 @@ cortex
 4. **인증 방법** (UI에서 3가지 제공):
    - **Local OAuth** (권장) — 브라우저가 열리며 Snowflake 로그인 후 자동 연결
    - **SSO** — 조직의 IdP(Okta, Azure AD 등)를 통한 인증
-   - **Password** — ID/PW 직접 입력 (MFA 설정 시 추가 인증 필요)
+   - **Password** — Snowflake 비밀번호 또는 PAT를 입력 (MFA 설정 시 추가 인증 필요, PAT 사용 시 MFA 불필요)
 5. 연결 완료 후 좌측에 Snowflake 오브젝트 탐색기 표시
 
 #### Step 3: 작업 디렉토리 설정
