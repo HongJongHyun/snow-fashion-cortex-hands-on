@@ -400,24 +400,23 @@ Compute Pool을 중지하면 해당 풀의 모든 서비스(앱)가 중지되고
 | 풀 재시작 | `ALTER COMPUTE POOL my_pool RESUME;` | 동일 경로에서 `⋮` → Resume |
 > 풀 SUSPEND 시 서비스(앱)는 즉시 중지되고, 잡(job)은 완료 후 노드가 해제됩니다.
 
-**2. 개별 앱 중지/재시작**
+**2. 개별 앱 중지/삭제**
 
-> `ALTER STREAMLIT`에는 SUSPEND/RESUME SQL 구문이 없습니다. 개별 앱을 중지하려면 Snowsight UI에서 조작합니다.
+> `ALTER STREAMLIT`에는 SUSPEND/RESUME SQL 구문이 없습니다. Snowsight UI의 Services 목록에서도 Streamlit 서비스에 대해서는 **Suspend 메뉴가 제공되지 않고 Drop만** 가능합니다.
 
-| 작업 | UI 경로 |
-|------|---------|
-| 개별 앱 중지 | Manage → Compute → 풀 선택 → Services 탭 → 해당 서비스 `⋮` → Suspend |
-| 개별 앱 재시작 | 동일 경로에서 `⋮` → Resume |
+| 작업 | 방법 |
+|------|------|
+| 개별 앱 삭제 | Manage → Compute → 풀 선택 → Services 탭 → 해당 서비스 `⋮` → **Drop** |
+| 개별 앱 중지 (삭제 없이) | 직접 중지 UI 없음. **3일간 뷰어 비활동** 시 자동 종료되거나, Compute Pool 전체를 Suspend하여 중지 |
 
-> Compute Pool과 다른 서비스는 영향 없이 계속 동작합니다.
+> **참고**: 개별 Streamlit 앱만 중지하고 싶지만 Drop(삭제)하지 않으려면, Compute Pool 전체를 Suspend하는 방법밖에 없습니다. 단, 같은 풀의 다른 서비스도 함께 중지됩니다. `SYSTEM_COMPUTE_POOL_CPU`를 사용하는 경우 3일 비활동 자동 종료에 의존하는 것이 현실적입니다.
 
 **3. 자동 재시작 설정**
 
 | 상황 | 재시작 동작 |
 |------|-------------|
 | 3일 뷰어 비활동으로 자동 종료 | 뷰어가 접속하면 **자동 재시작** |
-| UI에서 개별 앱 Suspend | UI에서 해당 서비스 **Resume 필요** (접속만으로 재시작 안 됨) |
-| `ALTER COMPUTE POOL SUSPEND` | `AUTO_RESUME = TRUE`면 서비스 제출 시 풀 자동 재개. 앱도 별도 UI Resume 필요 |
+| `ALTER COMPUTE POOL SUSPEND` | `AUTO_RESUME = TRUE`면 서비스 제출 시 풀 자동 재개 |
 
 **4. 비용 최적화 팁**
 
