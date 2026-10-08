@@ -161,7 +161,11 @@ Snowsight에 로그인하면 CoCo가 자동으로 활성화됩니다.
 - Snowsight 우측 하단의 CoCo 아이콘 클릭
 - 또는 Workspace에서 파일 열면 CoCo 패널 자동 표시
 
+> 매뉴얼: <a href="https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight" target="_blank">CoCo in Snowsight</a>
+
 ### 2.3 CoCo CLI 설치 및 연결
+
+> 매뉴얼: <a href="https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli" target="_blank">CoCo CLI</a>
 
 #### Step 1: 설치
 
@@ -290,6 +294,8 @@ cortex
 ```
 
 ### 2.4 CoCo Desktop 설치 및 연결
+
+> 매뉴얼: <a href="https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop" target="_blank">CoCo Desktop</a>
 
 #### Step 1: 설치
 
