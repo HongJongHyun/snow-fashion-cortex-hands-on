@@ -459,7 +459,7 @@ Deployed App (공개 URL)
 
 ```sql
 CREATE COMPUTE POOL IF NOT EXISTS SF_COMPUTE_POOL
-  MIN_NODES = 0
+  MIN_NODES = 1
   MAX_NODES = 3
   INSTANCE_FAMILY = CPU_X64_XS
   AUTO_RESUME = TRUE
@@ -469,7 +469,7 @@ CREATE COMPUTE POOL IF NOT EXISTS SF_COMPUTE_POOL
 | 파라미터 | 설명 |
 |----------|------|
 | `INSTANCE_FAMILY` | 머신 타입. `CPU_X64_XS`(최소) 권장 — Streamlit은 단일 프로세스로 실행되므로 다중 CPU 이점 없음 |
-| `MIN_NODES / MAX_NODES` | MIN=0(비용 최소화, 첫 접속 시 프로비저닝 대기 발생), MAX=3(앱 추가 생성 대비 여유) |
+| `MIN_NODES / MAX_NODES` | MIN=1(최소 1노드 유지), MAX=3(앱 추가 생성 대비 여유). AUTO_SUSPEND_SECS와 함께 사용하여 비활동 시 노드 해제 |
 | `AUTO_RESUME = TRUE` | 앱 접속 시 자동 재개 |
 | `AUTO_SUSPEND_SECS = 300` | 5분 비활동 시 노드 해제 (비용 절감) |
 
