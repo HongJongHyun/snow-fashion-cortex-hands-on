@@ -99,21 +99,21 @@ INSERT INTO SNOW_FASHION.SEMANTIC.EDU_DATA_DICTIONARY
   (ENTRY_TYPE, TABLE_NAME, COLUMN_NAME, TERM, SYNONYMS, DESCRIPTION, DOMAIN)
 VALUES
 -- 브랜드 값
-('VALUE', 'SALES_TRANSACTIONS', 'BRAND', 'TOPTEN',
- '탑텐, 톱텐, top ten, topten, 탑10',
- 'TOPTEN(탑텐, 톱텐, top ten, 탑10)은 스노우패션의 가성비 영캐주얼 브랜드입니다. 매장 수 200개로 가장 많습니다. 가격대가 가장 낮은 대중적 브랜드. 필터: BRAND = ''TOPTEN''', '상품'),
+('VALUE', 'SALES_TRANSACTIONS', 'BRAND', 'TOP10',
+ '탑10, 톱10, top 10, top10, 탑10',
+ 'TOP10(탑10, 톱10, top 10, 탑10)은 스노우패션의 가성비 영캐주얼 브랜드입니다. 매장 수 200개로 가장 많습니다. 가격대가 가장 낮은 대중적 브랜드. 필터: BRAND = ''TOP10''', '상품'),
 
-('VALUE', 'SALES_TRANSACTIONS', 'BRAND', 'ZIOZIA',
- '지오지아, ziozia',
- 'ZIOZIA(지오지아, ziozia)는 스노우패션의 남성 프리미엄 정장/비즈캐주얼 브랜드입니다. 매장 수 40개. 가격대가 가장 높은 프리미엄 라인. 필터: BRAND = ''ZIOZIA''', '상품'),
+('VALUE', 'SALES_TRANSACTIONS', 'BRAND', 'ZIOGIA',
+ '지오지아, ziogia',
+ 'ZIOGIA(지오지아, ziogia)는 스노우패션의 남성 프리미엄 정장/비즈캐주얼 브랜드입니다. 매장 수 40개. 가격대가 가장 높은 프리미엄 라인. 필터: BRAND = ''ZIOGIA''', '상품'),
 
-('VALUE', 'SALES_TRANSACTIONS', 'BRAND', 'OLZEN',
- '올젠, olzen',
- 'OLZEN(올젠, olzen)은 스노우패션의 중년 남성 캐주얼 브랜드입니다. 매장 수 35개. 40~60대 남성 타겟. 필터: BRAND = ''OLZEN''', '상품'),
+('VALUE', 'SALES_TRANSACTIONS', 'BRAND', 'OLDZEN',
+ '올젠, oldzen',
+ 'OLDZEN(올젠, oldzen)은 스노우패션의 중년 남성 캐주얼 브랜드입니다. 매장 수 35개. 40~60대 남성 타겟. 필터: BRAND = ''OLDZEN''', '상품'),
 
-('VALUE', 'SALES_TRANSACTIONS', 'BRAND', 'ANDZ',
- '앤드지, andz',
- 'ANDZ(앤드지, andz)는 스노우패션의 여성 컨템포러리 브랜드입니다. 매장 수 25개로 가장 적습니다. 20~30대 여성 타겟. 필터: BRAND = ''ANDZ''', '상품'),
+('VALUE', 'SALES_TRANSACTIONS', 'BRAND', 'NG',
+ '엔지, ng',
+ 'NG(엔지, ng)는 스노우패션의 여성 컨템포러리 브랜드입니다. 매장 수 25개로 가장 적습니다. 20~30대 여성 타겟. 필터: BRAND = ''NG''', '상품'),
 
 -- 채널 값
 ('VALUE', 'SALES_TRANSACTIONS', 'CHANNEL', '오프라인',

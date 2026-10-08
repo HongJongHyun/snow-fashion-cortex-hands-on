@@ -85,8 +85,8 @@ CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SALES_SV
   DIMENSIONS (
     -- PRODUCTS
     PRODUCTS.BRAND AS BRAND
-      COMMENT = '브랜드명. 허용값: TOPTEN, ZIOZIA, OLZEN, ANDZ'
-      SAMPLE_VALUES ('TOPTEN', 'OLZEN', 'ZIOZIA'),
+      COMMENT = '브랜드명. 허용값: TOP10, ZIOGIA, OLDZEN, NG'
+      SAMPLE_VALUES ('TOP10', 'OLDZEN', 'ZIOGIA'),
     PRODUCTS.CATEGORY AS CATEGORY
       COMMENT = '상품 대분류. 허용값: 아우터, 상의, 하의, 액세서리, 언더웨어'
       SAMPLE_VALUES ('아우터', '액세서리', '하의'),
@@ -101,7 +101,7 @@ CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SALES_SV
       SAMPLE_VALUES ('TRUE'),
     PRODUCTS.PRODUCT_NAME AS PRODUCT_NAME
       COMMENT = '상품 전체 이름 (브랜드 + 카테고리 + 색상 + 사이즈)'
-      SAMPLE_VALUES ('ZIOZIA 가방 블루 S', 'OLZEN 패딩 네이비 S', 'ZIOZIA 내의 블루 XS'),
+      SAMPLE_VALUES ('ZIOGIA 가방 블루 S', 'OLDZEN 패딩 네이비 S', 'ZIOGIA 내의 블루 XS'),
     PRODUCTS.SEASON AS SEASON
       COMMENT = '시즌. 허용값: SS24(2024 봄여름), FW24(2024 가을겨울), SS25(2025 봄여름), FW25(2025 가을겨울)'
       SAMPLE_VALUES ('FW24', 'SS24', 'SS25'),
@@ -126,8 +126,8 @@ CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SALES_SV
 
     -- SALES_TRANSACTIONS
     SALES_TRANSACTIONS.BRAND AS BRAND
-      COMMENT = '브랜드명. 허용값: TOPTEN, ZIOZIA, OLZEN, ANDZ'
-      SAMPLE_VALUES ('OLZEN', 'ZIOZIA', 'TOPTEN'),
+      COMMENT = '브랜드명. 허용값: TOP10, ZIOGIA, OLDZEN, NG'
+      SAMPLE_VALUES ('OLDZEN', 'ZIOGIA', 'TOP10'),
     SALES_TRANSACTIONS.CHANNEL AS CHANNEL
       COMMENT = '판매 채널. 허용값: 오프라인, 온라인몰, 모바일앱, 라이브커머스'
       SAMPLE_VALUES ('라이브커머스', '모바일앱', '온라인몰'),
@@ -181,8 +181,8 @@ CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SALES_SV
 
     -- STORES
     STORES.BRAND AS BRAND
-      COMMENT = '매장 브랜드. 허용값: TOPTEN, ZIOZIA, OLZEN, ANDZ'
-      SAMPLE_VALUES ('ANDZ', 'TOPTEN', 'OLZEN'),
+      COMMENT = '매장 브랜드. 허용값: TOP10, ZIOGIA, OLDZEN, NG'
+      SAMPLE_VALUES ('NG', 'TOP10', 'OLDZEN'),
     STORES.CITY AS CITY
       COMMENT = '매장 소재 도시'
       SAMPLE_VALUES ('인천', '경기', '서울'),
@@ -200,7 +200,7 @@ CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SALES_SV
       SAMPLE_VALUES ('SZ-0022', 'ST-0150', 'ST-0054'),
     STORES.STORE_NAME AS STORE_NAME
       COMMENT = '매장 전체 이름 (브랜드 + 지역 + 구점)'
-      SAMPLE_VALUES ('TOPTEN 청주 흥덕구점', 'ANDZ 인천 남동구점', 'ANDZ 서울 서초구점'),
+      SAMPLE_VALUES ('TOP10 청주 흥덕구점', 'NG 인천 남동구점', 'NG 서울 서초구점'),
     STORES.STORE_TYPE AS STORE_TYPE
       COMMENT = '매장 유형. 허용값: 직영점, 대리점, 백화점, 아울렛, 온라인전용'
       SAMPLE_VALUES ('대리점', '아울렛', '온라인전용'),

@@ -379,7 +379,7 @@ Workspace의 Streamlit 앱(Container Runtime)은 **Compute Pool** 위에서 실�
 | **Compute Pool** | 앱이 실행되는 컨테이너 환경. 계정에 기본 컴퓨트 풀이 설정되어 있어야 함 |
 | **Query Warehouse** | 앱 내 SQL 쿼리를 실행하는 웨어하우스 (예: `SF_WH`) |
 
-> **참고**: `SYSTEM_COMPUTE_POOL_CPU`(시스템 제공 풀)를 사용하면 전용 Compute Pool을 별도로 생성하지 않아도 됩니다. 노드당 최대 3개 앱이 공유 실행되며, 전용 풀과 달리 앱이 없을 때 빈 노드를 점유하지 않습니다.
+> **참고**: `SYSTEM_COMPUTE_POOL_CPU`(시스템 제공 풀)를 사용하면 전용 Compute Pool을 별도로 생성하지 않아도 됩니다. 노드당 최대 3개 앱이 공유 실행되며, 전용 풀과 달리 앱이 없을 때 빈 노드를 점유하지 않습니다. 반면, 사용자가 직접 생성한 **전용 Compute Pool**에서는 Streamlit 앱 1개가 노드 1개를 독점 사용합니다.
 
 #### 자동 중지 동작
 
@@ -390,50 +390,44 @@ Workspace의 Streamlit 앱(Container Runtime)은 **Compute Pool** 위에서 실�
 
 #### 상황별 관리 방안
 
-**1. Compute Pool 중지/재시작**
+**1. 개별 앱 중지/재시작**
 
-Compute Pool을 중지하면 해당 풀의 모든 서비스(앱)가 중지되고 노드가 해제됩니다.
-
-| 작업 | SQL | UI |
-|------|-----|-----|
-| 풀 중지 | `ALTER COMPUTE POOL my_pool SUSPEND;` | Manage → Compute → 리스트에서 `⋮` → Suspend (또는 풀 선택 → 상세 화면 우측 `⋮` → Suspend) |
-| 풀 재시작 | `ALTER COMPUTE POOL my_pool RESUME;` | 동일 경로에서 `⋮` → Resume |
-> 풀 SUSPEND 시 서비스(앱)는 즉시 중지되고, 잡(job)은 완료 후 노드가 해제됩니다.
-
-**2. 개별 앱 중지/삭제**
-
-> `ALTER STREAMLIT`에는 SUSPEND/RESUME SQL 구문이 없습니다. Snowsight UI의 Services 목록에서도 Streamlit 서비스에 대해서는 **Suspend 메뉴가 제공되지 않고 Drop만** 가능합니다.
+Streamlit 앱은 **Projects → Streamlit** 메뉴에서 개별적으로 관리할 수 있습니다.
 
 | 작업 | 방법 |
 |------|------|
-| 개별 앱 삭제 | Manage → Compute → 풀 선택 → Services 탭 → 해당 서비스 `⋮` → **Drop** |
-| 개별 앱 중지 (삭제 없이) | 직접 중지 UI 없음. **3일간 뷰어 비활동** 시 자동 종료되거나, Compute Pool 전체를 Suspend하여 중지 |
+| 개별 앱 중지 | **Projects → Streamlit** → 해당 앱 선택 → 우측 상단 `⋮` → **Shutdown** |
+| 개별 앱 재시작 | Shutdown된 앱에 **접속만 하면 자동 재시작** (Projects 또는 Apps 어디서든 가능) |
 
-> **참고**: 개별 Streamlit 앱만 중지하고 싶지만 Drop(삭제)하지 않으려면, Compute Pool 전체를 Suspend하는 방법밖에 없습니다. 단, 같은 풀의 다른 서비스도 함께 중지됩니다. `SYSTEM_COMPUTE_POOL_CPU`를 사용하는 경우 3일 비활동 자동 종료에 의존하는 것이 현실적입니다.
+> **참고**: Snowsight 좌측 메뉴의 **Apps**에서 Streamlit 앱에 진입하면 뷰어 모드로만 표시되어 관리 메뉴가 없습니다. 앱 중지(Shutdown/Delete 등)는 **Projects → Streamlit** 경로로 진입해야 합니다.
 
-**3. 자동 재시작 설정**
+교육 후 리소스 정리가 필요하다면, 개별 앱을 **Shutdown**하는 것이 가장 간단한 방법입니다. 3일을 기다리지 않아도 즉시 리소스가 해제되며, 나중에 앱에 접속하면 자동으로 다시 시작됩니다.
 
-| 상황 | 재시작 동작 |
-|------|-------------|
-| 3일 뷰어 비활동으로 자동 종료 | 뷰어가 접속하면 **자동 재시작** |
-| `ALTER COMPUTE POOL SUSPEND` | `AUTO_RESUME = TRUE`면 서비스 제출 시 풀 자동 재개 |
+**2. Compute Pool 관리**
+
+| 작업 | SQL | UI |
+|------|-----|-----|
+| 풀 중지 | `ALTER COMPUTE POOL my_pool SUSPEND;` | Manage → Compute → 리스트에서 `⋮` → Suspend |
+| 풀 재시작 | `ALTER COMPUTE POOL my_pool RESUME;` | 동일 경로에서 `⋮` → Resume |
+
+> **주의**: Compute Pool의 `AUTO_RESUME = TRUE`(기본값)인 경우, 풀을 Suspend하더라도 **브라우저에서 앱이 열려있으면 서비스 요청이 발생하여 풀이 자동으로 다시 재개**됩니다. 풀을 완전히 중지하려면 먼저 앱에 접속 중인 모든 브라우저 탭을 닫은 후 Suspend해야 합니다.
+
+**3. 자동 중지/재시작 동작 정리**
+
+| 상황 | 동작 |
+|------|------|
+| 3일간 뷰어 비활동 | Streamlit 서버 자동 종료 (Container Runtime 공통, 변경 불가) |
+| Shutdown된 앱에 사용자 접속 | **자동 재시작** (경로 무관, 콜드 스타트 발생) |
+| Compute Pool Suspend (`AUTO_RESUME = TRUE`) | 브라우저 탭이 열려있으면 즉시 자동 재개됨 |
+| Compute Pool Suspend (모든 탭 종료 후) | 풀 중지 유지, 이후 앱 접속 시 자동 재개 |
 
 **4. 비용 최적화 팁**
 
-```sql
--- Compute Pool 자동 중지 시간 설정 (예: 5분 = 300초)
-ALTER COMPUTE POOL my_pool SET AUTO_SUSPEND_SECS = 300;
-
--- 자동 재개 활성화
-ALTER COMPUTE POOL my_pool SET AUTO_RESUME = TRUE;
-```
-
 | 방법 | 효과 |
 |------|------|
-| `AUTO_SUSPEND_SECS`를 짧게 설정 | 서비스 종료 후 빠르게 노드 해제 |
-| `AUTO_RESUME = TRUE` | 접근 시 자동 재개 (콜드 스타트 발생) |
+| 미사용 앱 **Shutdown** (Projects → Streamlit → `⋮` → Shutdown) | 3일 대기 없이 즉시 리소스 해제, 접속 시 자동 재시작 |
 | 시스템 풀(`SYSTEM_COMPUTE_POOL_CPU`) 사용 | 전용 풀 생성 불필요, 앱 미사용 시 빈 노드 점유 없음 |
-| 미사용 앱 수동 SUSPEND | 3일 대기 없이 즉시 리소스 해제 |
+| `AUTO_SUSPEND_SECS`를 짧게 설정 | 모든 서비스 종료 후 빠르게 노드 해제 |
 
 #### 배포 흐름
 
@@ -701,7 +695,7 @@ CoCo에게 다음 프롬프트를 입력:
 ```
 다음 사항을 한번에 수정해줘:
 1. 차트 위에 브랜드별 총 매출 합계를 KPI 카드로 보여주는 섹션 추가
-2. 차트 색상을 브랜드별로 지정 (TOPTEN=파란색, ZIOZIA=빨간색, OLZEN=초록색, ANDZ=주황색)
+2. 차트 색상을 브랜드별로 지정 (TOP10=파란색, ZIOGIA=빨간색, OLDZEN=초록색, NG=주황색)
 3. KPI 카드도 동일한 색상 적용
 4. 화면 좌우 여백 최소화 (wide layout)
 ```
@@ -907,7 +901,7 @@ Step 4: UI 마무리 → 재배포 → 최종 확인
 #### Step 1: 프로젝트 생성 + 매출 대시보드
 
 1. CoCo Desktop 실행
-2. `File` → `Open Folder` → 새 폴더 생성 (예: `sf-operations-portal`) → 열기
+2. `File` → `Open Folder` → 1부에서 사용한 `snow-fashion-cortex-hands-on-main` 폴더 선택 → 열기
 3. CoCo Desktop 채팅에서 `/snowflake-apps` 스킬을 호출하여 앱 생성:
 
 ```
@@ -915,6 +909,10 @@ Step 4: UI 마무리 → 재배포 → 최종 확인
 
 SNOW_FASHION.RAW 스키마의 데이터를 활용한 스노우패션 운영 관리 포털을 만들어줘.
 우선 첫 번째 페이지 "매출 대시보드"만 만들자.
+
+## 주의사항
+- 로컬에서 npm run dev 또는 localhost로 테스트하지 말 것. App Runtime 앱은 Snowflake에 배포해야만 데이터 접근이 가능함
+- 코드 작성이 완료되면 바로 snow app deploy로 배포할 것
 
 ## 사전 작업
 - 먼저 SHOW TABLES IN SCHEMA SNOW_FASHION.RAW 을 실행해서 어떤 테이블이 있는지 확인할 것
@@ -936,7 +934,7 @@ SNOW_FASHION.RAW 스키마의 데이터를 활용한 스노우패션 운영 관�
 - 숫자: 천 단위 구분 기호
 ```
 
-4. CoCo가 프로젝트를 생성하면, **로컬 폴더에 파일이 생성된 것을 확인** — 좌측 파일 탐색기에서 `app.yml`, `src/` 등 구조를 살펴봅니다.
+4. CoCo가 프로젝트를 생성하면, **`snow-fashion-cortex-hands-on-main` 폴더 하위에 앱 파일이 생성된 것을 확인** — 좌측 파일 탐색기에서 `app.yml`, `src/` 등 구조를 살펴봅니다.
 
 5. **배포 및 확인**: CoCo에게 요청합니다:
 
@@ -1005,6 +1003,7 @@ SNOW_FASHION.RAW 스키마의 데이터를 활용한 스노우패션 운영 관�
 2. 3개 페이지 간 네비게이션 일관성 확인
 3. 로딩 스피너 추가
 4. 좌우 여백 최소화
+
 ```
 
 **재배포 및 최종 확인**:

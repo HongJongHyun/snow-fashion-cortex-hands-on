@@ -39,7 +39,7 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
       - "평효율" → dict_search 검색 → SUM(SALE_AMOUNT) / AREA_SQM 확인
 
       ■ 주의: 아래 용어는 dict_search 없이도 바로 사용 가능합니다:
-      - 브랜드명: TOPTEN, ZIOZIA, OLZEN, ANDZ (영문 그대로)
+      - 브랜드명: TOP10, ZIOGIA, OLDZEN, NG (영문 그대로)
       - 기본 지표: 매출, 수량, 할인율 (SALE_AMOUNT, QUANTITY, DISCOUNT_RATE)
 
     response: |
@@ -113,7 +113,7 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_SALES_AGENT
           searchable: true
           filterable: false
         BRAND:
-          description: "브랜드명: TOPTEN, ZIOZIA, OLZEN, ANDZ"
+          description: "브랜드명: TOP10, ZIOGIA, OLDZEN, NG"
           type: string
           searchable: false
           filterable: true

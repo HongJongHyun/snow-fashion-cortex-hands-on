@@ -82,7 +82,7 @@ CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SALES_SV
     -- PRODUCTS
     PRODUCTS.BRAND AS BRAND
       COMMENT = 'The brand name associated with a product.'
-      SAMPLE_VALUES ('TOPTEN', 'OLZEN', 'ZIOZIA'),
+      SAMPLE_VALUES ('TOP10', 'OLDZEN', 'ZIOGIA'),
     PRODUCTS.CATEGORY AS CATEGORY
       COMMENT = 'The category of a product.'
       SAMPLE_VALUES ('아우터', '액세서리', '하의'),
@@ -97,7 +97,7 @@ CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SALES_SV
       SAMPLE_VALUES ('TRUE'),
     PRODUCTS.PRODUCT_NAME AS PRODUCT_NAME
       COMMENT = 'The full name of a product, including brand, category, color, and size information.'
-      SAMPLE_VALUES ('ZIOZIA 가방 블루 S', 'OLZEN 패딩 네이비 S', 'ZIOZIA 내의 블루 XS'),
+      SAMPLE_VALUES ('ZIOGIA 가방 블루 S', 'OLDZEN 패딩 네이비 S', 'ZIOGIA 내의 블루 XS'),
     PRODUCTS.SEASON AS SEASON
       COMMENT = 'The fashion season associated with the product, combining a period of the year with a two-digit year indicator.'
       SAMPLE_VALUES ('FW24', 'SS24', 'SS25'),
@@ -123,7 +123,7 @@ CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SALES_SV
     -- SALES_TRANSACTIONS
     SALES_TRANSACTIONS.BRAND AS BRAND
       COMMENT = 'The brand associated with each sales transaction.'
-      SAMPLE_VALUES ('OLZEN', 'ZIOZIA', 'TOPTEN'),
+      SAMPLE_VALUES ('OLDZEN', 'ZIOGIA', 'TOP10'),
     SALES_TRANSACTIONS.CHANNEL AS CHANNEL
       COMMENT = 'The sales or distribution channel through which a transaction was made.'
       SAMPLE_VALUES ('라이브커머스', '모바일앱', '온라인몰'),
@@ -178,7 +178,7 @@ CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SALES_SV
     -- STORES
     STORES.BRAND AS BRAND
       COMMENT = 'The brand name associated with the store.'
-      SAMPLE_VALUES ('ANDZ', 'TOPTEN', 'OLZEN'),
+      SAMPLE_VALUES ('NG', 'TOP10', 'OLDZEN'),
     STORES.CITY AS CITY
       COMMENT = 'The city or regional area where the store is located.'
       SAMPLE_VALUES ('인천', '경기', '서울'),
@@ -196,7 +196,7 @@ CREATE OR ALTER SEMANTIC VIEW SNOW_FASHION.SEMANTIC.EDU_SALES_SV
       SAMPLE_VALUES ('SZ-0022', 'ST-0150', 'ST-0054'),
     STORES.STORE_NAME AS STORE_NAME
       COMMENT = 'The full name of the store including the brand and location.'
-      SAMPLE_VALUES ('TOPTEN 청주 흥덕구점', 'ANDZ 인천 남동구점', 'ANDZ 서울 서초구점'),
+      SAMPLE_VALUES ('TOP10 청주 흥덕구점', 'NG 인천 남동구점', 'NG 서울 서초구점'),
     STORES.STORE_TYPE AS STORE_TYPE
       COMMENT = 'The type or classification of a store.'
       SAMPLE_VALUES ('대리점', '아울렛', '온라인전용'),

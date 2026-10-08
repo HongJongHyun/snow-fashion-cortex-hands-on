@@ -2,7 +2,7 @@
 
 > **대상**: 스노우패션 데이터/IT 담당자  
 > **환경**: Snowsight + CoCo (Snowsight 내장)  
-> **데이터**: SNOW_FASHION 데이터베이스 (TOPTEN, ZIOZIA, OLZEN, ANDZ 4개 브랜드)  
+> **데이터**: SNOW_FASHION 데이터베이스 (TOP10, ZIOGIA, OLDZEN, NG 4개 브랜드)  
 > **교육용 리소스 네이밍**: 모두 `EDU_` 접두사 (기존 데모용 리소스와 구분)  
 > **2부 예고**: CoCo Desktop을 활용한 Streamlit / Snowflake App Runtime 빌드 (별도 세션)
 
@@ -52,7 +52,7 @@
 #### Cortex Analyst (정형 데이터 → SQL)
 - **역할**: 자연어 질문을 SQL로 변환하여 정형 데이터를 조회
 - **기반**: Semantic View (시맨틱 뷰)
-- **예시**: "지난 분기 TOPTEN 브랜드의 월별 매출 추이를 보여줘"
+- **예시**: "지난 분기 TOP10 브랜드의 월별 매출 추이를 보여줘"
 - **내부 동작**: 질문 → Semantic View의 메타데이터 참조 → SQL 생성 → 실행 → 결과 반환
 
 #### Cortex Search (비정형 데이터 → RAG 검색)
@@ -65,7 +65,7 @@
 #### Cortex Agent (오케스트레이션)
 - **역할**: 사용자의 질문을 분석하고, 적절한 도구(Analyst/Search/Custom)를 선택하여 답변
 - **핵심 루프**: `Plan → Use Tools → Reflect`
-- **예시**: "TOPTEN 매출이 떨어진 원인을 분석해줘" → Agent가 매출 데이터(Analyst) + 고객 리뷰(Search)를 조합
+- **예시**: "TOP10 매출이 떨어진 원인을 분석해줘" → Agent가 매출 데이터(Analyst) + 고객 리뷰(Search)를 조합
 
 #### Snowflake Cowork (Intelligence)
 - **역할**: 비즈니스 사용자를 위한 채팅 인터페이스
@@ -102,7 +102,7 @@
 |--------|------|------|
 | SALES_TRANSACTIONS | 2,506,622 | 매출 거래 (2024.01~2025.12) |
 | PRODUCTS | 5,000 | 4개 브랜드 SKU 마스터 |
-| STORES | 300 | 매장 정보 (TOPTEN 200 + ZIOZIA 40 + OLZEN 35 + ANDZ 25) |
+| STORES | 300 | 매장 정보 (TOP10 200 + ZIOGIA 40 + OLDZEN 35 + NG 25) |
 | CUSTOMERS | 500,000 | 고객 마스터 (연령/성별/지역/멤버십) |
 | INVENTORY_SNAPSHOT | 780,000 | 일별 재고 스냅샷 (2025년) |
 | PRODUCT_REVIEWS | 100,000 | 한국어 리뷰 텍스트 |
@@ -137,7 +137,7 @@ CoCo에게: "SALES_TRANSACTIONS 테이블의 컬럼 구조를 알려줘"
 ```
 CoCo에게: "SALES_TRANSACTIONS에서 브랜드별 매출 건수를 보여줘"
 → SELECT BRAND, COUNT(*) FROM SALES_TRANSACTIONS GROUP BY BRAND 생성
-→ TOPTEN 94만건, ZIOZIA 65만건, OLZEN 53만건, ANDZ 39만건
+→ TOP10 94만건, ZIOGIA 65만건, OLDZEN 53만건, NG 39만건
 ```
 
 ```
@@ -174,9 +174,9 @@ CoCo에게: "PRODUCT_REVIEWS 테이블에서 리뷰 텍스트 샘플 5건을 보
 
 ### 2.2 왜 시맨틱 레이어가 필요한가?
 
-**문제**: LLM에게 "TOPTEN 매출 알려줘"라고 하면...
+**문제**: LLM에게 "TOP10 매출 알려줘"라고 하면...
 - 어떤 테이블을 써야 하는지 모름
-- BRAND 컬럼 값이 'TOPTEN'인지 'topten'인지 모름
+- BRAND 컬럼 값이 'TOP10'인지 'top10'인지 모름
 - SALE_AMOUNT가 VAT 포함인지 모름
 - 테이블 간 JOIN 관계를 모름
 
@@ -217,7 +217,7 @@ CoCo에게: "PRODUCT_REVIEWS 테이블에서 리뷰 텍스트 샘플 5건을 보
 **데이터 사전이 커버하는 것:**
 - 테이블/컬럼의 한국어 설명
 - 비즈니스 용어 → 컬럼/계산식 매핑 (예: "객단가" → `AVG(SALE_AMOUNT)`)
-- 컬럼의 허용값 목록 (예: BRAND → TOPTEN, ZIOZIA, OLZEN, ANDZ)
+- 컬럼의 허용값 목록 (예: BRAND → TOP10, ZIOGIA, OLDZEN, NG)
 - 도메인 컨텍스트 (브랜드 특성, 시즌 구분 등)
 
 ### 2.4 도메인별 시맨틱 뷰 분리 전략
@@ -237,7 +237,7 @@ CoCo에게: "PRODUCT_REVIEWS 테이블에서 리뷰 텍스트 샘플 5건을 보
 
 ### 2.5 ER 다이어그램 (핵심 관계)
 
-Semantic View를 만들 때 **Relationship(관계)** 정의가 필수입니다. 관계가 없으면 Cortex Analyst는 테이블 간 JOIN 방법을 모르기 때문에, 여러 테이블에 걸친 질문("TOPTEN 매장별 매출")에 답할 수 없습니다. 아래 다이어그램은 Chapter 3에서 Semantic View에 등록할 JOIN 키를 미리 파악하기 위한 것입니다.
+Semantic View를 만들 때 **Relationship(관계)** 정의가 필수입니다. 관계가 없으면 Cortex Analyst는 테이블 간 JOIN 방법을 모르기 때문에, 여러 테이블에 걸친 질문("TOP10 매장별 매출")에 답할 수 없습니다. 아래 다이어그램은 Chapter 3에서 Semantic View에 등록할 JOIN 키를 미리 파악하기 위한 것입니다.
 
 ```
 [ 매출 도메인 — EDU_SALES_SV ]
@@ -393,7 +393,7 @@ Autopilot이 완료되면 Semantic View 편집 화면이 열립니다. 화면 �
 | **커스텀 Metric 정의** (예: `SUM(SALE_AMOUNT)`) | | **X** |
 | **한국어 Description 작성** | | **X** |
 | **비즈니스 맥락의 VQR 작성** | | **X** |
-| **컬럼 고유값 설명** (예: BRAND 허용값: TOPTEN, ZIOZIA...) | | **X** |
+| **컬럼 고유값 설명** (예: BRAND 허용값: TOP10, ZIOGIA...) | | **X** |
 
 > **핵심**: Autopilot은 테이블 구조 분석과 기본 분류를 자동으로 처리하여 시작점을 만들어 줍니다.
 > 이후 비즈니스 맥락(Fact/Dimension 재분류, Metric 정의, VQR 등)은 수동으로 보완해야 합니다.
@@ -458,7 +458,7 @@ Description은 LLM이 컬럼의 의미를 이해하는 데 결정적입니다. *
    - **"Open semantic view in Workspaces"** 대화상자에서 Workspace 선택 후 `Open`
 2. 좌측 패널에서 `SALES_TRANSACTIONS` Logical Table 선택
 3. **Dimensions** 섹션에서 `BRAND` 컬럼 옆의 **Edit** (연필 아이콘) 클릭
-4. **Description** 필드에 입력: `브랜드명. 허용값: TOPTEN, ZIOZIA, OLZEN, ANDZ`
+4. **Description** 필드에 입력: `브랜드명. 허용값: TOP10, ZIOGIA, OLDZEN, NG`
 5. **Save** 클릭하여 컬럼 수정 완료
 6. 상단 **Publish changes** 클릭
 
@@ -477,7 +477,7 @@ Description은 LLM이 컬럼의 의미를 이해하는 데 결정적입니다. *
 
 | 테이블 | 컬럼 | 권장 Description |
 |--------|------|-----------------|
-| SALES_TRANSACTIONS | BRAND | 브랜드명. 허용값: TOPTEN, ZIOZIA, OLZEN, ANDZ |
+| SALES_TRANSACTIONS | BRAND | 브랜드명. 허용값: TOP10, ZIOGIA, OLDZEN, NG |
 | SALES_TRANSACTIONS | CHANNEL | 판매 채널. 허용값: 오프라인, 온라인몰, 모바일앱, 라이브커머스 |
 | SALES_TRANSACTIONS | SALE_AMOUNT | 실 결제 금액 (원). 할인 적용 후 최종 결제 금액 |
 | SALES_TRANSACTIONS | DISCOUNT_RATE | 할인율. 0.00=무할인, 0.30=30%할인. 범위: 0.00~0.50 |
@@ -602,7 +602,7 @@ Verified Query 매칭됨?
 
 | 언제 VQR을 만드는가 | 예시 |
 |---------------------|------|
-| 현업이 반복 질문하는 KPI | "이번 달 TOPTEN 매출" |
+| 현업이 반복 질문하는 KPI | "이번 달 TOP10 매출" |
 | LLM이 계산식을 틀리는 경우 | "전년 대비 성장률", "평당 매출" |
 | 사내 전용 비즈니스 용어 | "객단가", "sell-through율", "기여마진" |
 | Window function 등 복잡 SQL | "매출 순위 변화 추이" |
@@ -631,7 +631,7 @@ Verified Query 매칭됨?
 - **생성된 SQL 확인**: 응답 하단의 SQL 펼치기를 눌러 어떤 SQL이 생성되었는지 확인
 - **VQR 활용 여부**: SQL 하단에 **"Generated based on verified query: VQR이름"** 텍스트가 표시되면 VQR이 매칭된 것입니다
   - 예: `Generated based on verified query: BRAND_REVENUE`
-- **필터 값 정확도**: Description에 명시한 허용값(TOPTEN, 라이브커머스 등)이 정확히 적용되는지 확인
+- **필터 값 정확도**: Description에 명시한 허용값(TOP10, 라이브커머스 등)이 정확히 적용되는지 확인
 
 > **결과가 이상하다면?**
 > - 필터 값이 틀림 → Description에 허용값을 더 명확히 추가
@@ -737,7 +737,7 @@ Agent 상세 화면 → **Configuration** 탭 → **Instructions** 서브탭으�
 
 **Configuration** → **General** 서브탭에서:
 
-- **Description**: `스노우패션 4개 브랜드(TOPTEN, ZIOZIA, OLZEN, ANDZ)의 매출·고객·상품 데이터를 분석하는 교육용 에이전트입니다.`
+- **Description**: `스노우패션 4개 브랜드(TOP10, ZIOGIA, OLDZEN, NG)의 매출·고객·상품 데이터를 분석하는 교육용 에이전트입니다.`
 - **Example questions**:
   - "브랜드별 총 매출은 얼마야?"
   - "월별 매출 추이를 보여줘"
@@ -812,7 +812,7 @@ Agent 동작:     ▼
 |------|------|------|
 | `COLUMN` | 개별 컬럼 설명 | SALE_AMOUNT: 실 결제 금액 |
 | `TERM` | 비즈니스 용어 → 계산식/규칙 매핑 | 순매출 → SUM(SALE_AMOUNT) WHERE DISCOUNT_RATE < 1.0 |
-| `VALUE` | 컬럼 고유값 + 설명 | BRAND = 'TOPTEN': 가성비 영캐주얼 |
+| `VALUE` | 컬럼 고유값 + 설명 | BRAND = 'TOP10': 가성비 영캐주얼 |
 
 ### 5.4 Step 2: 데이터 사전 테이블 생성 및 적재
 
@@ -849,9 +849,9 @@ VALUES
 INSERT INTO SNOW_FASHION.SEMANTIC.EDU_DATA_DICTIONARY 
   (ENTRY_TYPE, TABLE_NAME, COLUMN_NAME, TERM, SYNONYMS, DESCRIPTION, DOMAIN)
 VALUES
-('VALUE', 'SALES_TRANSACTIONS', 'BRAND', 'TOPTEN',
- '탑텐, 톱텐, top ten, topten, 탑10',
- 'TOPTEN은 스노우패션의 가성비 영캐주얼 브랜드입니다. 필터: BRAND = ''TOPTEN''', '상품');
+('VALUE', 'SALES_TRANSACTIONS', 'BRAND', 'TOP10',
+ '탑10, 톱10, top 10, top10, 탑10',
+ 'TOP10은 스노우패션의 가성비 영캐주얼 브랜드입니다. 필터: BRAND = ''TOP10''', '상품');
 ```
 
 > **<a href="https://github.com/HongJongHyun/snow-fashion-cortex-hands-on/blob/main/scripts/EDU_DATA_DICTIONARY_%EC%83%9D%EC%84%B1.sql" target="_blank">EDU_DATA_DICTIONARY_생성.sql</a>에 포함된 전체 데이터:**
@@ -960,7 +960,7 @@ Agent 상세 화면 → **Configuration** 탭으로 이동하여 다음 3단계�
 - "평효율" → dict_search 검색 → SUM(SALE_AMOUNT) / AREA_SQM 확인
 
 ■ 주의: 아래 용어는 dict_search 없이도 바로 사용 가능합니다:
-- 브랜드명: TOPTEN, ZIOZIA, OLZEN, ANDZ (영문 그대로)
+- 브랜드명: TOP10, ZIOGIA, OLDZEN, NG (영문 그대로)
 - 기본 지표: 매출, 수량, 할인율 (SALE_AMOUNT, QUANTITY, DISCOUNT_RATE)
 ```
 
@@ -1140,7 +1140,7 @@ Agent 상세 화면 → **Configuration** 탭으로 이동하여 다음 4단계�
 - "평효율" → dict_search 검색 → SUM(SALE_AMOUNT) / AREA_SQM 확인
 
 ■ 주의: 아래 용어는 dict_search 없이도 바로 사용 가능합니다:
-- 브랜드명: TOPTEN, ZIOZIA, OLZEN, ANDZ (영문 그대로)
+- 브랜드명: TOP10, ZIOGIA, OLDZEN, NG (영문 그대로)
 - 기본 지표: 매출, 수량, 할인율 (SALE_AMOUNT, QUANTITY, DISCOUNT_RATE)
 ```
 
@@ -1284,7 +1284,7 @@ Agent 상세 화면 상단의 `+ Add to Snowflake CoWork` 버튼을 클릭합니
 2. 채팅 화면 하단에서 `스노우패션 매출분석(교육)` Agent 선택
 3. 질문 입력:
 ```
-탑텐 브랜드의 이번 분기 객단가 추이를 차트로 보여줘
+탑10 브랜드의 이번 분기 객단가 추이를 차트로 보여줘
 ```
 
 ### 7.3 오토메이션 (Automation)
@@ -1347,8 +1347,8 @@ CoWork 인터페이스의 외형을 커스터마이징합니다:
 ```
 시나리오: MD(상품기획) 담당자의 일상 업무
 
-1. "탑텐 아우터 카테고리 이번 달 매출은?"
-   → dict_search("탑텐") + sales_analytics → 정확한 매출 수치
+1. "탑10 아우터 카테고리 이번 달 매출은?"
+   → dict_search("탑10") + sales_analytics → 정확한 매출 수치
 
 2. "아우터 중에서 고객 불만이 많은 부분은?"
    → voc_search → 사이즈/배송/품질 불만 요약
@@ -1518,7 +1518,7 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
       - question: "이번 달 브랜드별 매출은?"
       - question: "품절 위험 상품은?"
       - question: "배송 지연이 매출에 영향을 주고 있을까?"
-      - question: "탑텐 고객 불만 TOP 3는?"
+      - question: "탑10 고객 불만 TOP 3는?"
 
   tools:
     - tool_spec: { type: cortex_analyst_text_to_sql, name: sales_analytics, ... }

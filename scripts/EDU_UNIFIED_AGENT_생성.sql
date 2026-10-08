@@ -52,7 +52,7 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
       - "배송지연" → dict_search 검색 → DELAY_DAYS > 0, 테이블: SHIPMENTS 확인
 
       ■ 주의: 아래 용어는 dict_search 없이도 바로 사용 가능합니다:
-      - 브랜드명: TOPTEN, ZIOZIA, OLZEN, ANDZ (영문 그대로)
+      - 브랜드명: TOP10, ZIOGIA, OLDZEN, NG (영문 그대로)
       - 기본 지표: 매출, 수량, 할인율 (SALE_AMOUNT, QUANTITY, DISCOUNT_RATE)
 
     response: |
@@ -70,7 +70,7 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
       - question: "이번 달 브랜드별 매출은?"
       - question: "품절 위험 상품은?"
       - question: "배송 지연이 매출에 영향을 주고 있을까?"
-      - question: "탑텐 고객 불만 TOP 3는?"
+      - question: "탑10 고객 불만 TOP 3는?"
 
   tools:
     - tool_spec:
@@ -137,7 +137,7 @@ CREATE OR REPLACE AGENT SNOW_FASHION.SEMANTIC.EDU_UNIFIED_AGENT
           searchable: true
           filterable: false
         BRAND:
-          description: "브랜드명: TOPTEN, ZIOZIA, OLZEN, ANDZ"
+          description: "브랜드명: TOP10, ZIOGIA, OLDZEN, NG"
           type: string
           searchable: false
           filterable: true
