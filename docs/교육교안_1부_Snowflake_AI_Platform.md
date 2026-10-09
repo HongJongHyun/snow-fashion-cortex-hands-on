@@ -1335,12 +1335,13 @@ Settings를 클릭하면 **"Agents settings"** 화면이 열리며, 좌측에 �
 
 CoWork 인터페이스의 외형을 커스터마이징합니다:
 
-| 항목 | 설명 |
-|------|------|
-| Display name | CoWork 전체 표시 이름 |
-| Welcome message | 사용자가 처음 접속 시 보이는 메시지 |
-| Color theme | CoWork 인터페이스 색상 (hex 코드 지원) |
-| Full-length logo / Compact logo | 네비게이션 로고 및 브라우저 탭 아이콘 (투명 배경 PNG 권장) |
+| 항목 | 설명 | 교육 예시 |
+|------|------|-----------|
+| Display name | CoWork 전체 표시 이름 | `스노우패션 AI 분석` |
+| Welcome message | 사용자가 처음 접속 시 보이는 메시지 | `스노우패션 AI 분석 포털입니다. 매출, SCM, VOC를 자연어로 질문하세요.` |
+| Color theme | CoWork 인터페이스 색상 (hex 코드 지원) | `#00E676` (밝은 초록) |
+| Full-length logo | 네비게이션 로고 (투명 배경 PNG 권장) | `assets/snowfashion_logo_full.png` |
+| Compact logo | 브라우저 탭 아이콘 (투명 배경 PNG 권장) | `assets/snowfashion_logo_compact.png` |
 
 ### 7.6 데모 시나리오: 비즈니스 사용자 관점
 
